@@ -1,0 +1,31 @@
+# Chek API is UP
+GET http://localhost:3000/healthcheck HTTP/1.1
+
+###
+
+# Create a new user
+POST http://localhost:3000/api/users HTTP/1.1
+content-type: application/json
+
+{
+    "email": "test4@email.com",
+    "name": "Any User",
+    "password": "123454"
+}
+
+###
+
+# Find Users
+GET http://localhost:3000/api/users HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsImVtYWlsIjoidGVzdDRAZW1haWwuY29tIiwibmFtZSI6IkFueSBVc2VyIiwiaWF0IjoxNjk5ODMyNDkyfQ.iYfELF_0ereo9efT-0JoLirixfGKjar0XsuJvrJa_Bk
+
+###
+
+# Authorization
+POST http://localhost:3000/api/auth HTTP/1.1
+content-type: application/json
+
+{
+    "email": "test4@email.com",
+    "password": "123454"
+}

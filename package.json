@@ -1,0 +1,38 @@
+{
+  "name": "ollo-link-api",
+  "version": "1.0.0",
+  "description": "OLLO.li api",
+  "main": "index.js",
+  "engines": {
+    "node": ">=18.12.0 <=20.9.0"
+  },
+  "author": "Romulo Assis",
+  "license": "ISC",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "nvm": "nvm use",
+    "docker": "docker-compose up & npm install",
+    "dev": "npx tsx watch src/app.ts",
+    "prisma:newMigration": "npx prisma migrate dev --name",
+    "prisma:studio": "npx prisma studio",
+    "new:module": "chmod +x ./scripts/create_module.sh && ./scripts/create_module.sh"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/node": "^20.9.0",
+    "ts-node": "^10.9.1",
+    "tsx": "^4.1.1",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@fastify/jwt": "^7.2.3",
+    "@fastify/swagger": "^8.12.0",
+    "@fastify/swagger-ui": "^1.10.1",
+    "@prisma/client": "^5.5.2",
+    "bcrypt": "^5.1.1",
+    "fastify": "^4.24.3",
+    "fastify-zod": "^1.4.0",
+    "zod": "^3.22.4",
+    "zod-to-json-schema": "^3.21.4"
+  }
+}
