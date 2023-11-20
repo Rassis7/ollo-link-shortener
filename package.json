@@ -15,7 +15,13 @@
     "dev": "npx tsx watch src/app.ts",
     "prisma:newMigration": "npx prisma migrate dev --name",
     "prisma:studio": "npx prisma studio",
-    "new:module": "chmod +x ./scripts/create_module.sh && ./scripts/create_module.sh"
+    "new:module": "chmod +x ./scripts/create_module.sh && ./scripts/create_module.sh",
+    "commit": "git cz"
+  },
+  "config": {
+    "commitizen": {
+      "path": "git-cz"
+    }
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
@@ -26,6 +32,7 @@
   },
   "dependencies": {
     "@fastify/jwt": "^7.2.3",
+    "@fastify/rate-limit": "^9.0.0",
     "@fastify/swagger": "^8.12.0",
     "@fastify/swagger-ui": "^1.10.1",
     "@prisma/client": "^5.5.2",
