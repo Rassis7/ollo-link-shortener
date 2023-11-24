@@ -8,8 +8,8 @@ POST http://localhost:3000/api/users HTTP/1.1
 content-type: application/json
 
 {
-    "email": "test5@email.com",
-    "name": "Any User",
+    "email": "romuloassis.as@gmail.com",
+    "name": "Romulo Assis",
     "password": "123454"
 }
 
