@@ -7,7 +7,7 @@
 ![Bitbucket open pull requests](https://img.shields.io/bitbucket/pr-raw/iuricode/README-template?style=for-the-badge)
 
 <div align="center">
-<img src="./docs/ollo-logo.jpg" width="450px;" height="400px">
+<img src="./resource/images/logo-ollo.png" width="450px;" height="400px">
 </div>
 
 > API que controla todas as features da OLLO.li, **essa API não contempla o MVP**
@@ -30,6 +30,12 @@ Antes de começar, verifique se você atendeu aos seguintes requisitos:
 - Ter o `npm` que acompanha a versão do `node` instalada no seu computador
 - Ter o Docker instalado na máquina
 - Ler esse README
+
+## 🏗️ Arquitetura
+
+<div align="center">
+<img src="./resource/images/architecture.png" width="600px;">
+</div>
 
 ## 🚀 Instalando OLLO.li API
 
