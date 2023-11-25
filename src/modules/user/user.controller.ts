@@ -14,23 +14,8 @@ export async function registerUserHandler(
   const { body } = request;
   const user = await createUser(body);
 
-  // TODO: In future send in queue
-  await sendVerifyEmailHandler({
-    subject: "Confirme Seu Cadastro - Importante!",
-    recipients: [
-      {
-        email: user.email,
-        name: null,
-        variables: [
-          { variable: "expire_in", value: "48" },
-          {
-            variable: "verification_url",
-            value: "https://ollo.li/verification",
-          },
-        ],
-      },
-    ],
-  });
+  // TODO: In future to send in queue
+  await sendVerifyEmailHandler(user.email);
 
   return reply.code(201).send(user);
 }

@@ -24,5 +24,5 @@ export type SendEmailProps = z.infer<typeof emailCore>;
 
 export type EmailHandlerParams = Omit<
   SendEmailProps,
-  "fromEmail" | "fromName" | "templateId" | "htmlTemplate"
+  "fromEmail" | "fromName" | "templateId" | "htmlTemplate" | "subject"
 >;
