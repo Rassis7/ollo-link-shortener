@@ -8,8 +8,8 @@ POST http://localhost:3000/api/users HTTP/1.1
 content-type: application/json
 
 {
-    "email": "test4@email.com",
-    "name": "Any User",
+    "email": "romuloassis.as@gmail.com",
+    "name": "Romulo Assis",
     "password": "123454"
 }
 
@@ -17,11 +17,11 @@ content-type: application/json
 
 # Find Users
 GET http://localhost:3000/api/users HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsImVtYWlsIjoidGVzdDRAZW1haWwuY29tIiwibmFtZSI6IkFueSBVc2VyIiwiaWF0IjoxNjk5ODMyNDkyfQ.iYfELF_0ereo9efT-0JoLirixfGKjar0XsuJvrJa_Bk
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsImVtYWlsIjoidGVzdDRAZW1haWwuY29tIiwibmFtZSI6IkFueSBVc2VyIiwiaWF0IjoxNzAwNDkyMDEwLCJleHAiOjE3MDEwOTY4MTB9.k9i0VFQbkCM0y1mUFmfzi2w-oxCX5p5EFbmsX3wzGcU
 
 ###
 
-# Authorization
+# Login
 POST http://localhost:3000/api/auth HTTP/1.1
 content-type: application/json
 
