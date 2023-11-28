@@ -1,4 +1,11 @@
+import { buildJsonSchemas } from "fastify-zod";
 import { z } from "zod";
+
+export enum VERIFY_EMAIL_RESPONSE {
+  VALIDATED = "VALIDATED",
+  CODE_IS_WRONG = "CODE_IS_WRONG",
+  CODE_EXPIRED_OR_NOT_EXISTS = "CODE_EXPIRED_OR_NOT_EXISTS",
+}
 
 const emailCore = z.object({
   fromEmail: z.string().email(),
@@ -26,3 +33,24 @@ export type EmailHandlerParams = Omit<
   SendEmailProps,
   "fromEmail" | "fromName" | "templateId" | "htmlTemplate" | "subject"
 >;
+
+const verifyEmailSchema = z.object({
+  email: z.string().email(),
+});
+
+export type VerifyEmailInput = z.infer<typeof verifyEmailSchema>;
+
+const verifyEmailParamsSchema = z.object({
+  verificationCode: z.string().uuid(),
+});
+
+export type VerifyEmailParams = z.infer<typeof verifyEmailParamsSchema>;
+
+export const { schemas: emailSchemas, $ref } = buildJsonSchemas(
+  {
+    verifyEmailSchema,
+  },
+  {
+    $id: "emailSchemas",
+  }
+);

@@ -1,5 +1,5 @@
 import { EmailParams, MailerSend, Recipient } from "mailersend";
-import { SendEmailProps } from "./email.schema";
+import { SendEmailProps, VERIFY_EMAIL_RESPONSE } from "./email.schema";
 import { join } from "node:path";
 import { readFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";
@@ -55,9 +55,9 @@ async function generateVerifyEmailUrl(email: string) {
   const urlSuffix = randomUUID();
   const emailParsed = encodeURIComponent(email);
 
-  const validAt = addHours(new Date(), EXPIRE_IN).getMilliseconds();
-  await redis.set(`emailVerification/${email}`, urlSuffix, "PX", validAt);
-  //  console.log(await redis.ttl(`emailVerification/${email}`));//verify expiration
+  const validAt = addHours(new Date(), EXPIRE_IN).getTime() / 1000;
+  await redis.set(`emailVerification/${email}`, urlSuffix);
+  await redis.expire(`emailVerification/${email}`, Math.round(validAt));
 
   return `${process.env.INTERNAL_OLLO_LI_BASE_URL}/verification/${urlSuffix}?${emailParsed}`;
 }
@@ -89,4 +89,19 @@ export async function sendVerifyEmailHandler(email: string) {
   };
 
   await sendEmail(emailProps);
+}
+
+export async function verifyEmail(code: string, email: string) {
+  const restTime = await redis.ttl(`emailVerification/${email}1`);
+
+  if (restTime <= -1) {
+    throw new Error(VERIFY_EMAIL_RESPONSE.CODE_EXPIRED_OR_NOT_EXISTS);
+  }
+
+  const verificationCode = await redis.get(`emailVerification/${email}`);
+
+  if (verificationCode !== code) {
+    throw new Error(VERIFY_EMAIL_RESPONSE.CODE_IS_WRONG);
+  }
+  return VERIFY_EMAIL_RESPONSE.VALIDATED;
 }

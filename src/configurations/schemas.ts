@@ -1,10 +1,10 @@
 import { FastifyInstance } from "fastify";
-import { userSchemas } from "@/modules/user/user.schema";
-import { authSchemas } from "@/modules/auth/auth.schema";
+import { JsonSchema } from "fastify-zod";
 
-const schemas = [...userSchemas, ...authSchemas];
-
-export function addApplicationSchemas(server: FastifyInstance) {
+export function addApplicationSchemas(
+  server: FastifyInstance,
+  schemas: JsonSchema[]
+) {
   for (const schema of schemas) {
     server.addSchema(schema);
   }
