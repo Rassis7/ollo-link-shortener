@@ -1,10 +1,11 @@
 import { type FastifyError } from "fastify";
+import { FastifySchemaValidationError } from "fastify/types/schema";
 
 export class ErrorHandler {
   code: string;
-  message: string;
-  private statusCode?: number;
-  private fastifyErrorInfos: Partial<FastifyError>;
+  message: string | FastifySchemaValidationError[];
+  #fastifyErrorInfos: Partial<FastifyError>;
+  #statusCode?: number;
 
   constructor(error: unknown, message?: string) {
     const errorUpdated: FastifyError = {
@@ -14,12 +15,12 @@ export class ErrorHandler {
 
     this.code = errorUpdated.code;
     this.message = errorUpdated.message;
-    this.statusCode = errorUpdated.statusCode;
-    this.fastifyErrorInfos = error as FastifyError;
+    this.#statusCode = errorUpdated.statusCode;
+    this.#fastifyErrorInfos = error as FastifyError;
   }
 
   getStatusCode() {
-    return this?.statusCode;
+    return this.#statusCode;
   }
 
   getCode() {
@@ -31,6 +32,6 @@ export class ErrorHandler {
   }
 
   getCompleteInfos() {
-    return this.fastifyErrorInfos;
+    return this.#fastifyErrorInfos;
   }
 }

@@ -2,7 +2,7 @@ import { buildJsonSchemas } from "fastify-zod";
 import { z } from "zod";
 
 export enum AUTH_ERRORS_RESPONSE {
-  USER_OR_PASSWORD_INVALID = "USER_OR_PASSWORD_INVALID",
+  USER_OR_PASSWORD_INVALID = "O usuário ou a senha estão inválidos",
 }
 
 const authSchema = z.object({

@@ -20,14 +20,10 @@ export async function verifyEmailHandler(
 
     await verifyEmail(verificationCode, email);
 
-    return reply.code(200).send();
+    return reply.code(204);
   } catch (error) {
-    const statusCode = VERIFY_EMAIL_RESPONSE.CODE_EXPIRED_OR_NOT_EXISTS
-      ? 401
-      : 400;
-
     const e = new ErrorHandler(error);
-    return reply.code(statusCode).send(e);
+    return reply.code(401).send(e);
   }
 }
 

@@ -2,10 +2,9 @@ import { buildJsonSchemas } from "fastify-zod";
 import { z } from "zod";
 
 export enum VERIFY_EMAIL_RESPONSE {
-  VALIDATED = "VALIDATED",
-  CODE_IS_WRONG = "CODE_IS_WRONG",
-  CODE_EXPIRED_OR_NOT_EXISTS = "CODE_EXPIRED_OR_NOT_EXISTS",
-  WAS_HAPPENED_AN_ERROR_WHEN_RESEND_EMAIL = "WAS_HAPPENED_AN_ERROR_WHEN_RESEND_EMAIL",
+  CODE_IS_WRONG = "O código está errado",
+  CODE_EXPIRED_OR_NOT_EXISTS = "O código está expirado ou não existe",
+  WAS_HAPPENED_AN_ERROR_WHEN_RESEND_EMAIL = "Ocorreu um erro ao reenviar o email de verificação",
 }
 
 const emailCore = z.object({

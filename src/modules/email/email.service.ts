@@ -56,8 +56,9 @@ async function generateVerifyEmailUrl(email: string) {
   const emailParsed = encodeURIComponent(email);
 
   const validAt = addHours(new Date(), EXPIRE_IN).getTime() / 1000;
-  await redis.set(`emailVerification/${email}`, urlSuffix);
-  await redis.expire(`emailVerification/${email}`, Math.round(validAt));
+  const key = `emailVerification/${email}`;
+  await redis.set(key, urlSuffix);
+  await redis.expire(key, Math.round(validAt));
 
   return `${process.env.INTERNAL_OLLO_LI_BASE_URL}/verification/${urlSuffix}?${emailParsed}`;
 }
@@ -92,16 +93,19 @@ export async function sendVerifyEmailHandler(email: string) {
 }
 
 export async function verifyEmail(code: string, email: string) {
-  const restTime = await redis.ttl(`emailVerification/${email}1`);
+  const key = `emailVerification/${email}`;
+
+  const restTime = await redis.ttl(key);
 
   if (restTime <= -1) {
     throw new Error(VERIFY_EMAIL_RESPONSE.CODE_EXPIRED_OR_NOT_EXISTS);
   }
 
-  const verificationCode = await redis.get(`emailVerification/${email}`);
+  const verificationCode = await redis.get(key);
 
   if (verificationCode !== code) {
     throw new Error(VERIFY_EMAIL_RESPONSE.CODE_IS_WRONG);
   }
-  return VERIFY_EMAIL_RESPONSE.VALIDATED;
+
+  await redis.del(key);
 }
