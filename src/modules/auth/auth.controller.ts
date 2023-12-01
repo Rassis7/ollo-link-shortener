@@ -1,9 +1,9 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { findUserByEmail } from "@/modules/user/user.service";
-import { verifyPassword } from "@/utils/hash";
+import { verifyPassword } from "@/helpers";
 import { server } from "@/configurations";
 import { AUTH_ERRORS_RESPONSE, AuthInput } from "./auth.schema";
-import { ErrorHandler } from "@/helpers/error-handler";
+import { ErrorHandler } from "@/helpers";
 
 type AuthHandlerRequestProps = FastifyRequest<{
   Body: AuthInput;

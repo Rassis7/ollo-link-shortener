@@ -1,6 +1,6 @@
 import Fastify, { FastifyReply, FastifyRequest } from "fastify";
 import fastifyJwt from "@fastify/jwt";
-import { ErrorHandler } from "@/helpers/error-handler";
+import { ErrorHandler } from "@/helpers";
 
 const IS_DEV = process.env.NODE_ENV === "development";
 
@@ -35,31 +35,31 @@ server.decorate(
 
 server.setErrorHandler(function (e, _, reply) {
   const error = new ErrorHandler(e);
+  const statusCode = error.getStatusCode();
 
   this.log.error(error);
-
-  if (error.statusCode === 404) {
+  if (statusCode === 404) {
     reply.code(404);
     error.message = "Rota não encontrada";
   }
 
-  if (error.statusCode === 500) {
+  if (statusCode === 500) {
     reply.code(500);
     error.message = "Ocorreu um erro interno";
   }
 
-  if (error.statusCode === 429) {
+  if (statusCode === 429) {
     reply.code(429);
     error.message =
       "Você atingiu o limite da taxa! Aguarde 1 minuto, por favor!";
   }
 
-  if (error.statusCode === 401) {
+  if (statusCode === 401) {
     reply.code(401);
     error.message = "Não autorizado";
   }
 
-  if (error.statusCode === 400) {
+  if (statusCode === 400) {
     reply.code(401);
     error.message = "Ocorreu um erro, tente mais tarde";
   }

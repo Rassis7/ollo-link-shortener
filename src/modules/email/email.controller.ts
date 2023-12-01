@@ -5,7 +5,7 @@ import {
   VerifyEmailParams,
 } from "./email.schema";
 import { sendVerifyEmailHandler, verifyEmail } from "./email.service";
-import { ErrorHandler } from "@/helpers/error-handler";
+import { ErrorHandler } from "@/helpers";
 
 export async function verifyEmailHandler(
   request: FastifyRequest<{
