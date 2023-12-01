@@ -5,6 +5,7 @@ import {
   VerifyEmailParams,
 } from "./email.schema";
 import { sendVerifyEmailHandler, verifyEmail } from "./email.service";
+import { ErrorHandler } from "@/helpers/error-handler";
 
 export async function verifyEmailHandler(
   request: FastifyRequest<{
@@ -25,7 +26,8 @@ export async function verifyEmailHandler(
       ? 401
       : 400;
 
-    return reply.code(statusCode).send(error);
+    const e = new ErrorHandler(error);
+    return reply.code(statusCode).send(e);
   }
 }
 
@@ -41,6 +43,7 @@ export async function resendVerificationEmailHandler(
 
     return reply.code(200).send();
   } catch (error) {
-    return reply.code(400).send("Ocorreu um erro ao reenviar o email");
+    const e = new ErrorHandler(error);
+    return reply.code(400).send(e);
   }
 }

@@ -1,6 +1,10 @@
 import { z } from "zod";
 import { buildJsonSchemas } from "fastify-zod";
 
+export enum USER_ERRORS_RESPONSE {
+  EMAIL_ALREADY_EXISTS = "EMAIL_ALREADY_EXISTS",
+}
+
 const userCore = {
   email: z
     .string({
