@@ -1,4 +1,3 @@
-import { buildJsonSchemas } from "fastify-zod";
 import { z } from "zod";
 
 export enum VERIFY_EMAIL_RESPONSE {
@@ -34,7 +33,7 @@ export type EmailHandlerParams = Omit<
   "fromEmail" | "fromName" | "templateId" | "htmlTemplate" | "subject"
 >;
 
-const verifyEmailSchema = z.object({
+export const verifyEmailSchema = z.object({
   email: z.string().email(),
 });
 
@@ -45,12 +44,3 @@ const verifyEmailParamsSchema = z.object({
 });
 
 export type VerifyEmailParams = z.infer<typeof verifyEmailParamsSchema>;
-
-export const { schemas: emailSchemas, $ref } = buildJsonSchemas(
-  {
-    verifyEmailSchema,
-  },
-  {
-    $id: "emailSchemas",
-  }
-);

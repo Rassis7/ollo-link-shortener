@@ -1,37 +1,37 @@
-import { type FastifyError } from "fastify";
-import { FastifySchemaValidationError } from "fastify/types/schema";
+import { ZodError } from "zod";
 
+type ErrorInstanceType = {
+  message: string | string[];
+  code?: string;
+  statusCode?: number;
+};
 export class ErrorHandler {
-  code: string;
-  message: string | FastifySchemaValidationError[];
-  #fastifyErrorInfos: Partial<FastifyError>;
-  #statusCode?: number;
+  message: string[] | string;
 
   constructor(error: unknown, message?: string) {
-    const errorUpdated: FastifyError = {
-      ...(error as FastifyError),
-      message: message ?? (error as FastifyError).message,
-    };
+    const applicationError = error as unknown | ZodError;
 
-    this.code = errorUpdated.code;
+    const errorUpdated = {} as ErrorInstanceType;
+
+    if (applicationError instanceof ZodError) {
+      const message = applicationError.errors.map((error) => error.message);
+      Object.assign(errorUpdated, {
+        message,
+      });
+    }
+
+    if (!errorUpdated.message) {
+      const err = new Error(applicationError as any);
+      Object.assign(errorUpdated, {
+        message: message ?? err.message,
+        code: err.name,
+      });
+    }
+
     this.message = errorUpdated.message;
-    this.#statusCode = errorUpdated.statusCode;
-    this.#fastifyErrorInfos = error as FastifyError;
-  }
-
-  getStatusCode() {
-    return this.#statusCode;
-  }
-
-  getCode() {
-    return this.code;
   }
 
   getMessage() {
     return this.message;
-  }
-
-  getCompleteInfos() {
-    return this.#fastifyErrorInfos;
   }
 }

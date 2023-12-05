@@ -1,11 +1,10 @@
-import { buildJsonSchemas } from "fastify-zod";
 import { z } from "zod";
 
 export enum AUTH_ERRORS_RESPONSE {
   USER_OR_PASSWORD_INVALID = "O usuário ou a senha estão inválidos",
 }
 
-const authSchema = z.object({
+export const authSchema = z.object({
   email: z
     .string({
       required_error: "O email é obrigatório",
@@ -17,18 +16,8 @@ const authSchema = z.object({
   password: z.string(),
 });
 
-const authResponseSchema = z.object({
+export const authResponseSchema = z.object({
   accessToken: z.string(),
 });
 
 export type AuthInput = z.infer<typeof authSchema>;
-
-export const { schemas: authSchemas, $ref } = buildJsonSchemas(
-  {
-    authSchema,
-    authResponseSchema,
-  },
-  {
-    $id: "authSchemas",
-  }
-);

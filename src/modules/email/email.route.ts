@@ -3,26 +3,25 @@ import {
   resendVerificationEmailHandler,
   verifyEmailHandler,
 } from "./email.controller";
-import { $ref } from "./email.schema";
+import { ZodTypeProvider } from "fastify-type-provider-zod";
+import { verifyEmailSchema } from "./email.schema";
 
 export async function emailRoutes(server: FastifyInstance) {
-  server.post(
-    "/verify/:verificationCode",
-    {
-      schema: {
-        body: $ref("verifyEmailSchema"),
-      },
+  server.withTypeProvider<ZodTypeProvider>().route({
+    method: "POST",
+    url: "/verify/:verificationCode",
+    schema: {
+      body: verifyEmailSchema,
     },
-    verifyEmailHandler
-  );
+    handler: verifyEmailHandler,
+  });
 
-  server.post(
-    "/resend",
-    {
-      schema: {
-        body: $ref("verifyEmailSchema"),
-      },
+  server.withTypeProvider<ZodTypeProvider>().route({
+    method: "POST",
+    url: "/resend",
+    schema: {
+      body: verifyEmailSchema,
     },
-    resendVerificationEmailHandler
-  );
+    handler: resendVerificationEmailHandler,
+  });
 }
