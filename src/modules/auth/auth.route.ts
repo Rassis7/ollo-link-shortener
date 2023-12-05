@@ -1,18 +1,18 @@
 import { FastifyInstance } from "fastify";
 import { authHandler } from "./auth.controller";
-import { $ref } from "./auth.schema";
+import { authResponseSchema, authSchema } from "./auth.schema";
+import { ZodTypeProvider } from "fastify-type-provider-zod";
 
 export async function authRoutes(server: FastifyInstance) {
-  server.post(
-    "/",
-    {
-      schema: {
-        body: $ref("authSchema"),
-        response: {
-          200: $ref("authResponseSchema"),
-        },
+  server.withTypeProvider<ZodTypeProvider>().route({
+    method: "POST",
+    url: "/",
+    schema: {
+      body: authSchema,
+      response: {
+        201: authResponseSchema,
       },
     },
-    authHandler
-  );
+    handler: authHandler,
+  });
 }

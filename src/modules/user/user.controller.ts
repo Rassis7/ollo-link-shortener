@@ -1,7 +1,8 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { createUser, findUsers } from "./user.service";
-import { CreateUserInput } from "./user.schema";
+import { createUser, findUserByEmail, findUsers } from "./user.service";
+import { CreateUserInput, USER_ERRORS_RESPONSE } from "./user.schema";
 import { sendVerifyEmailHandler } from "../email/email.service";
+import { ErrorHandler } from "@/helpers";
 
 type RegisterUserHandlerRequestProps = FastifyRequest<{
   Body: CreateUserInput;
@@ -11,32 +12,34 @@ export async function registerUserHandler(
   request: RegisterUserHandlerRequestProps,
   reply: FastifyReply
 ) {
-  const { body } = request;
-  const user = await createUser(body);
+  try {
+    const { body } = request;
 
-  // TODO: In future send in queue
-  await sendVerifyEmailHandler({
-    subject: "Confirme Seu Cadastro - Importante!",
-    recipients: [
-      {
-        email: user.email,
-        name: null,
-        variables: [
-          { variable: "expire_in", value: "48" },
-          {
-            variable: "verification_url",
-            value: "https://ollo.li/verification",
-          },
-        ],
-      },
-    ],
-  });
+    const hasUser = await findUserByEmail(body.email);
 
-  return reply.code(201).send(user);
+    if (hasUser) {
+      throw new Error(USER_ERRORS_RESPONSE.EMAIL_ALREADY_EXISTS);
+    }
+
+    const user = await createUser(body);
+
+    // TODO: In future to send in queue
+    await sendVerifyEmailHandler(user.email);
+
+    return reply.code(201).send(user);
+  } catch (e) {
+    const error = new ErrorHandler(e);
+    return reply.code(400).send(error);
+  }
 }
 
-export async function getUsersHandler() {
-  const users = await findUsers();
+export async function getUsersHandler(_, reply: FastifyReply) {
+  try {
+    const users = await findUsers();
 
-  return users;
+    return users;
+  } catch (e) {
+    const error = new ErrorHandler(e, "Ocorreu um erro ao listar os usuários");
+    return reply.code(400).send(error);
+  }
 }

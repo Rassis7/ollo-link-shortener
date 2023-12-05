@@ -1,5 +1,11 @@
 import { z } from "zod";
 
+export enum VERIFY_EMAIL_RESPONSE {
+  CODE_IS_WRONG = "O código está errado",
+  CODE_EXPIRED_OR_NOT_EXISTS = "O código está expirado ou não existe",
+  WAS_HAPPENED_AN_ERROR_WHEN_RESEND_EMAIL = "Ocorreu um erro ao reenviar o email de verificação",
+}
+
 const emailCore = z.object({
   fromEmail: z.string().email(),
   fromName: z.string(),
@@ -24,5 +30,17 @@ export type SendEmailProps = z.infer<typeof emailCore>;
 
 export type EmailHandlerParams = Omit<
   SendEmailProps,
-  "fromEmail" | "fromName" | "templateId" | "htmlTemplate"
+  "fromEmail" | "fromName" | "templateId" | "htmlTemplate" | "subject"
 >;
+
+export const verifyEmailSchema = z.object({
+  email: z.string().email(),
+});
+
+export type VerifyEmailInput = z.infer<typeof verifyEmailSchema>;
+
+const verifyEmailParamsSchema = z.object({
+  verificationCode: z.string().uuid(),
+});
+
+export type VerifyEmailParams = z.infer<typeof verifyEmailParamsSchema>;
