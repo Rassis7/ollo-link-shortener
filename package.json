@@ -12,7 +12,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "nvm": "nvm use",
     "docker": "docker-compose up & npm install",
-    "dev": "npx tsx watch src/app.ts",
+    "dev": "NODE_ENV=development npx tsx watch src/server.ts",
     "prisma:newMigration": "npx prisma migrate dev --name",
     "prisma:studio": "npx prisma studio",
     "new:module": "chmod +x ./scripts/create_module.sh && ./scripts/create_module.sh",
@@ -33,6 +33,7 @@
     "eslint-plugin-import": "^2.29.0",
     "eslint-plugin-n": "^16.3.1",
     "eslint-plugin-promise": "^6.1.1",
+    "pino-pretty": "^10.2.3",
     "ts-node": "^10.9.1",
     "tsx": "^4.1.1",
     "typescript": "^5.3.2"

@@ -7,8 +7,8 @@ import {
 } from "./user.schema";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 
-export async function userRoutes(server: FastifyInstance) {
-  server.withTypeProvider<ZodTypeProvider>().route({
+export async function userRoutes(fastify: FastifyInstance) {
+  fastify.withTypeProvider<ZodTypeProvider>().route({
     method: "POST",
     url: "/",
     schema: {
@@ -20,10 +20,10 @@ export async function userRoutes(server: FastifyInstance) {
     handler: registerUserHandler,
   });
 
-  server.withTypeProvider<ZodTypeProvider>().route({
+  fastify.withTypeProvider<ZodTypeProvider>().route({
     method: "GET",
     url: "/",
-    preHandler: [server.authenticate],
+    preHandler: [fastify.authenticate],
     schema: {
       response: {
         201: getUserResponseSchema,

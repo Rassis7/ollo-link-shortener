@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { findUserByEmail } from "@/modules/user/user.service";
 import { verifyPassword } from "@/helpers";
-import { server } from "@/configurations";
+import { fastify } from "@/configurations";
 import { AUTH_ERRORS_RESPONSE, AuthInput } from "./auth.schema";
 import { ErrorHandler } from "@/helpers";
 
@@ -31,7 +31,7 @@ export async function authHandler(
     }
     const { password, createdAt, ...rest } = user;
 
-    return reply.code(200).send({ accessToken: server.jwt.sign(rest) });
+    return reply.code(200).send({ accessToken: fastify.jwt.sign(rest) });
   } catch (error) {
     const e = new ErrorHandler(error);
     return reply.code(401).send(e);

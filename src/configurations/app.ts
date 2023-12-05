@@ -4,16 +4,21 @@ import { ErrorHandler } from "@/helpers";
 
 const IS_DEV = process.env.NODE_ENV === "development";
 
-const server = Fastify({
-  logger: IS_DEV,
+const fastify = Fastify({
+  logger: IS_DEV && {
+    level: "info",
+    transport: {
+      target: "pino-pretty",
+    },
+  },
 });
 
-server.register(import("@fastify/rate-limit"), {
+fastify.register(import("@fastify/rate-limit"), {
   max: Number(process.env.FASTIFY_RATE_LIMIT_MAX),
   timeWindow: String(process.env.FASTIFY_RATE_LIMIT_TIME_WINDOW),
 });
 
-server.register(fastifyJwt, () => ({
+fastify.register(fastifyJwt, () => ({
   secret: String(process.env.FASTIFY_JWT_SECRET),
   sign: {
     expiresIn: process.env.FASTIFY_JWT_SECRET_EXPIRES_IN,
@@ -26,11 +31,11 @@ server.register(fastifyJwt, () => ({
   },
 }));
 
-server.decorate("authenticate", async (request: FastifyRequest) => {
+fastify.decorate("authenticate", async (request: FastifyRequest) => {
   await request.jwtVerify();
 });
 
-server.setErrorHandler(function (e, _, reply) {
+fastify.setErrorHandler(function (e, _, reply) {
   const error = new ErrorHandler(e);
 
   this.log.error(error);
@@ -58,8 +63,8 @@ server.setErrorHandler(function (e, _, reply) {
   reply.send(error);
 });
 
-server.get("/healthcheck", async () => {
+fastify.get("/healthcheck", async () => {
   return { status: "OK" };
 });
 
-export { server };
+export { fastify };

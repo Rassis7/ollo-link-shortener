@@ -6,8 +6,8 @@ import {
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { verifyEmailSchema } from "./email.schema";
 
-export async function emailRoutes(server: FastifyInstance) {
-  server.withTypeProvider<ZodTypeProvider>().route({
+export async function emailRoutes(fastify: FastifyInstance) {
+  fastify.withTypeProvider<ZodTypeProvider>().route({
     method: "POST",
     url: "/verify/:verificationCode",
     schema: {
@@ -16,7 +16,7 @@ export async function emailRoutes(server: FastifyInstance) {
     handler: verifyEmailHandler,
   });
 
-  server.withTypeProvider<ZodTypeProvider>().route({
+  fastify.withTypeProvider<ZodTypeProvider>().route({
     method: "POST",
     url: "/resend",
     schema: {

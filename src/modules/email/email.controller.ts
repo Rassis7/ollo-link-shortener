@@ -1,9 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import {
-  VERIFY_EMAIL_RESPONSE,
-  VerifyEmailInput,
-  VerifyEmailParams,
-} from "./email.schema";
+import { VerifyEmailInput, VerifyEmailParams } from "./email.schema";
 import { sendVerifyEmailHandler, verifyEmail } from "./email.service";
 import { ErrorHandler } from "@/helpers";
 

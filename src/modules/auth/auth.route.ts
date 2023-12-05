@@ -3,8 +3,8 @@ import { authHandler } from "./auth.controller";
 import { authResponseSchema, authSchema } from "./auth.schema";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 
-export async function authRoutes(server: FastifyInstance) {
-  server.withTypeProvider<ZodTypeProvider>().route({
+export async function authRoutes(fastify: FastifyInstance) {
+  fastify.withTypeProvider<ZodTypeProvider>().route({
     method: "POST",
     url: "/",
     schema: {

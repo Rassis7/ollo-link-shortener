@@ -1,4 +1,4 @@
-import { server, addApplicationDocumentation } from "@/configurations";
+import { fastify, addApplicationDocumentation } from "@/configurations";
 import { userRoutes } from "@/modules/user/user.route";
 import { authRoutes } from "@/modules/auth/auth.route";
 import { emailRoutes } from "./modules/email/email.route";
@@ -23,18 +23,17 @@ declare module "@fastify/jwt" {
 const port = Number(process.env.SERVER_PORT) ?? 3000;
 
 async function main() {
-  server.setValidatorCompiler(validatorCompiler);
-  server.setSerializerCompiler(serializerCompiler);
+  fastify.setValidatorCompiler(validatorCompiler);
+  fastify.setSerializerCompiler(serializerCompiler);
 
-  server.register(userRoutes, { prefix: "api/users" });
-  server.register(authRoutes, { prefix: "api/auth" });
-  server.register(emailRoutes, { prefix: "api/email" });
+  fastify.register(userRoutes, { prefix: "api/users" });
+  fastify.register(authRoutes, { prefix: "api/auth" });
+  fastify.register(emailRoutes, { prefix: "api/email" });
 
-  await addApplicationDocumentation(server);
+  await addApplicationDocumentation(fastify);
 
   try {
-    await server.listen({ port, host: "0.0.0.0" });
-    console.log(`Server ready at http://localhost:${port}`);
+    await fastify.listen({ port, host: "0.0.0.0" });
   } catch (error) {
     console.error(error);
     process.exit(1);
