@@ -1,0 +1,27 @@
+/** @type {import('ts-jest').JestConfigWithTsJest} */
+module.exports = {
+  clearMocks: true,
+  preset: "ts-jest",
+  testEnvironment: "node",
+  moduleDirectories: ["node_modules", "src"],
+  roots: ["<rootDir>/src"],
+  setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
+  moduleNameMapper: {
+    "^@/(.+)$": "<rootDir>/src/$1",
+  },
+  collectCoverage: true,
+  coverageProvider: "v8",
+  collectCoverageFrom: [
+    "<rootDir>/src/**/*.{ts,tsx}",
+    "!<rootDir>/src/configurations/**/*",
+    "!**/*.d.ts",
+    "!**/node_modules/**",
+  ],
+  coverageThreshold: {
+    global: {
+      branches: 10,
+      functions: 10,
+      lines: 10,
+    },
+  },
+};
