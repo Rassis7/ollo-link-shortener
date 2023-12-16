@@ -20,7 +20,8 @@ declare module "@fastify/jwt" {
   }
 }
 
-const port = Number(process.env.SERVER_PORT) ?? 3000;
+const port =
+  process.env.NODE_ENV !== "test" ? Number(process.env.SERVER_PORT) : 4200;
 
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
