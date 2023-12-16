@@ -5,7 +5,14 @@ const { redis } = require("./src/infra");
 
 dotenv.config({ path: path.resolve(__dirname, "./.env") });
 
-afterAll(() => {
-  server.close();
-  redis.quit();
+beforeEach(async () => {
+  await server.ready();
+});
+
+afterEach(async () => {
+  await server.close();
+});
+
+afterAll(async () => {
+  await redis.quit();
 });

@@ -9,10 +9,12 @@ module.exports = {
   moduleNameMapper: {
     "^@/(.+)$": "<rootDir>/src/$1",
   },
+  resetMocks: true,
   collectCoverage: true,
   coverageProvider: "v8",
   collectCoverageFrom: [
     "<rootDir>/src/**/*.{ts,tsx}",
+    "!<rootDir>/src/__tests__/**/*",
     "!<rootDir>/src/configurations/**/*",
     "!**/*.d.ts",
     "!**/node_modules/**",
