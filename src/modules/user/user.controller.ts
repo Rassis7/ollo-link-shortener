@@ -3,6 +3,7 @@ import { createUser, findUserByEmail, findUsers } from "./user.service";
 import { CreateUserInput, USER_ERRORS_RESPONSE } from "./user.schema";
 import { sendVerifyEmailHandler } from "../email/email.service";
 import { ErrorHandler } from "@/helpers";
+import { prisma } from "@/infra";
 
 type RegisterUserHandlerRequestProps = FastifyRequest<{
   Body: CreateUserInput;
@@ -21,7 +22,7 @@ export async function registerUserHandler(
       throw new Error(USER_ERRORS_RESPONSE.EMAIL_ALREADY_EXISTS);
     }
 
-    const user = await createUser(body);
+    const user = await createUser({ input: body, context: { prisma } });
 
     // TODO: In future to send in queue
     await sendVerifyEmailHandler(user.email);

@@ -36,14 +36,3 @@ export const createUserResponseSchema = z.object({
 export const getUserResponseSchema = createUserResponseSchema;
 
 export type CreateUserInput = z.infer<typeof createUserSchema>;
-
-// export const { schemas: userSchemas, $ref } = buildJsonSchemas(
-//   {
-//     createUserSchema,
-//     createUserResponseSchema,
-//     getUserResponseSchema,
-//   },
-//   {
-//     $id: "userSchemas",
-//   }
-// );

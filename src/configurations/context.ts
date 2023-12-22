@@ -5,7 +5,7 @@ export type Context = {
   prisma: PrismaClient;
 };
 
-export type MockContext = {
+type MockContext = {
   prisma: DeepMockProxy<PrismaClient>;
 };
 
@@ -14,3 +14,13 @@ export const createMockContext = (): MockContext => {
     prisma: mockDeep<PrismaClient>(),
   };
 };
+
+let mockContext: MockContext;
+let context: Context;
+
+beforeEach(() => {
+  mockContext = createMockContext();
+  context = mockContext as unknown as Context;
+});
+
+export { context, mockContext };
