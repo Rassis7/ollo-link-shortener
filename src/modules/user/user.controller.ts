@@ -16,7 +16,10 @@ export async function registerUserHandler(
   try {
     const { body } = request;
 
-    const hasUser = await findUserByEmail(body.email);
+    const hasUser = await findUserByEmail({
+      email: body.email,
+      context: { prisma },
+    });
 
     if (hasUser) {
       throw new Error(USER_ERRORS_RESPONSE.EMAIL_ALREADY_EXISTS);
@@ -36,7 +39,7 @@ export async function registerUserHandler(
 
 export async function getUsersHandler(_, reply: FastifyReply) {
   try {
-    const users = await findUsers();
+    const users = await findUsers({ context: { prisma } });
 
     return users;
   } catch (e) {

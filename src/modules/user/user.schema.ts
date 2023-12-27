@@ -1,3 +1,4 @@
+import { User } from "@prisma/client";
 import { z } from "zod";
 
 export enum USER_ERRORS_RESPONSE {
@@ -35,4 +36,16 @@ export const createUserResponseSchema = z.object({
 
 export const getUserResponseSchema = createUserResponseSchema;
 
+const findUsersSchema = z
+  .object({
+    ...userCore,
+    id: z.number(),
+    name: z.string().nullable(),
+  })
+  .array()
+  .nullable();
+
 export type CreateUserInput = z.infer<typeof createUserSchema>;
+
+export type FindUserByEmailResponse = User | null;
+export type FindUsersResponse = z.infer<typeof findUsersSchema>;

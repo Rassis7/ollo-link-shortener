@@ -1,7 +1,12 @@
 import { prisma } from "@/infra";
-import { CreateUserInput } from "./user.schema";
+import {
+  CreateUserInput,
+  FindUserByEmailResponse,
+  FindUsersResponse,
+} from "./user.schema";
 import { generateHash } from "@/helpers";
 import { Context } from "@/configurations";
+import { User } from "@prisma/client";
 
 export async function createUser({
   input,
@@ -9,7 +14,7 @@ export async function createUser({
 }: {
   input: CreateUserInput;
   context: Context;
-}) {
+}): Promise<User> {
   const { password, ...rest } = input;
 
   const hash = await generateHash(password);
@@ -21,16 +26,26 @@ export async function createUser({
   return user;
 }
 
-export async function findUserByEmail(email: string) {
-  return prisma.user.findUnique({
+export async function findUserByEmail({
+  email,
+  context,
+}: {
+  email: string;
+  context: Context;
+}): Promise<FindUserByEmailResponse> {
+  return context.prisma.user.findUnique({
     where: {
       email,
     },
   });
 }
 
-export async function findUsers() {
-  return prisma.user.findMany({
+export async function findUsers({
+  context,
+}: {
+  context: Context;
+}): Promise<FindUsersResponse> {
+  return context.prisma.user.findMany({
     select: {
       id: true,
       email: true,

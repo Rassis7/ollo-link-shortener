@@ -4,6 +4,7 @@ import { verifyPassword } from "@/helpers";
 import { app } from "@/configurations";
 import { AUTH_ERRORS_RESPONSE, AuthInput } from "./auth.schema";
 import { ErrorHandler } from "@/helpers";
+import { prisma } from "@/infra";
 
 type AuthHandlerRequestProps = FastifyRequest<{
   Body: AuthInput;
@@ -15,7 +16,10 @@ export async function authHandler(
 ) {
   try {
     const { body } = request;
-    const user = await findUserByEmail(body.email);
+    const user = await findUserByEmail({
+      email: body.email,
+      context: { prisma },
+    });
 
     if (!user) {
       throw new Error(AUTH_ERRORS_RESPONSE.USER_OR_PASSWORD_INVALID);
