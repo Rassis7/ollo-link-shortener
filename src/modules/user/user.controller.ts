@@ -26,8 +26,6 @@ export async function registerUserHandler(
     }
 
     const user = await createUser({ input: body, context: { prisma } });
-
-    // TODO: In future to send in queue
     await sendVerifyEmailHandler(user.email);
 
     return reply.code(201).send(user);
@@ -40,7 +38,6 @@ export async function registerUserHandler(
 export async function getUsersHandler(_, reply: FastifyReply) {
   try {
     const users = await findUsers({ context: { prisma } });
-
     return users;
   } catch (e) {
     const error = new ErrorHandler(e, "Ocorreu um erro ao listar os usuários");

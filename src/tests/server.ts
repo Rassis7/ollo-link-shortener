@@ -1,9 +1,9 @@
 import { server } from "@/server";
 
-beforeEach(async () => {
+beforeAll(async () => {
   await server.ready();
 });
 
-afterEach(async () => {
+afterAll(async () => {
   await server.close();
 });

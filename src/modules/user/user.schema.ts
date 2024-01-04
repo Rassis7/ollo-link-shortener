@@ -46,6 +46,7 @@ const findUsersSchema = z
   .nullable();
 
 export type CreateUserInput = z.infer<typeof createUserSchema>;
+export type CreateUserResponse = z.infer<typeof createUserResponseSchema>;
 
 export type FindUserByEmailResponse = User | null;
 export type FindUsersResponse = z.infer<typeof findUsersSchema>;
