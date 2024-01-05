@@ -1,4 +1,4 @@
-import { mockContext, context } from "@/configurations";
+import { mockContext, context } from "@/tests";
 import {
   mockCreateUserInput,
   mockCreatedUserResponse,
