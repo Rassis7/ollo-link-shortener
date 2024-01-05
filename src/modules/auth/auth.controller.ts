@@ -22,7 +22,7 @@ export async function authHandler(
     });
 
     if (!user) {
-      throw new Error(AUTH_ERRORS_RESPONSE.USER_OR_PASSWORD_INVALID);
+      throw new Error(AUTH_ERRORS_RESPONSE.USER_NOT_FOUND);
     }
 
     const correctPassword = await verifyPassword({
@@ -33,9 +33,11 @@ export async function authHandler(
     if (!correctPassword) {
       throw new Error(AUTH_ERRORS_RESPONSE.USER_OR_PASSWORD_INVALID);
     }
-    const { password, createdAt, ...rest } = user;
+    const { id, email, name } = user;
 
-    return reply.code(200).send({ accessToken: app.jwt.sign(rest) });
+    return reply
+      .code(200)
+      .send({ accessToken: app.jwt.sign({ id, email, name }) });
   } catch (error) {
     const e = new ErrorHandler(error);
     return reply.code(401).send(e);

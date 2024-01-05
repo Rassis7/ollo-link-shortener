@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export enum AUTH_ERRORS_RESPONSE {
   USER_OR_PASSWORD_INVALID = "O usuário ou a senha estão inválidos",
+  USER_NOT_FOUND = "Usuário não encontrado",
 }
 
 export const authSchema = z.object({
