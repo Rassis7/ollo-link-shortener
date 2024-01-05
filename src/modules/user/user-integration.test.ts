@@ -9,6 +9,8 @@ import * as userService from "./user.service";
 import { mockFindUserByEmailResponse } from "./__mocks__/find-user-by-email";
 import { USER_ERRORS_RESPONSE } from "./user.schema";
 import { ErrorHandler } from "@/helpers";
+import { MOCK_JWT_TOKEN } from "@/tests";
+import { mockFindUsersResponse } from "./__mocks__/find-users";
 
 describe("module/user.integration", () => {
   it("Should call POST /api/users and create an user", async () => {
@@ -49,8 +51,18 @@ describe("module/user.integration", () => {
     expect(response.statusCode).toEqual(400);
   });
 
-  it.todo("Should call GET /api/users and return an user list");
-  it.todo(
-    "Should call GET /api/users and return an error if its not authenticated"
-  );
+  it("Should call GET /api/users and return an user list", async () => {
+    jest
+      .spyOn(userService, "findUsers")
+      .mockResolvedValue(mockFindUsersResponse);
+
+    const response = await app.inject({
+      method: "GET",
+      url: "/api/users",
+      headers: { authorization: `Bearer ${MOCK_JWT_TOKEN}` },
+    });
+
+    expect(response.json()).toEqual(mockFindUsersResponse);
+    expect(response.statusCode).toEqual(200);
+  });
 });
