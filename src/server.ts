@@ -31,6 +31,10 @@ app.register(authRoutes, { prefix: "api/auth" });
 app.register(emailRoutes, { prefix: "api/email" });
 
 async function main() {
+  if (process.env.NODE_ENV === "test") {
+    return;
+  }
+
   // await addApplicationDocumentation(app);
 
   try {
