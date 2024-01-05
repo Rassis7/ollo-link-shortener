@@ -51,7 +51,7 @@ describe("module/user.integration", () => {
     expect(response.statusCode).toEqual(400);
   });
 
-  it("Should call GET /api/users and return an user list", async () => {
+  it("Should be able to call GET /api/users and return an user list", async () => {
     jest
       .spyOn(userService, "findUsers")
       .mockResolvedValue(mockFindUsersResponse);
@@ -64,5 +64,22 @@ describe("module/user.integration", () => {
 
     expect(response.json()).toEqual(mockFindUsersResponse);
     expect(response.statusCode).toEqual(200);
+  });
+
+  it("Should be able to call GET /api/users and return an error", async () => {
+    jest.spyOn(userService, "findUsers").mockImplementation(() => {
+      throw new Error("some error");
+    });
+
+    const response = await app.inject({
+      method: "GET",
+      url: "/api/users",
+      headers: { authorization: `Bearer ${MOCK_JWT_TOKEN}` },
+    });
+
+    expect(response.json()).toEqual({
+      message: "Ocorreu um erro ao listar os usuários",
+    });
+    expect(response.statusCode).toEqual(400);
   });
 });
