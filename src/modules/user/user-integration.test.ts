@@ -1,4 +1,4 @@
-import { app } from "@/configurations";
+import { app } from "@/configurations/app";
 import * as emailService from "../email/email.service";
 import {
   mockCreateUserInput,

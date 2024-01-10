@@ -1,4 +1,4 @@
-import { app } from "@/configurations";
+import { app } from "@/configurations/app";
 import { userRoutes } from "@/modules/user/user.route";
 import { authRoutes } from "@/modules/auth/auth.route";
 import { emailRoutes } from "./modules/email/email.route";

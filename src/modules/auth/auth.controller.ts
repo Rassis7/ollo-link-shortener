@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { findUserByEmail } from "@/modules/user/user.service";
 import { verifyPassword } from "@/helpers";
-import { app } from "@/configurations";
+import { app } from "@/configurations/app";
 import { AUTH_ERRORS_RESPONSE, AuthInput } from "./auth.schema";
 import { ErrorHandler } from "@/helpers";
 import { prisma } from "@/infra";

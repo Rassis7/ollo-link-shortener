@@ -3,7 +3,7 @@ import {
   mockAuthFindUserByEmailResponse,
   mockAuthInput,
 } from "./__mocks__/auth";
-import { app } from "@/configurations";
+import { app } from "@/configurations/app";
 import * as hashFunctions from "@/helpers/hash";
 
 const BASE_URL = "api/auth";

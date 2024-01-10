@@ -1,11 +1,10 @@
-import { prisma } from "@/infra";
 import {
   CreateUserInput,
   FindUserByEmailResponse,
   FindUsersResponse,
 } from "./user.schema";
 import { generateHash } from "@/helpers";
-import { Context } from "@/configurations";
+import { Context } from "@/configurations/context";
 import { User } from "@prisma/client";
 
 export async function createUser({
