@@ -1,24 +1,20 @@
 import Fastify, { FastifyRequest } from "fastify";
 import fastifyJwt from "@fastify/jwt";
 import { ErrorHandler } from "@/helpers";
-
+import pretty from "pino-pretty";
 import pino from "pino";
 
 const IS_DEV = process.env.NODE_ENV === "development";
 
-const stream = pino({
-  transport: {
-    target: "pino-pretty",
-    options: {
-      colorize: true,
-    },
-  },
-});
-
-const logger = pino(stream);
+const logger = pino(
+  pretty({
+    colorize: true,
+    sync: true,
+  })
+);
 
 const fastify = Fastify({
-  logger: IS_DEV && stream,
+  logger: IS_DEV && logger,
 });
 
 fastify.register(import("@fastify/rate-limit"), {
@@ -75,4 +71,4 @@ fastify.get("/healthcheck", async () => {
   return { status: "OK" };
 });
 
-export { fastify, logger };
+export { fastify as app, logger };

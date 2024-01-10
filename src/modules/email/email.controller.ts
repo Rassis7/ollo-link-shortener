@@ -16,7 +16,7 @@ export async function verifyEmailHandler(
 
     await verifyEmail(verificationCode, email);
 
-    return reply.code(204);
+    return reply.code(204).send();
   } catch (error) {
     const e = new ErrorHandler(error);
     return reply.code(401).send(e);
