@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export enum VERIFY_EMAIL_RESPONSE {
-  CODE_IS_WRONG = "O código está errado",
+  CODE_IS_WRONG = "O código está incorreto",
   CODE_EXPIRED_OR_NOT_EXISTS = "O código está expirado ou não existe",
   WAS_HAPPENED_AN_ERROR_WHEN_RESEND_EMAIL = "Ocorreu um erro ao reenviar o email de verificação",
 }

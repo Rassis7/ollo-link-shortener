@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { sendVerifyEmailHandler } from "./email.service";
+import { sendVerifyEmailHandler, verifyEmail } from "./email.service";
 import { redis } from "@/tests";
 import { randomUUID } from "node:crypto";
 import { RANDOM_UUID_MOCK } from "@/tests/__mocks__";
@@ -65,9 +65,55 @@ describe("modules/email.unit", () => {
       ],
     });
   });
-  it.todo("Should be not abe to send verification");
-  it.todo("Should be abe to check if verification email is valid");
-  it.todo("Should be abe to check if verification email not exists in redis");
-  it.todo("Should be abe to check if verification code is wrong");
-  it.todo("Should be abe to check if verification code was expired");
+
+  it("Should be abe to check if verification email is valid", async () => {
+    const code = faker.number.int({ min: 100, max: 999 }).toString();
+
+    jest.spyOn(redis, "ttl").mockResolvedValue(1);
+    jest.spyOn(redis, "get").mockResolvedValue(code);
+    jest.spyOn(redis, "del").mockImplementation(jest.fn());
+
+    const email = faker.internet.email();
+
+    await verifyEmail(code, email);
+
+    const key = `emailVerification/${email}`;
+    expect(redis.ttl).toHaveBeenCalledTimes(1);
+    expect(redis.ttl).toHaveBeenCalledWith(key);
+
+    expect(redis.get).toHaveBeenCalledTimes(1);
+
+    expect(redis.del).toHaveBeenCalledTimes(1);
+    expect(redis.del).toHaveBeenCalledWith(key);
+  });
+
+  it.each([
+    ["code was expired", -1],
+    ["email not exists", -2],
+  ])(
+    "Should reject to email verification if %s in redis",
+    async (_, redisResponse: number) => {
+      jest.spyOn(redis, "ttl").mockResolvedValue(redisResponse);
+
+      const email = faker.internet.email();
+      const code = faker.number.int({ min: 100, max: 999 }).toString();
+
+      expect(async () => verifyEmail(code, email)).rejects.toThrow(
+        /o código está expirado ou não existe/i
+      );
+    }
+  );
+
+  it("Should be abe to check if verification code is wrong", async () => {
+    const code = faker.number.int({ min: 100, max: 999 }).toString();
+
+    jest.spyOn(redis, "ttl").mockResolvedValue(1);
+    jest.spyOn(redis, "get").mockResolvedValue(code);
+
+    const email = faker.internet.email();
+
+    expect(async () => verifyEmail("OTHER_CODE", email)).rejects.toThrow(
+      /o código está incorreto/i
+    );
+  });
 });
