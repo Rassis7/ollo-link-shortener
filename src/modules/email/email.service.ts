@@ -1,16 +1,16 @@
-import { EmailParams, MailerSend, Recipient } from "mailersend";
 import { SendEmailProps, VERIFY_EMAIL_RESPONSE } from "./email.schema";
 import { join } from "node:path";
 import { readFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import { redis } from "@/infra";
 import { addHours } from "date-fns";
+import {
+  EmailParams,
+  Recipient,
+  emailProviderInstance,
+} from "@/configurations/email";
 
 const EXPIRE_IN = 48;
-
-const emailProviderInstance = new MailerSend({
-  apiKey: String(process.env.MAILERSEND_API_KEY),
-});
 
 function getEmailParams({
   fromEmail,
