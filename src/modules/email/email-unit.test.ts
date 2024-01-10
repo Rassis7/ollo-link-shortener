@@ -6,7 +6,7 @@ import { RANDOM_UUID_MOCK } from "@/tests/__mocks__";
 import { emailProviderInstance } from "@/configurations/email";
 import { join } from "node:path";
 import { readFileSync } from "node:fs";
-import { emailTemplateParamMock } from "./__mocks__/email-template-param-mock";
+import { emailTemplateParamMock } from "./__mocks__/email-template-param";
 
 const templatePath = join(__dirname, "templates", "email-verify.html");
 const htmlTemplate = readFileSync(templatePath, "utf8");
