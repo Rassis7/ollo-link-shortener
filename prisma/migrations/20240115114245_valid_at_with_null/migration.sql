@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Link" ALTER COLUMN "validAt" DROP NOT NULL,
+ALTER COLUMN "validAt" DROP DEFAULT;

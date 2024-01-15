@@ -2,6 +2,7 @@ import { app } from "@/configurations/app";
 import { userRoutes } from "@/modules/user/user.route";
 import { authRoutes } from "@/modules/auth/auth.route";
 import { emailRoutes } from "./modules/email/email.route";
+import { shortenerRoutes } from "./modules/shortener/shortener.route";
 
 import {
   serializerCompiler,
@@ -29,6 +30,7 @@ app.setSerializerCompiler(serializerCompiler);
 app.register(userRoutes, { prefix: "api/users" });
 app.register(authRoutes, { prefix: "api/auth" });
 app.register(emailRoutes, { prefix: "api/email" });
+app.register(shortenerRoutes, { prefix: "api/shortener" });
 
 async function main() {
   if (process.env.NODE_ENV === "test") {
