@@ -62,3 +62,20 @@ Content-Type: {{content_type}}
 GET {{host_name}}/users HTTP/1.1
 Content-Type: {{content_type}}
 Authorization: bearer {{jwt_token}}
+
+### POST - Shortener a link
+POST {{host_name}}/shortener HTTP/1.1
+Content-Type: {{content_type}}
+Authorization: bearer {{jwt_token}}
+
+ {
+  "url": "https://any_site",
+  "alias": "MySite",
+   "validAt": "2025-01-16T19:52:21.208Z",
+   "metadata": {
+     "title": "my site",
+     "description": "just a site",
+     "image": "https://robohash.org/UTI.png?set=set1"
+   }
+ }
+
