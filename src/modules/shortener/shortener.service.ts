@@ -9,6 +9,7 @@ import { redis } from "@/infra";
 
 type GetRedirectLinkValuesInput = {
   redirectTo: string;
+  userId: number;
   alias?: string;
 };
 
@@ -29,10 +30,7 @@ export async function getRedirectLinkValues({
   context: Context;
 }) {
   return context.prisma.link.findFirst({
-    where: {
-      ...input,
-      userId: 123,
-    },
+    where: { ...input },
   });
 }
 
@@ -83,7 +81,11 @@ export async function saveLink({
 }) {
   const link = await getRedirectLinkValues({
     context,
-    input: { redirectTo: data.redirectTo, alias: data.alias },
+    input: {
+      redirectTo: data.redirectTo,
+      alias: data.alias,
+      userId: data.userId,
+    },
   });
 
   if (link) {
