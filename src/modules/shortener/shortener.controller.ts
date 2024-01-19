@@ -36,7 +36,7 @@ export async function registerShortenerLinkHandler(
         redirectTo: body.url,
         alias: body.alias ?? undefined,
         userId: user.id,
-      }, //ver mais em https://daily.dev/blog/fastify-authentication-strategy
+      },
       context: { prisma },
     });
 
@@ -46,18 +46,18 @@ export async function registerShortenerLinkHandler(
       const { url, ...restBody } = body;
 
       if (restBody.alias) {
-        const hasAlias = await getByAlias({
+        const link = await getByAlias({
           alias: restBody.alias,
           context: { prisma },
         });
 
-        if (hasAlias?.id) {
+        if (link?.id) {
           throw new Error(SHORTENER_ERRORS_RESPONSE.ALIAS_HAS_EXISTS);
         }
       }
 
       hash = generateUrlHash(url);
-      const cacheParams: SaveLinkInput = {
+      const linkInputValues: SaveLinkInput = {
         hash,
         redirectTo: url,
         active: true,
@@ -65,15 +65,14 @@ export async function registerShortenerLinkHandler(
         ...restBody,
       };
 
-      await saveLinkCache(cacheParams);
-      await saveLink({ data: cacheParams, context: { prisma } });
+      await saveLinkCache(linkInputValues);
+      await saveLink({ data: linkInputValues, context: { prisma } });
     }
 
-    const shortenerLink = `https://${request.headers.host}/${hash}`;
-
-    return reply.send(200).send({ shortenerLink });
+    const shortenerLink = `${request.protocol}/${request.hostname}/${hash}`;
+    return reply.code(200).send({ shortenerLink });
   } catch (e) {
     const error = new ErrorHandler(e);
-    return reply.send(400).send(error);
+    return reply.code(400).send(error);
   }
 }
