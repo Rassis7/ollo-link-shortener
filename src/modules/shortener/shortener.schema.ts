@@ -1,4 +1,5 @@
-import { z } from "zod";
+import { RefinementCtx, z } from "zod";
+import { isPast } from "date-fns";
 
 export enum SHORTENER_ERRORS_RESPONSE {
   URL_NOT_EXISTS = "A URL não foi informada",
@@ -14,23 +15,48 @@ export const createShortenerLinkSchema = z.object({
     })
     .trim()
     .url("URL com formato inválido. EX: https://meusite.com")
-    .regex(/((http(s?):\/\/)?)ollo.li(\/?)[^A-Za-z0-9]/, "URL inválida")
+    .regex(
+      /^(?!.*https?:\/\/ollo\.li(?:\/?|\/oka)?[^A-Za-z0-9]).*$/,
+      "URL inválida"
+    )
     .transform((url) =>
       url.match(
         /(http(s?):\/\/.)[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/gm
       )
-        ? `https://${url}`
-        : url
+        ? url
+        : `https://${url}`
     ),
-  alias: z.string().optional(),
+  alias: z
+    .string()
+    .refine((alias) => !alias.includes(" "), "O apelido não pode conter espaço")
+    .optional(),
   validAt: z
-    .date()
-    .min(new Date(), "A data deve ser maior que hoje")
-    .transform((date) => date.toISOString()),
+    .string()
+    .datetime({ message: "Data de validade inválida" })
+    .transform((date: string, ctx: RefinementCtx) => {
+      const dateAsDate = new Date(date);
+
+      if (isPast(dateAsDate)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "A data de validade deve ser maior que hoje!",
+        });
+        return z.NEVER;
+      }
+      return dateAsDate;
+    })
+    .transform((dateAsDate) => dateAsDate.toISOString())
+    .optional(),
   metadata: z
     .object({
       title: z.string().optional(),
-      description: z.string().max(300, "Máximo de 300 caracteres").optional(),
+      description: z
+        .string()
+        .max(
+          300,
+          "A descrição do metadata deve conter no máximo de 300 caracteres"
+        )
+        .optional(),
       photo: z.string().url().optional(),
     })
     .optional(),
@@ -63,10 +89,8 @@ const getByHashSchema = z.object({
   active: z.boolean(),
 });
 
-createShortenerLinkSchema.parse(undefined);
 export type CreateShortenerLink = z.infer<typeof createShortenerLinkSchema>;
 
 export type GetByHashResponse = z.infer<typeof getByHashSchema>;
 
-saveLinkSchema.parse(undefined);
 export type SaveLinkInput = z.infer<typeof saveLinkSchema>;
