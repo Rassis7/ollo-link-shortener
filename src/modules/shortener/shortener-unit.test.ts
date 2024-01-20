@@ -4,6 +4,8 @@ import {
   getLinkByHashFromCache,
   getLinkByHashOrAlias,
   getRedirectLinkValues,
+  shortenerLink,
+  shortenerLinkCache,
 } from "./shortener.service";
 import { createHash } from "node:crypto";
 import { mockContext, context, redis } from "@/tests";
@@ -14,12 +16,12 @@ import {
 import {
   mockGetLinkByAliasInput,
   mockGetLinkByAliasResponse,
-} from "./__mocks__/get-by-alias";
+} from "./__mocks__/get-by-alias-or-hash";
 import {
   mockGetLinkByHashFromCacheResponse,
   mockHashInput,
-  mockGetLinkByHashResponse,
 } from "./__mocks__/get-by-hash";
+import { mockSaveLinkInput, mockSaveLinkResponse } from "./__mocks__/save-link";
 
 describe("modules/shortener.unit", () => {
   it("Should be able to generate hash", async () => {
@@ -122,6 +124,59 @@ describe("modules/shortener.unit", () => {
     expect(linkFromCache).toEqual(null);
   });
 
-  it("Should be able to create link cache", () => {});
-  it.todo("Should be able to create link");
+  it("Should be able to response error if exists link when create link in cache", async () => {
+    jest
+      .spyOn(redis, "get")
+      .mockResolvedValue(JSON.stringify(mockGetLinkByHashFromCacheResponse));
+
+    expect(async () => shortenerLinkCache(mockSaveLinkInput)).rejects.toThrow(
+      /a url informada já existe/i
+    );
+  });
+
+  it("Should be able to create link in cache and save key as alias", async () => {
+    jest.spyOn(redis, "get").mockResolvedValue(null);
+    jest.spyOn(redis, "set");
+
+    await shortenerLinkCache(mockSaveLinkInput);
+
+    const { alias, hash, ...redisSettableParams } = mockSaveLinkInput;
+
+    expect(redis.set).toHaveBeenCalledTimes(1);
+    expect(redis.set).toHaveBeenCalledWith(
+      alias,
+      JSON.stringify(redisSettableParams)
+    );
+  });
+
+  it("Should be able to create link in cache and save key as hash", async () => {
+    jest.spyOn(redis, "get").mockResolvedValue(null);
+    jest.spyOn(redis, "set");
+
+    const { alias, hash, ...redisSettableParams } = mockSaveLinkInput;
+
+    await shortenerLinkCache({ hash, ...redisSettableParams });
+
+    expect(redis.set).toHaveBeenCalledTimes(1);
+    expect(redis.set).toHaveBeenCalledWith(
+      hash,
+      JSON.stringify(redisSettableParams)
+    );
+  });
+
+  it("Should be able to create link", async () => {
+    mockContext.prisma.link.create.mockResolvedValue(mockSaveLinkResponse);
+
+    const newLink = await shortenerLink({
+      data: mockSaveLinkInput,
+      context,
+    });
+
+    expect(mockContext.prisma.link.create).toHaveBeenCalledTimes(1);
+    expect(mockContext.prisma.link.create).toHaveBeenCalledWith({
+      data: { ...mockSaveLinkInput },
+    });
+
+    expect(newLink).toEqual(mockSaveLinkResponse);
+  });
 });

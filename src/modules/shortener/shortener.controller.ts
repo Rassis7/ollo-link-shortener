@@ -7,9 +7,9 @@ import {
 import { APPLICATION_ERRORS, ErrorHandler } from "@/helpers";
 import {
   generateUrlHash,
-  saveLink,
-  saveLinkCache,
   getLinkByHashOrAlias,
+  shortenerLinkCache,
+  shortenerLink,
 } from "./shortener.service";
 import { prisma } from "@/infra";
 import { JwtAuthProps } from "../auth/auth.schema";
@@ -55,11 +55,13 @@ export async function registerShortenerLinkHandler(
       ...restBody,
     };
 
-    await saveLinkCache(linkInputValues);
-    await saveLink({ data: linkInputValues, context: { prisma } });
+    await shortenerLinkCache(linkInputValues);
+    await shortenerLink({ data: linkInputValues, context: { prisma } });
 
-    const shortenerLink = `${process.env.OLLO_LI_BASE_URL}/${alias ?? hash}`;
-    return reply.code(200).send({ shortenerLink });
+    const shortenerLinkResponse = `${process.env.OLLO_LI_BASE_URL}/${
+      alias ?? hash
+    }`;
+    return reply.code(200).send({ shortenerLink: shortenerLinkResponse });
   } catch (e) {
     const error = new ErrorHandler(e);
     return reply.code(400).send(error);

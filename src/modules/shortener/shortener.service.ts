@@ -61,7 +61,11 @@ export async function getLinkByHashFromCache(
   return linkResponse;
 }
 
-export async function saveLinkCache({ hash, alias, ...rest }: SaveLinkInput) {
+export async function shortenerLinkCache({
+  hash,
+  alias,
+  ...rest
+}: SaveLinkInput) {
   const hasExistsLink = await getLinkByHashFromCache(hash);
 
   if (hasExistsLink) {
@@ -72,7 +76,7 @@ export async function saveLinkCache({ hash, alias, ...rest }: SaveLinkInput) {
   await redis.set(key, JSON.stringify({ ...rest }));
 }
 
-export async function saveLink({
+export async function shortenerLink({
   context,
   data,
 }: {
