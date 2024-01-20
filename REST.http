@@ -69,8 +69,8 @@ Content-Type: {{content_type}}
 Authorization: bearer {{jwt_token}}
 
  {
-  "url": "https://any_site",
-  "alias": "MySite",
+  "url": "https://any_site/lllll",
+  "alias": "MySite52",
    "validAt": "2025-01-16T19:52:21.208Z",
    "metadata": {
      "title": "my site",

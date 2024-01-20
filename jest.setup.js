@@ -8,6 +8,7 @@ jest.mock("ioredis", () => jest.requireActual("ioredis-mock"));
 jest.mock("node:crypto", () => ({
   ...jest.requireActual("node:crypto"),
   randomUUID: jest.fn(),
+  createHash: jest.fn(),
 }));
 
 require("./src/tests/server");
