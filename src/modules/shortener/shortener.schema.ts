@@ -82,15 +82,27 @@ const saveLinkSchema = z.object({
     .optional(),
 });
 
-const getByHashSchema = z.object({
+const getByLinkHashFromCacheSchema = z.object({
   counter: z.number(),
   redirectTo: z.string().url(),
-  validAt: z.string().transform((validAt) => new Date(validAt)),
+  validAt: z.string().transform((validAt) => new Date(validAt).toISOString()),
   active: z.boolean(),
+});
+
+const getRedirectLinkValuesSchema = z.object({
+  redirectTo: z.string().url(),
+  userId: z.number(),
+  alias: z.string().optional(),
 });
 
 export type CreateShortenerLink = z.infer<typeof createShortenerLinkSchema>;
 
-export type GetByHashResponse = z.infer<typeof getByHashSchema>;
+export type GetByLinkHashFromCacheResponse = z.infer<
+  typeof getByLinkHashFromCacheSchema
+>;
 
 export type SaveLinkInput = z.infer<typeof saveLinkSchema>;
+
+export type GetRedirectLinkValuesInput = z.infer<
+  typeof getRedirectLinkValuesSchema
+>;

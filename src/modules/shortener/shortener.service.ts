@@ -1,17 +1,12 @@
 import { createHash } from "node:crypto";
 import {
-  GetByHashResponse,
+  GetByLinkHashFromCacheResponse,
+  GetRedirectLinkValuesInput,
   SHORTENER_ERRORS_RESPONSE,
   SaveLinkInput,
 } from "./shortener.schema";
 import { Context } from "@/configurations/context";
 import { redis } from "@/infra";
-
-type GetRedirectLinkValuesInput = {
-  redirectTo: string;
-  userId: number;
-  alias?: string;
-};
 
 export function generateUrlHash(url: string): string {
   const data = url + Math.random().toString(36).slice(2, 5);
@@ -34,21 +29,25 @@ export async function getRedirectLinkValues({
   });
 }
 
-export async function getByAlias({
-  alias,
+export async function getLinkByHashOrAlias({
+  input,
   context,
 }: {
-  alias: string;
+  input: { hash: string; alias?: string };
   context: Context;
 }) {
-  return context.prisma.link.findFirst({
-    where: {
-      alias,
-    },
+  const whereCondition = input?.alias
+    ? { OR: [{ hash: input.hash }, { alias: input.alias }] }
+    : { hash: input.hash };
+
+  return await context.prisma.link.findMany({
+    where: whereCondition,
   });
 }
 
-async function getByHash(hash: string): Promise<GetByHashResponse | null> {
+export async function getLinkByHashFromCache(
+  hash: string
+): Promise<GetByLinkHashFromCacheResponse | null> {
   const linkResponse = await redis.get(hash);
 
   if (!linkResponse) {
@@ -62,14 +61,15 @@ async function getByHash(hash: string): Promise<GetByHashResponse | null> {
   return linkResponse;
 }
 
-export async function saveLinkCache({ hash, ...rest }: SaveLinkInput) {
-  const hasExistsLink = await getByHash(hash);
+export async function saveLinkCache({ hash, alias, ...rest }: SaveLinkInput) {
+  const hasExistsLink = await getLinkByHashFromCache(hash);
 
   if (hasExistsLink) {
     throw new Error(SHORTENER_ERRORS_RESPONSE.URL_HAS_EXISTS);
   }
 
-  await redis.set(hash, JSON.stringify({ ...rest }));
+  const key = alias ?? hash;
+  await redis.set(key, JSON.stringify({ ...rest }));
 }
 
 export async function saveLink({
@@ -79,20 +79,5 @@ export async function saveLink({
   data: SaveLinkInput;
   context: Context;
 }) {
-  const link = await getRedirectLinkValues({
-    context,
-    input: {
-      redirectTo: data.redirectTo,
-      alias: data.alias,
-      userId: data.userId,
-    },
-  });
-
-  if (link) {
-    await saveLink({ context, data });
-  }
-
-  await context.prisma.link.create({ data });
-
-  return data.hash;
+  return await context.prisma.link.create({ data });
 }

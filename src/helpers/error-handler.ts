@@ -1,5 +1,9 @@
 import { ZodError } from "zod";
 
+export enum APPLICATION_ERRORS {
+  INTERNAL_ERROR = "Ocorreu um erro, por favor tente novamente",
+}
+
 type ErrorInstanceType = {
   message: string | string[];
   code?: string;

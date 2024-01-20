@@ -4,13 +4,12 @@ import {
   type CreateShortenerLink,
   SaveLinkInput,
 } from "./shortener.schema";
-import { ErrorHandler } from "@/helpers";
+import { APPLICATION_ERRORS, ErrorHandler } from "@/helpers";
 import {
-  getRedirectLinkValues,
   generateUrlHash,
   saveLink,
   saveLinkCache,
-  getByAlias,
+  getLinkByHashOrAlias,
 } from "./shortener.service";
 import { prisma } from "@/infra";
 import { JwtAuthProps } from "../auth/auth.schema";
@@ -27,49 +26,39 @@ export async function registerShortenerLinkHandler(
     const { body } = request;
     const user = await request.jwtDecode<JwtAuthProps>();
 
-    if (!body.url) {
-      throw new Error(SHORTENER_ERRORS_RESPONSE.URL_NOT_EXISTS);
-    }
+    const { url, alias, ...restBody } = body;
+    const hash = generateUrlHash(url);
 
-    const linkValues = await getRedirectLinkValues({
-      input: {
-        redirectTo: body.url,
-        alias: body.alias ?? undefined,
-        userId: user.id,
-      },
+    const links = await getLinkByHashOrAlias({
+      input: { hash, alias },
       context: { prisma },
     });
 
-    let hash = linkValues?.hash;
-
-    if (!linkValues?.id) {
-      const { url, ...restBody } = body;
-
-      if (restBody.alias) {
-        const link = await getByAlias({
-          alias: restBody.alias,
-          context: { prisma },
-        });
-
-        if (link?.id) {
+    if (links.length > 0) {
+      links.forEach((link) => {
+        if (link.alias === alias) {
           throw new Error(SHORTENER_ERRORS_RESPONSE.ALIAS_HAS_EXISTS);
         }
-      }
 
-      hash = generateUrlHash(url);
-      const linkInputValues: SaveLinkInput = {
-        hash,
-        redirectTo: url,
-        active: true,
-        userId: user.id,
-        ...restBody,
-      };
-
-      await saveLinkCache(linkInputValues);
-      await saveLink({ data: linkInputValues, context: { prisma } });
+        if (link.hash === hash) {
+          throw new Error(APPLICATION_ERRORS.INTERNAL_ERROR);
+        }
+      });
     }
 
-    const shortenerLink = `${request.protocol}/${request.hostname}/${hash}`;
+    const linkInputValues: SaveLinkInput = {
+      hash,
+      redirectTo: url,
+      active: true,
+      userId: user.id,
+      alias,
+      ...restBody,
+    };
+
+    await saveLinkCache(linkInputValues);
+    await saveLink({ data: linkInputValues, context: { prisma } });
+
+    const shortenerLink = `${process.env.OLLO_LI_BASE_URL}/${alias ?? hash}`;
     return reply.code(200).send({ shortenerLink });
   } catch (e) {
     const error = new ErrorHandler(e);
