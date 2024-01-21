@@ -31,3 +31,14 @@ export const mockSaveLinkResponse: Link = {
     photo: faker.image.url(),
   },
 };
+
+export const mockLinkToShortenerInput = {
+  url: faker.internet.url(),
+  alias: faker.lorem.word(),
+  validAt: faker.date.future().toISOString(),
+  metadata: {
+    title: faker.lorem.words(2),
+    description: faker.lorem.sentence(5),
+    photo: faker.image.url(),
+  },
+};

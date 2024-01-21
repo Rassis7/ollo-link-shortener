@@ -7,7 +7,7 @@ export enum SHORTENER_ERRORS_RESPONSE {
   ALIAS_HAS_EXISTS = "Já existe um link com esse nome personalizado",
 }
 
-export const createShortenerLinkSchema = z.object({
+const shortenerBase = {
   url: z
     .string({
       required_error: "A url é obrigatória",
@@ -35,7 +35,6 @@ export const createShortenerLinkSchema = z.object({
     .datetime({ message: "Data de validade inválida" })
     .transform((date: string, ctx: RefinementCtx) => {
       const dateAsDate = new Date(date);
-
       if (isPast(dateAsDate)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -60,6 +59,14 @@ export const createShortenerLinkSchema = z.object({
       photo: z.string().url().optional(),
     })
     .optional(),
+};
+
+export const createShortenerLinkSchema = z.object(shortenerBase);
+
+export const editShortenerLinkSchema = z.object({
+  ...shortenerBase,
+  url: shortenerBase.url.optional(),
+  active: z.boolean().optional(),
 });
 
 export const createShortenerLinkResponseSchema = z.object({
