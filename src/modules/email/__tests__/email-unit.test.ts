@@ -7,11 +7,23 @@ import { emailProviderInstance } from "@/configurations/email";
 import { join } from "node:path";
 import { readFileSync } from "node:fs";
 import { emailTemplateParamMock } from "../__mocks__/email-template-param";
+import { addHours } from "date-fns";
 
 const templatePath = join(__dirname, "../templates", "email-verify.html");
 const htmlTemplate = readFileSync(templatePath, "utf8");
 
+const NOW = new Date("2024-01-21T14:03:21.209Z");
+
 describe("modules/email.unit", () => {
+  beforeAll(() => {
+    jest.useFakeTimers();
+    jest.setSystemTime(NOW);
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
+  });
+
   it("Should be abe to call email provider and send verification email with template", async () => {
     const redisSetSpy = jest.spyOn(redis, "set").mockImplementation(jest.fn());
     const redisExpireSet = jest
@@ -36,7 +48,8 @@ describe("modules/email.unit", () => {
 
     // expire
     expect(redisExpireSet).toHaveBeenCalledTimes(1);
-    const validAt = new Date().getTime() / 1000;
+
+    const validAt = addHours(NOW, 48).getTime() / 1000;
     expect(redisExpireSet).toHaveBeenCalledWith(key, Math.round(validAt));
 
     expect(mailSendSpy).toHaveBeenCalledTimes(1);

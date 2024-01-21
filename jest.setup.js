@@ -22,12 +22,3 @@ beforeEach(() => {
 afterAll(() => {
   jest.useRealTimers();
 });
-
-const now = new Date();
-class MockDate extends Date {
-  constructor() {
-    super(now.toISOString());
-  }
-}
-
-global.Date = MockDate;
