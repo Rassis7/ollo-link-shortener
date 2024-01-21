@@ -1,14 +1,14 @@
 import { faker } from "@faker-js/faker";
-import { sendVerifyEmailHandler, verifyEmail } from "./email.service";
+import { sendVerifyEmailHandler, verifyEmail } from "../email.service";
 import { redis } from "@/tests";
 import { randomUUID } from "node:crypto";
 import { RANDOM_UUID_MOCK } from "@/tests/__mocks__";
 import { emailProviderInstance } from "@/configurations/email";
 import { join } from "node:path";
 import { readFileSync } from "node:fs";
-import { emailTemplateParamMock } from "./__mocks__/email-template-param";
+import { emailTemplateParamMock } from "../__mocks__/email-template-param";
 
-const templatePath = join(__dirname, "templates", "email-verify.html");
+const templatePath = join(__dirname, "../templates", "email-verify.html");
 const htmlTemplate = readFileSync(templatePath, "utf8");
 
 describe("modules/email.unit", () => {

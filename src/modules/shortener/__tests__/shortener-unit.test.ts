@@ -6,22 +6,25 @@ import {
   getRedirectLinkValues,
   shortenerLink,
   shortenerLinkCache,
-} from "./shortener.service";
+} from "../shortener.service";
 import { createHash } from "node:crypto";
 import { mockContext, context, redis } from "@/tests";
 import {
   mockGetRedirectLinkValuesResponse,
   mockGetRedirectValuesInput,
-} from "./__mocks__/get-redirect-link";
+} from "../__mocks__/get-redirect-link";
 import {
   mockGetLinkByAliasInput,
   mockGetLinkByAliasResponse,
-} from "./__mocks__/get-by-alias-or-hash";
+} from "../__mocks__/get-by-alias-or-hash";
 import {
   mockGetLinkByHashFromCacheResponse,
   mockHashInput,
-} from "./__mocks__/get-by-hash";
-import { mockSaveLinkInput, mockSaveLinkResponse } from "./__mocks__/save-link";
+} from "../__mocks__/get-by-hash";
+import {
+  mockSaveLinkInput,
+  mockSaveLinkResponse,
+} from "../__mocks__/save-link";
 
 describe("modules/shortener.unit", () => {
   it("Should be able to generate hash", async () => {

@@ -2,12 +2,12 @@ import { mockContext, context } from "@/tests";
 import {
   mockCreateUserInput,
   mockCreatedUserResponse,
-} from "./__mocks__/create-user";
-import { createUser, findUserByEmail, findUsers } from "./user.service";
+} from "../__mocks__/create-user";
+import { createUser, findUserByEmail, findUsers } from "../user.service";
 import * as helpers from "@/helpers/hash";
 import { faker } from "@faker-js/faker";
-import { mockFindUserByEmailResponse } from "./__mocks__/find-user-by-email";
-import { mockFindUsersResponse } from "./__mocks__/find-users";
+import { mockFindUserByEmailResponse } from "../__mocks__/find-user-by-email";
+import { mockFindUsersResponse } from "../__mocks__/find-users";
 
 describe("module/user.unit", () => {
   it("Should create a new user", async () => {

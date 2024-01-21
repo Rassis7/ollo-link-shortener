@@ -1,7 +1,7 @@
 import { app } from "@/configurations/app";
-import * as emailService from "./email.service";
-import { mockEmailInput } from "./__mocks__/verify-code";
-import { VERIFY_EMAIL_RESPONSE } from "./email.schema";
+import * as emailService from "../email.service";
+import { mockEmailInput } from "../__mocks__/verify-code";
+import { VERIFY_EMAIL_RESPONSE } from "../email.schema";
 
 const BASE_URL = "api/email";
 
