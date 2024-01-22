@@ -15,7 +15,7 @@ import {
 } from "../__mocks__/get-redirect-link";
 import {
   mockGetLinkByAliasInput,
-  mockGetLinkByAliasResponse,
+  mockGetLinkByAliasOrHashResponse,
 } from "../__mocks__/get-by-alias-or-hash";
 import {
   mockGetLinkByHashFromCacheResponse,
@@ -60,7 +60,7 @@ describe("modules/shortener.unit", () => {
 
   it("Should be able to return link by alias or hash", async () => {
     mockContext.prisma.link.findMany.mockResolvedValue(
-      mockGetLinkByAliasResponse
+      mockGetLinkByAliasOrHashResponse
     );
 
     const link = await getLinkByHashOrAlias({
@@ -82,12 +82,12 @@ describe("modules/shortener.unit", () => {
       },
     });
 
-    expect(link).toEqual(mockGetLinkByAliasResponse);
+    expect(link).toEqual(mockGetLinkByAliasOrHashResponse);
   });
 
   it("Should be able to return link by hash and without alias", async () => {
     mockContext.prisma.link.findMany.mockResolvedValue(
-      mockGetLinkByAliasResponse
+      mockGetLinkByAliasOrHashResponse
     );
 
     await getLinkByHashOrAlias({

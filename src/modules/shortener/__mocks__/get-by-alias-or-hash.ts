@@ -1,7 +1,7 @@
 import { faker } from "@faker-js/faker";
 import { Link } from "@prisma/client";
 
-export const mockGetLinkByAliasResponse: Link[] = [
+export const mockGetLinkByAliasOrHashResponse: Link[] = [
   {
     id: faker.number.int({ min: 1, max: 10 }),
     redirectTo: faker.internet.url(),

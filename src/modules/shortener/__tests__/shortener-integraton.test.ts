@@ -1,27 +1,160 @@
 import { app } from "@/configurations/app";
-import { mockLinkToShortenerInput } from "../__mocks__/save-link";
+import {
+  mockLinkToShortenerInput,
+  mockSaveLinkResponse,
+} from "../__mocks__/save-link";
+import { MOCK_JWT_PAYLOAD, MOCK_JWT_TOKEN, mockContext, redis } from "@/tests";
+import * as shortenerService from "../shortener.service";
+import { mockGetLinkByAliasOrHashResponse } from "../__mocks__/get-by-alias-or-hash";
+import { faker } from "@faker-js/faker";
+import { mockGetLinkByHashFromCacheResponse } from "../__mocks__/get-by-hash";
 
 const BASE_URL = "/api/shortener";
 
 describe("modules/shortener.integration", () => {
-  it("Should be able to return a error if not send url field", async () => {
-    const { url, ...body } = mockLinkToShortenerInput;
-    const response = await app.inject({
-      method: "POST",
-      url: BASE_URL,
-      body,
+  describe("Save", () => {
+    it("Should be able to return a error if not send url field", async () => {
+      const { url, ...body } = mockLinkToShortenerInput;
+      const response = await app.inject({
+        method: "POST",
+        url: BASE_URL,
+        headers: { authorization: `Bearer ${MOCK_JWT_TOKEN}` },
+        body,
+      });
+
+      expect(response.json()).toEqual({
+        message: ["A url é obrigatória"],
+      });
+      expect(response.statusCode).toEqual(200);
     });
 
-    expect(response.json()).toEqual({
-      message: ["A url é obrigatória"],
+    it("Should be able to return a error if user not authenticated", async () => {
+      const response = await app.inject({
+        method: "POST",
+        url: BASE_URL,
+        body: mockLinkToShortenerInput,
+      });
+
+      expect(response.json()).toEqual({
+        message: "Não autorizado",
+      });
+      expect(response.statusCode).toEqual(401);
+    });
+
+    it("Should be able to return a error if exists other link with same hash", async () => {
+      const hash = "123";
+      jest.spyOn(shortenerService, "generateUrlHash").mockReturnValue(hash);
+
+      const [firstLink] = mockGetLinkByAliasOrHashResponse;
+
+      jest
+        .spyOn(shortenerService, "getLinkByHashOrAlias")
+        .mockResolvedValue([{ ...firstLink, hash }]);
+
+      const response = await app.inject({
+        method: "POST",
+        url: BASE_URL,
+        body: mockLinkToShortenerInput,
+        headers: { authorization: `Bearer ${MOCK_JWT_TOKEN}` },
+      });
+
+      expect(response.json()).toEqual({
+        message: "Error: Ocorreu um erro, por favor tente novamente",
+      });
+      expect(response.statusCode).toEqual(400);
+    });
+
+    it("Should be able to return a error if exists other link with same alias", async () => {
+      const alias = faker.lorem.word();
+
+      const [firstLink] = mockGetLinkByAliasOrHashResponse;
+
+      jest
+        .spyOn(shortenerService, "getLinkByHashOrAlias")
+        .mockResolvedValue([{ ...firstLink, alias }]);
+
+      const response = await app.inject({
+        method: "POST",
+        url: BASE_URL,
+        body: { ...mockLinkToShortenerInput, alias },
+        headers: { authorization: `Bearer ${MOCK_JWT_TOKEN}` },
+      });
+
+      expect(response.json()).toEqual({
+        message: "Error: Já existe um link com esse nome personalizado",
+      });
+      expect(response.statusCode).toEqual(400);
+    });
+
+    it("Should be able to return error if save in cache and already exists that hash", async () => {
+      jest
+        .spyOn(shortenerService, "getLinkByHashOrAlias")
+        .mockResolvedValue([]);
+      jest
+        .spyOn(redis, "get")
+        .mockResolvedValue(JSON.stringify(mockGetLinkByHashFromCacheResponse));
+
+      const response = await app.inject({
+        method: "POST",
+        url: BASE_URL,
+        body: mockLinkToShortenerInput,
+        headers: { authorization: `Bearer ${MOCK_JWT_TOKEN}` },
+      });
+
+      expect(response.json()).toEqual({
+        message: "Error: A url informada já existe",
+      });
+      expect(response.statusCode).toEqual(400);
+    });
+
+    it("Should be able to shortener link", async () => {
+      jest
+        .spyOn(shortenerService, "getLinkByHashOrAlias")
+        .mockResolvedValue([]);
+      jest.spyOn(shortenerService, "shortenerLinkCache").mockResolvedValue();
+      jest
+        .spyOn(shortenerService, "shortenerLink")
+        .mockResolvedValue(mockSaveLinkResponse);
+
+      const response = await app.inject({
+        method: "POST",
+        url: BASE_URL,
+        body: mockLinkToShortenerInput,
+        headers: { authorization: `Bearer ${MOCK_JWT_TOKEN}` },
+      });
+
+      expect(response.json()).toEqual({
+        shortenerLink: `https://ollo.li/${mockLinkToShortenerInput.alias}`,
+      });
+      expect(response.statusCode).toBe(200);
+    });
+
+    it("Should be able to response new shortener url with hash", async () => {
+      const hash = "123";
+
+      jest.spyOn(shortenerService, "generateUrlHash").mockReturnValue(hash);
+      jest
+        .spyOn(shortenerService, "getLinkByHashOrAlias")
+        .mockResolvedValue([]);
+      jest.spyOn(shortenerService, "shortenerLinkCache").mockResolvedValue();
+      jest
+        .spyOn(shortenerService, "shortenerLink")
+        .mockResolvedValue(mockSaveLinkResponse);
+
+      const { alias, ...mockLinkToShortenerInputWithoutAlias } =
+        mockLinkToShortenerInput;
+
+      const response = await app.inject({
+        method: "POST",
+        url: BASE_URL,
+        body: mockLinkToShortenerInputWithoutAlias,
+        headers: { authorization: `Bearer ${MOCK_JWT_TOKEN}` },
+      });
+
+      expect(response.json()).toEqual({
+        shortenerLink: `https://ollo.li/${hash}`,
+      });
+      expect(response.statusCode).toBe(200);
     });
   });
-
-  it.todo(
-    "Should return error if exists other link with same %s (hash or alias)"
-  );
-  it.todo("Should be able to shortener link and save in cache");
-  it.todo(
-    "Should be able to response new shortener url with %s(alias or hash)"
-  );
 });
