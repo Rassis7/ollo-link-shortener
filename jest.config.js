@@ -11,7 +11,6 @@ module.exports = {
   },
   resetMocks: true,
   collectCoverage: true,
-  enableGlobally: true,
   coverageProvider: "v8",
   collectCoverageFrom: [
     "<rootDir>/src/**/*.{ts,tsx}",

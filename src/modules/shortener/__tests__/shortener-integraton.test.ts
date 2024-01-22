@@ -3,7 +3,7 @@ import {
   mockLinkToShortenerInput,
   mockSaveLinkResponse,
 } from "../__mocks__/save-link";
-import { MOCK_JWT_PAYLOAD, MOCK_JWT_TOKEN, mockContext, redis } from "@/tests";
+import { MOCK_JWT_TOKEN, redis } from "@/tests";
 import * as shortenerService from "../shortener.service";
 import { mockGetLinkByAliasOrHashResponse } from "../__mocks__/get-by-alias-or-hash";
 import { faker } from "@faker-js/faker";
@@ -14,16 +14,22 @@ const BASE_URL = "/api/shortener";
 describe("modules/shortener.integration", () => {
   describe("Save", () => {
     it("Should be able to return a error if not send url field", async () => {
-      const { url, ...body } = mockLinkToShortenerInput;
+      const dateInPast = faker.date.past();
+
+      const { url, validAt, ...mockLinkToShortenerInputWithError } =
+        mockLinkToShortenerInput;
       const response = await app.inject({
         method: "POST",
         url: BASE_URL,
         headers: { authorization: `Bearer ${MOCK_JWT_TOKEN}` },
-        body,
+        body: { ...mockLinkToShortenerInputWithError, validAt: dateInPast },
       });
 
       expect(response.json()).toEqual({
-        message: ["A url é obrigatória"],
+        message: [
+          "A url é obrigatória",
+          "A data de validade deve ser maior que hoje!",
+        ],
       });
       expect(response.statusCode).toEqual(200);
     });
