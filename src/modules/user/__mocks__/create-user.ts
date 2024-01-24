@@ -11,7 +11,7 @@ export const mockCreateUserInput: CreateUserInput = {
 };
 
 export const mockCreatedUserResponse = {
-  id: faker.number.int({ min: 1, max: 100 }),
+  id: faker.string.uuid(),
   createdAt: new Date(),
   ...mockCreateUserInput,
 };

@@ -82,6 +82,8 @@ export const editShortenerLinkSchema = z.object({
   active: z.boolean().optional(),
 });
 
+export const editShortenerLinkResponseSchema = shortenerBase;
+
 export const createShortenerLinkResponseSchema = z.object({
   shortLink: z.string().url(),
 });
@@ -90,7 +92,7 @@ const saveLinkSchema = z.object({
   redirectTo: z.string().url(),
   active: z.boolean(),
   hash: z.string(),
-  userId: z.number(),
+  userId: z.string().uuid(),
   validAt: z.string().optional(),
   alias: z.string().optional(),
   metadata: z
@@ -111,7 +113,7 @@ const getByLinkHashFromCacheSchema = z.object({
 
 const getRedirectLinkValuesSchema = z.object({
   redirectTo: z.string().url(),
-  userId: z.number(),
+  userId: z.string().uuid(),
   alias: z.string().optional(),
 });
 

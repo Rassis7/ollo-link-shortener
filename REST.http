@@ -1,7 +1,7 @@
 @base_url = http://localhost:3000
 @base_pos_url = api
 @host_name = {{base_url}}/{{base_pos_url}}
-@jwt_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjMsImVtYWlsIjoiamhvbmR1ZUBlbWFpbC5jb20iLCJuYW1lIjoiSmhvbiBEb2UiLCJpYXQiOjE3MDU0MzQ0MDksImV4cCI6MTcwNjAzOTIwOX0.NCSckWRrignwzKwT2xUryWZn25078DC0uDsQQDkKMpI
+@jwt_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijk5OGVmZTM1LWYzZDktNDM4NC04NTNiLTcwOWFiNDc4N2Q1OSIsImVtYWlsIjoiamhvbmR1ZUBlbWFpbC5jb20iLCJuYW1lIjoiSmhvbiBEb2UiLCJpYXQiOjE3MDYwOTkxNzgsImV4cCI6MTcwNjcwMzk3OH0.9zS25zBHkJ3ESlKQQ1zHkBzf18Hla8L_nBQDBw2IMVg
 @content_type = application/json
 
 # Some params

@@ -67,3 +67,5 @@ export async function registerShortenerLinkHandler(
     return reply.code(400).send(error);
   }
 }
+
+export async function editShortenerLinkHandler() {}

@@ -3,9 +3,9 @@ import { Link } from "@prisma/client";
 import { GetRedirectLinkValuesInput } from "../shortener.schema";
 
 export const mockGetRedirectLinkValuesResponse: Link = {
-  id: faker.number.int({ min: 1, max: 10 }),
+  id: faker.string.uuid(),
   redirectTo: faker.internet.url(),
-  userId: faker.number.int({ min: 1, max: 10 }),
+  userId: faker.string.uuid(),
   alias: faker.lorem.word(),
   hash: faker.string.alphanumeric(8),
   active: true,
@@ -20,6 +20,6 @@ export const mockGetRedirectLinkValuesResponse: Link = {
 
 export const mockGetRedirectValuesInput: GetRedirectLinkValuesInput = {
   redirectTo: faker.internet.url(),
-  userId: faker.number.int({ min: 1, max: 10 }),
+  userId: faker.string.uuid(),
   alias: faker.lorem.word(),
 };

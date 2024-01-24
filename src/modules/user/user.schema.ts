@@ -30,7 +30,7 @@ export const createUserSchema = z.object({
 });
 
 export const createUserResponseSchema = z.object({
-  id: z.number(),
+  id: z.string().uuid(),
   ...userCore,
 });
 
@@ -39,7 +39,7 @@ export const getUserResponseSchema = createUserResponseSchema;
 const findUsersSchema = z
   .object({
     ...userCore,
-    id: z.number(),
+    id: z.string().uuid(),
     name: z.string().nullable(),
   })
   .array()

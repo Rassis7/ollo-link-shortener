@@ -1,9 +1,10 @@
+import { faker } from "@faker-js/faker";
 import jwt from "jsonwebtoken";
 
 const secretKey = String(process.env.FASTIFY_JWT_SECRET);
 
 export const MOCK_JWT_PAYLOAD = {
-  id: 123,
+  id: faker.string.uuid(),
   email: "john_doe@email.com",
   name: "John Doe",
 };
