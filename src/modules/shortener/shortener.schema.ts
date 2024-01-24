@@ -27,11 +27,13 @@ const shortenerBase = {
         : `https://${url}`
     ),
   alias: z
-    .string()
+    .string({
+      invalid_type_error: "O apelido deve ser uma string",
+    })
     .refine((alias) => !alias.includes(" "), "O apelido não pode conter espaço")
     .optional(),
   validAt: z
-    .string()
+    .string({ invalid_type_error: "Data inválida" })
     .datetime({ message: "Data de validade inválida" })
     .transform((date: string, ctx: RefinementCtx) => {
       const dateAsDate = new Date(date);
@@ -48,15 +50,26 @@ const shortenerBase = {
     .optional(),
   metadata: z
     .object({
-      title: z.string().optional(),
+      title: z
+        .string({
+          invalid_type_error: "O título deve ser um texto",
+        })
+        .optional(),
       description: z
-        .string()
+        .string({
+          invalid_type_error: "A descrição deve ser um texto",
+        })
         .max(
           300,
           "A descrição do metadata deve conter no máximo de 300 caracteres"
         )
         .optional(),
-      photo: z.string().url().optional(),
+      photo: z
+        .string()
+        .url({
+          message: "URL inválida",
+        })
+        .optional(),
     })
     .optional(),
 };

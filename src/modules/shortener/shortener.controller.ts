@@ -61,7 +61,7 @@ export async function registerShortenerLinkHandler(
     const shortenerLinkResponse = `${process.env.OLLO_LI_BASE_URL}/${
       alias ?? hash
     }`;
-    return reply.code(200).send({ shortenerLink: shortenerLinkResponse });
+    return reply.code(201).send({ shortLink: shortenerLinkResponse });
   } catch (e) {
     const error = new ErrorHandler(e);
     return reply.code(400).send(error);
