@@ -28,7 +28,7 @@ describe("helpers/error-handler", () => {
   it("Should return ErrorHandler message when error is Javascript Error type", () => {
     const error = new Error("any error");
     const errorHandler = new ErrorHandler(error);
-    expect(errorHandler.getError()).toBe("Error: any error");
+    expect(errorHandler.getError()).toBe("any error");
   });
 
   it("Should return ErrorHandler message equal then message when that prop is passed", () => {

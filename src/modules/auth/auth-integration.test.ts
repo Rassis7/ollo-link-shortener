@@ -38,7 +38,7 @@ describe("module/auth.integration", () => {
     });
 
     expect(response.json()).toEqual({
-      message: "Error: Usuário não encontrado",
+      error: "Usuário não encontrado",
     });
     expect(response.statusCode).toEqual(401);
   });
@@ -56,7 +56,7 @@ describe("module/auth.integration", () => {
     });
 
     expect(response.json()).toEqual({
-      message: "Error: O usuário ou a senha estão inválidos",
+      error: "O usuário ou a senha estão inválidos",
     });
     expect(response.statusCode).toEqual(401);
   });
@@ -68,7 +68,7 @@ describe("module/auth.integration", () => {
     });
 
     expect(response.json()).toEqual({
-      message: "Não autorizado",
+      error: "Não autorizado",
     });
     expect(response.statusCode).toEqual(401);
   });

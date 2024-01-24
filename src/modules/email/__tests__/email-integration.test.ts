@@ -32,7 +32,7 @@ describe("modules/email.integration", () => {
     });
 
     expect(response.json()).toEqual({
-      message: "Error: O código está expirado ou não existe",
+      error: "O código está expirado ou não existe",
     });
     expect(response.statusCode).toEqual(401);
   });
@@ -61,7 +61,7 @@ describe("modules/email.integration", () => {
     });
 
     expect(response.json()).toEqual({
-      message: "Error: some_error",
+      error: "some_error",
     });
     expect(response.statusCode).toEqual(400);
   });

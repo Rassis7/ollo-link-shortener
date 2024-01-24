@@ -26,12 +26,22 @@ describe("modules/shortener.integration", () => {
       });
 
       expect(response.json()).toEqual({
-        message: [
-          "A url é obrigatória",
-          "A data de validade deve ser maior que hoje!",
-        ],
+        error: {
+          url: {
+            code: "invalid_type",
+            message: "A url é obrigatória",
+            typeError: {
+              expected: "string",
+              received: "undefined",
+            },
+          },
+          validAt: {
+            code: "custom",
+            message: "A data de validade deve ser maior que hoje!",
+          },
+        },
       });
-      expect(response.statusCode).toEqual(200);
+      expect(response.statusCode).toEqual(400);
     });
 
     it("Should be able to return a error if user not authenticated", async () => {
@@ -42,7 +52,7 @@ describe("modules/shortener.integration", () => {
       });
 
       expect(response.json()).toEqual({
-        message: "Não autorizado",
+        error: "Não autorizado",
       });
       expect(response.statusCode).toEqual(401);
     });
@@ -65,7 +75,7 @@ describe("modules/shortener.integration", () => {
       });
 
       expect(response.json()).toEqual({
-        message: "Error: Ocorreu um erro, por favor tente novamente",
+        error: "Ocorreu um erro, por favor tente novamente",
       });
       expect(response.statusCode).toEqual(400);
     });
@@ -87,7 +97,7 @@ describe("modules/shortener.integration", () => {
       });
 
       expect(response.json()).toEqual({
-        message: "Error: Já existe um link com esse nome personalizado",
+        error: "Já existe um link com esse nome personalizado",
       });
       expect(response.statusCode).toEqual(400);
     });
@@ -108,7 +118,7 @@ describe("modules/shortener.integration", () => {
       });
 
       expect(response.json()).toEqual({
-        message: "Error: A url informada já existe",
+        error: "A url informada já existe",
       });
       expect(response.statusCode).toEqual(400);
     });
@@ -130,9 +140,9 @@ describe("modules/shortener.integration", () => {
       });
 
       expect(response.json()).toEqual({
-        shortenerLink: `https://ollo.li/${mockLinkToShortenerInput.alias}`,
+        shortLink: `https://ollo.li/${mockLinkToShortenerInput.alias}`,
       });
-      expect(response.statusCode).toBe(200);
+      expect(response.statusCode).toBe(201);
     });
 
     it("Should be able to response new shortener url with hash", async () => {
@@ -158,9 +168,9 @@ describe("modules/shortener.integration", () => {
       });
 
       expect(response.json()).toEqual({
-        shortenerLink: `https://ollo.li/${hash}`,
+        shortLink: `https://ollo.li/${hash}`,
       });
-      expect(response.statusCode).toBe(200);
+      expect(response.statusCode).toBe(201);
     });
   });
 });

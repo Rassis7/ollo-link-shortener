@@ -48,7 +48,6 @@ fastify.setErrorHandler(function (e, _, reply) {
     reply.code(400);
   }
 
-  console.log({ e }, "FILE: app.ts", "LINE NUMBER: 45");
   if (e.statusCode === 404) {
     reply.code(404);
     errorHandler.error = "Rota não encontrada";

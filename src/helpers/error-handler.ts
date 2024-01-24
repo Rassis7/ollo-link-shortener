@@ -55,7 +55,7 @@ export class ErrorHandler {
     if (!errorUpdated.error) {
       const err = new Error(applicationError as any);
       Object.assign(errorUpdated, {
-        error: message ?? err.message,
+        error: message ?? err.message.replace("Error:", "").trim(),
       });
     }
 

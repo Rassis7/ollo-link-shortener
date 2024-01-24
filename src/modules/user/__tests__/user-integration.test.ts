@@ -78,7 +78,7 @@ describe("module/user.integration", () => {
     });
 
     expect(response.json()).toEqual({
-      message: "Ocorreu um erro ao listar os usuários",
+      error: "Ocorreu um erro ao listar os usuários",
     });
     expect(response.statusCode).toEqual(400);
   });
