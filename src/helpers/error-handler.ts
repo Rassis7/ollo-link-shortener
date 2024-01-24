@@ -4,13 +4,40 @@ export enum APPLICATION_ERRORS {
   INTERNAL_ERROR = "Ocorreu um erro, por favor tente novamente",
 }
 
+type MessageWithObjet = Record<string, unknown>;
+
 type ErrorInstanceType = {
-  message: string | string[];
-  code?: string;
-  statusCode?: number;
+  error: string | MessageWithObjet;
 };
+
+function mappedZodErrors(zodErrors: ZodError) {
+  let zodErrosMapped = {};
+
+  zodErrors.errors.forEach((error) => {
+    let mappedErrors = {};
+
+    if (error.code === "invalid_type") {
+      mappedErrors = {
+        typeError: {
+          expected: error.expected,
+          received: error.received,
+        },
+      };
+    }
+
+    Object.assign(zodErrosMapped, {
+      [error.path.join(".")]: {
+        message: error.message,
+        code: error.code,
+        ...mappedErrors,
+      },
+    });
+  });
+
+  return zodErrosMapped;
+}
 export class ErrorHandler {
-  message: string[] | string;
+  error: string | MessageWithObjet;
 
   constructor(error: unknown, message?: string) {
     const applicationError = error as unknown | ZodError;
@@ -18,24 +45,24 @@ export class ErrorHandler {
     const errorUpdated = {} as ErrorInstanceType;
 
     if (applicationError instanceof ZodError) {
-      const message = applicationError.errors.map((error) => error.message);
+      const zodErrosMapped = mappedZodErrors(applicationError);
+
       Object.assign(errorUpdated, {
-        message,
+        error: zodErrosMapped,
       });
     }
 
-    if (!errorUpdated.message) {
+    if (!errorUpdated.error) {
       const err = new Error(applicationError as any);
       Object.assign(errorUpdated, {
-        message: message ?? err.message,
-        code: err.name,
+        error: message ?? err.message,
       });
     }
 
-    this.message = errorUpdated.message;
+    this.error = errorUpdated.error;
   }
 
-  getMessage() {
-    return this.message;
+  getError() {
+    return this.error;
   }
 }

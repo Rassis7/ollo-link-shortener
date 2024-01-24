@@ -13,6 +13,13 @@ const mockZodError = new ZodError([
     message: "second error",
     path: ["second_field"],
   },
+  {
+    code: "invalid_type",
+    message: "third error",
+    path: ["third_field", "other_field"],
+    expected: "string",
+    received: "number",
+  },
 ]);
 
 export { mockZodError };
