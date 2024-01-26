@@ -9,6 +9,7 @@ import {
   Recipient,
   emailProviderInstance,
 } from "@/configurations/email";
+import { expireCacheInSeconds } from "@/helpers";
 
 const EXPIRE_IN = 48;
 
@@ -55,10 +56,11 @@ async function generateVerifyEmailUrl(email: string) {
   const urlSuffix = randomUUID();
   const emailParsed = encodeURIComponent(email);
 
-  const validAt = addHours(new Date(), EXPIRE_IN).getTime() / 1000;
+  const validAt = addHours(new Date(), EXPIRE_IN);
+  const validAtInSeconds = expireCacheInSeconds(validAt);
   const key = `emailVerification/${email}`;
   await redis.set(key, urlSuffix);
-  await redis.expire(key, Math.round(validAt));
+  await redis.expire(key, validAtInSeconds);
 
   return `${process.env.INTERNAL_OLLO_LI_BASE_URL}/verification/${urlSuffix}?${emailParsed}`;
 }

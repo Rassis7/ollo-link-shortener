@@ -27,7 +27,7 @@ export async function shortenerRoutes(fastify: FastifyInstance) {
 
   fastify.withTypeProvider<ZodTypeProvider>().route({
     method: "PUT",
-    url: "/:",
+    url: "/:id",
     preHandler: [fastify.authenticate],
     schema: {
       body: editShortenerLinkSchema,

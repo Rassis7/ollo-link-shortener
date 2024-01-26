@@ -3,13 +3,15 @@ import {
   SHORTENER_ERRORS_RESPONSE,
   type CreateShortenerLink,
   SaveLinkInput,
+  EditShortenerLink,
 } from "./shortener.schema";
 import { APPLICATION_ERRORS, ErrorHandler } from "@/helpers";
 import {
   generateUrlHash,
   getLinkByHashOrAlias,
-  shortenerLinkCache,
+  saveOrUpdateLinkCache,
   shortenerLink,
+  updateLink,
 } from "./shortener.service";
 import { prisma } from "@/infra";
 import { JwtAuthProps } from "../auth/auth.schema";
@@ -55,7 +57,7 @@ export async function registerShortenerLinkHandler(
       ...restBody,
     };
 
-    await shortenerLinkCache(linkInputValues);
+    await saveOrUpdateLinkCache(linkInputValues);
     await shortenerLink({ data: linkInputValues, context: { prisma } });
 
     const shortenerLinkResponse = `${process.env.OLLO_LI_BASE_URL}/${
@@ -68,4 +70,54 @@ export async function registerShortenerLinkHandler(
   }
 }
 
-export async function editShortenerLinkHandler() {}
+export async function editShortenerLinkHandler(
+  request: FastifyRequest<{
+    Body: EditShortenerLink;
+    Params: { id: string };
+  }>,
+  reply: FastifyReply
+) {
+  try {
+    const { body, params } = request;
+
+    const links = await getLinkByHashOrAlias({
+      input: { hash: body.hash, alias: body?.alias },
+      context: { prisma },
+    });
+
+    const hasOtherLinkWithSameAlias = links.some(
+      (link) => link.id !== params.id && link.alias === body.alias
+    );
+
+    if (hasOtherLinkWithSameAlias) {
+      throw new Error(SHORTENER_ERRORS_RESPONSE.ALIAS_HAS_EXISTS);
+    }
+
+    const linkShorted = links.find((link) => link.id === params.id);
+
+    if (!linkShorted) {
+      throw new Error(APPLICATION_ERRORS.INTERNAL_ERROR);
+    }
+
+    const linkUpdated = await updateLink({
+      context: { prisma },
+      data: { id: params.id, ...body },
+    });
+
+    const linkUpdatedToCache: SaveLinkInput = {
+      ...linkShorted,
+      active: body?.active ?? linkShorted.active,
+      redirectTo: body?.url ?? linkShorted.redirectTo,
+      alias: String(body?.alias ?? linkShorted.alias),
+      validAt: String(body?.validAt ?? linkShorted.validAt),
+      metadata: JSON.parse(linkShorted.metadata as string),
+    };
+
+    await saveOrUpdateLinkCache(linkUpdatedToCache);
+
+    return reply.code(201).send(linkUpdated);
+  } catch (e) {
+    const error = new ErrorHandler(e);
+    return reply.send(400).send(error);
+  }
+}

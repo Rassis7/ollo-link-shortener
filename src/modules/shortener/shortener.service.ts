@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import {
+  EditLinkInput,
   GetByLinkHashFromCacheResponse,
   GetRedirectLinkValuesInput,
   SHORTENER_ERRORS_RESPONSE,
@@ -7,6 +8,7 @@ import {
 } from "./shortener.schema";
 import { Context } from "@/configurations/context";
 import { redis } from "@/infra";
+import { expireCacheInSeconds } from "@/helpers";
 
 export function generateUrlHash(url: string): string {
   const data = url + Math.random().toString(36).slice(2, 5);
@@ -61,7 +63,7 @@ export async function getLinkByHashFromCache(
   return linkResponse;
 }
 
-export async function shortenerLinkCache({
+export async function saveOrUpdateLinkCache({
   hash,
   alias,
   ...rest
@@ -74,6 +76,11 @@ export async function shortenerLinkCache({
 
   const key = alias ?? hash;
   await redis.set(key, JSON.stringify({ ...rest }));
+
+  if (rest.validAt) {
+    const validAt = expireCacheInSeconds(rest?.validAt);
+    await redis.expire(key, Math.round(validAt));
+  }
 }
 
 export async function shortenerLink({
@@ -84,4 +91,19 @@ export async function shortenerLink({
   context: Context;
 }) {
   return await context.prisma.link.create({ data });
+}
+
+export async function updateLink({
+  context,
+  data,
+}: {
+  data: EditLinkInput;
+  context: Context;
+}) {
+  const { id, ...params } = data;
+
+  return await context.prisma.link.update({
+    where: { id },
+    data: params,
+  });
 }

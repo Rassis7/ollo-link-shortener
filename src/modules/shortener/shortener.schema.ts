@@ -3,7 +3,7 @@ import { isPast } from "date-fns";
 
 export enum SHORTENER_ERRORS_RESPONSE {
   URL_NOT_EXISTS = "A URL não foi informada",
-  URL_HAS_EXISTS = "A url informada já existe",
+  URL_HAS_EXISTS = "A URL informada já existe",
   ALIAS_HAS_EXISTS = "Já existe um link com esse nome personalizado",
 }
 
@@ -80,13 +80,30 @@ export const editShortenerLinkSchema = z.object({
   ...shortenerBase,
   url: shortenerBase.url.optional(),
   active: z.boolean().optional(),
+  hash: z
+    .string({
+      invalid_type_error: "Deve ser uma string",
+      required_error: "Campo obrigatório",
+    })
+    .min(8, "O hash deve conter 8 caracteres"),
 });
 
-export const editShortenerLinkResponseSchema = shortenerBase;
+export const editShortenerLinkResponseSchema = z.object({
+  ...shortenerBase,
+  url: shortenerBase.url.optional(),
+});
 
 export const createShortenerLinkResponseSchema = z.object({
   shortLink: z.string().url(),
+  active: z.boolean().optional(),
 });
+
+const editLinkSchema = z.intersection(
+  editShortenerLinkSchema,
+  z.object({
+    id: z.string().uuid(),
+  })
+);
 
 const saveLinkSchema = z.object({
   redirectTo: z.string().url(),
@@ -118,12 +135,14 @@ const getRedirectLinkValuesSchema = z.object({
 });
 
 export type CreateShortenerLink = z.infer<typeof createShortenerLinkSchema>;
+export type EditShortenerLink = z.infer<typeof editShortenerLinkSchema>;
 
 export type GetByLinkHashFromCacheResponse = z.infer<
   typeof getByLinkHashFromCacheSchema
 >;
 
 export type SaveLinkInput = z.infer<typeof saveLinkSchema>;
+export type EditLinkInput = z.infer<typeof editLinkSchema>;
 
 export type GetRedirectLinkValuesInput = z.infer<
   typeof getRedirectLinkValuesSchema
