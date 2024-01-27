@@ -124,6 +124,21 @@ const getRedirectLinkValuesSchema = z.object({
   alias: z.string().optional(),
 });
 
+export const updateShortenerLinkResponseSchema = z.object({
+  redirectTo: z.string().url(),
+  active: z.boolean(),
+  hash: z.string(),
+  validAt: z.date(),
+  alias: z.string().optional(),
+  metadata: z
+    .object({
+      title: z.string().optional(),
+      description: z.string().optional(),
+      photo: z.string().optional(),
+    })
+    .optional(),
+});
+
 export type CreateShortenerLink = z.infer<typeof createShortenerLinkSchema>;
 export type EditShortenerLink = z.infer<typeof editShortenerLinkSchema>;
 
@@ -136,4 +151,8 @@ export type EditLinkInput = z.infer<typeof editLinkSchema>;
 
 export type GetRedirectLinkValuesInput = z.infer<
   typeof getRedirectLinkValuesSchema
+>;
+
+export type UpdateShortenerLinkResponse = z.infer<
+  typeof updateShortenerLinkResponseSchema
 >;

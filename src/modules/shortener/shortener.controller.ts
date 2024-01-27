@@ -4,6 +4,7 @@ import {
   type CreateShortenerLink,
   SaveLinkInput,
   EditShortenerLink,
+  UpdateShortenerLinkResponse,
 } from "./shortener.schema";
 import { APPLICATION_ERRORS, ErrorHandler } from "@/helpers";
 import {
@@ -116,9 +117,14 @@ export async function editShortenerLinkHandler(
 
     await saveOrUpdateLinkCache(linkUpdatedToCache);
 
-    return reply
-      .code(200)
-      .send({ redirectTo, active, validAt, metadata, alias, hash });
+    return reply.code(200).send({
+      redirectTo,
+      active,
+      validAt,
+      metadata,
+      alias,
+      hash,
+    } as UpdateShortenerLinkResponse);
   } catch (e) {
     const error = new ErrorHandler(e);
     return reply.code(400).send(error);
