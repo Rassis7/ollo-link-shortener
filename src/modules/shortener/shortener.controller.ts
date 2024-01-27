@@ -99,25 +99,28 @@ export async function editShortenerLinkHandler(
       throw new Error(APPLICATION_ERRORS.INTERNAL_ERROR);
     }
 
-    const linkUpdated = await updateLink({
-      context: { prisma },
-      data: { id: params.id, ...body },
-    });
+    const { redirectTo, active, validAt, metadata, alias, hash } =
+      await updateLink({
+        context: { prisma },
+        data: { id: params.id, ...body },
+      });
 
     const linkUpdatedToCache: SaveLinkInput = {
       ...linkShorted,
       active: body?.active ?? linkShorted.active,
-      redirectTo: body?.url ?? linkShorted.redirectTo,
+      redirectTo: body?.redirectTo ?? linkShorted.redirectTo,
       alias: String(body?.alias ?? linkShorted.alias),
       validAt: String(body?.validAt ?? linkShorted.validAt),
-      metadata: JSON.parse(linkShorted.metadata as string),
+      metadata: linkShorted.metadata as unknown as SaveLinkInput["metadata"],
     };
 
     await saveOrUpdateLinkCache(linkUpdatedToCache);
 
-    return reply.code(201).send(linkUpdated);
+    return reply
+      .code(200)
+      .send({ redirectTo, active, validAt, metadata, alias, hash });
   } catch (e) {
     const error = new ErrorHandler(e);
-    return reply.send(400).send(error);
+    return reply.code(400).send(error);
   }
 }

@@ -145,7 +145,12 @@ describe("modules/shortener.unit", () => {
 
     await saveOrUpdateLinkCache(mockSaveLinkInput);
 
-    const { alias, hash, ...redisSettableParams } = mockSaveLinkInput;
+    const {
+      alias,
+      hash: _hash,
+      userId: _userId,
+      ...redisSettableParams
+    } = mockSaveLinkInput;
 
     expect(redis.set).toHaveBeenCalledTimes(1);
     expect(redis.set).toHaveBeenCalledWith(
@@ -162,15 +167,14 @@ describe("modules/shortener.unit", () => {
     jest.spyOn(redis, "get").mockResolvedValue(null);
     jest.spyOn(redis, "set");
 
-    const { alias, hash, ...redisSettableParams } = mockSaveLinkInput;
+    const { alias: _alias, hash, ...redisSettableParams } = mockSaveLinkInput;
 
     await saveOrUpdateLinkCache({ hash, ...redisSettableParams });
 
     expect(redis.set).toHaveBeenCalledTimes(1);
-    expect(redis.set).toHaveBeenCalledWith(
-      hash,
-      JSON.stringify(redisSettableParams)
-    );
+
+    const { userId: _userId, ...redisResponse } = redisSettableParams;
+    expect(redis.set).toHaveBeenCalledWith(hash, JSON.stringify(redisResponse));
   });
 
   it("Should be able to create link", async () => {

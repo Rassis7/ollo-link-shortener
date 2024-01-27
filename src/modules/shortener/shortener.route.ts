@@ -7,7 +7,6 @@ import {
 import {
   createShortenerLinkResponseSchema,
   createShortenerLinkSchema,
-  editShortenerLinkResponseSchema,
   editShortenerLinkSchema,
 } from "./shortener.schema";
 
@@ -31,9 +30,6 @@ export async function shortenerRoutes(fastify: FastifyInstance) {
     preHandler: [fastify.authenticate],
     schema: {
       body: editShortenerLinkSchema,
-      response: {
-        201: editShortenerLinkResponseSchema,
-      },
     },
     handler: editShortenerLinkHandler,
   });

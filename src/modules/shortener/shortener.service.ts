@@ -66,6 +66,7 @@ export async function getLinkByHashFromCache(
 export async function saveOrUpdateLinkCache({
   hash,
   alias,
+  userId: _userId,
   ...rest
 }: SaveLinkInput) {
   const hasExistsLink = await getLinkByHashFromCache(hash);
@@ -79,7 +80,7 @@ export async function saveOrUpdateLinkCache({
 
   if (rest.validAt) {
     const validAt = expireCacheInSeconds(rest?.validAt);
-    await redis.expire(key, Math.round(validAt));
+    await redis.expire(key, validAt);
   }
 }
 

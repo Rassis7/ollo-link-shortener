@@ -19,13 +19,7 @@ const shortenerBase = {
       /^(?!.*https?:\/\/ollo\.li(?:\/?|\/oka)?[^A-Za-z0-9]).*$/,
       "URL inválida"
     )
-    .transform((url) =>
-      url.match(
-        /(http(s?):\/\/.)[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/gm
-      )
-        ? url
-        : `https://${url}`
-    ),
+    .transform((url) => (url.startsWith("http") ? url : `https://${url}`)),
   alias: z
     .string({
       invalid_type_error: "O apelido deve ser uma string",
@@ -76,9 +70,10 @@ const shortenerBase = {
 
 export const createShortenerLinkSchema = z.object(shortenerBase);
 
+const { url, ...restShortenerBase } = shortenerBase;
 export const editShortenerLinkSchema = z.object({
-  ...shortenerBase,
-  url: shortenerBase.url.optional(),
+  ...restShortenerBase,
+  redirectTo: url.optional(),
   active: z.boolean().optional(),
   hash: z
     .string({
@@ -86,11 +81,6 @@ export const editShortenerLinkSchema = z.object({
       required_error: "Campo obrigatório",
     })
     .min(8, "O hash deve conter 8 caracteres"),
-});
-
-export const editShortenerLinkResponseSchema = z.object({
-  ...shortenerBase,
-  url: shortenerBase.url.optional(),
 });
 
 export const createShortenerLinkResponseSchema = z.object({
