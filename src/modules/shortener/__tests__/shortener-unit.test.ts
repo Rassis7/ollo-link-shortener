@@ -5,7 +5,7 @@ import {
   getLinkByHashOrAlias,
   getRedirectLinkValues,
   shortenerLink,
-  shortenerLinkCache,
+  saveOrUpdateLinkCache,
 } from "../shortener.service";
 import { createHash } from "node:crypto";
 import { mockContext, context, redis } from "@/tests";
@@ -25,6 +25,7 @@ import {
   mockSaveLinkInput,
   mockSaveLinkResponse,
 } from "../__mocks__/save-link";
+import { expireCacheInSeconds } from "@/helpers";
 
 describe("modules/shortener.unit", () => {
   it("Should be able to generate hash", async () => {
@@ -132,16 +133,17 @@ describe("modules/shortener.unit", () => {
       .spyOn(redis, "get")
       .mockResolvedValue(JSON.stringify(mockGetLinkByHashFromCacheResponse));
 
-    expect(async () => shortenerLinkCache(mockSaveLinkInput)).rejects.toThrow(
-      /a url informada já existe/i
-    );
+    expect(async () =>
+      saveOrUpdateLinkCache(mockSaveLinkInput)
+    ).rejects.toThrow(/a url informada já existe/i);
   });
 
   it("Should be able to create link in cache and save key as alias", async () => {
     jest.spyOn(redis, "get").mockResolvedValue(null);
     jest.spyOn(redis, "set");
+    jest.spyOn(redis, "expire");
 
-    await shortenerLinkCache(mockSaveLinkInput);
+    await saveOrUpdateLinkCache(mockSaveLinkInput);
 
     const { alias, hash, ...redisSettableParams } = mockSaveLinkInput;
 
@@ -150,6 +152,10 @@ describe("modules/shortener.unit", () => {
       alias,
       JSON.stringify(redisSettableParams)
     );
+    expect(redis.expire).toHaveBeenCalledTimes(1);
+
+    const validAt = expireCacheInSeconds(mockSaveLinkInput.validAt!);
+    expect(redis.expire).toHaveBeenCalledWith(alias, validAt);
   });
 
   it("Should be able to create link in cache and save key as hash", async () => {
@@ -158,7 +164,7 @@ describe("modules/shortener.unit", () => {
 
     const { alias, hash, ...redisSettableParams } = mockSaveLinkInput;
 
-    await shortenerLinkCache({ hash, ...redisSettableParams });
+    await saveOrUpdateLinkCache({ hash, ...redisSettableParams });
 
     expect(redis.set).toHaveBeenCalledTimes(1);
     expect(redis.set).toHaveBeenCalledWith(

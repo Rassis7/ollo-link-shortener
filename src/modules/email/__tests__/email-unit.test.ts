@@ -49,8 +49,8 @@ describe("modules/email.unit", () => {
     // expire
     expect(redisExpireSet).toHaveBeenCalledTimes(1);
 
-    const validAt = addHours(NOW, 48).getTime() / 1000;
-    expect(redisExpireSet).toHaveBeenCalledWith(key, Math.round(validAt));
+    const validAt = 48 * 3600; // 48 hours in seconds
+    expect(redisExpireSet).toHaveBeenCalledWith(key, validAt);
 
     expect(mailSendSpy).toHaveBeenCalledTimes(1);
 

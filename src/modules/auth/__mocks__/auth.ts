@@ -6,7 +6,7 @@ export const mockAuthInput = {
 };
 
 export const mockAuthFindUserByEmailResponse = {
-  id: faker.number.int({ min: 1, max: 100 }),
+  id: faker.string.uuid(),
   createdAt: new Date(),
   name: faker.person.fullName(),
   ...mockAuthInput,

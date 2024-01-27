@@ -8,6 +8,8 @@ import * as shortenerService from "../shortener.service";
 import { mockGetLinkByAliasOrHashResponse } from "../__mocks__/get-by-alias-or-hash";
 import { faker } from "@faker-js/faker";
 import { mockGetLinkByHashFromCacheResponse } from "../__mocks__/get-by-hash";
+import { SHORTENER_ERRORS_RESPONSE } from "../shortener.schema";
+import { APPLICATION_ERRORS } from "@/helpers";
 
 const BASE_URL = "/api/shortener";
 
@@ -75,7 +77,7 @@ describe("modules/shortener.integration", () => {
       });
 
       expect(response.json()).toEqual({
-        error: "Ocorreu um erro, por favor tente novamente",
+        error: APPLICATION_ERRORS.INTERNAL_ERROR,
       });
       expect(response.statusCode).toEqual(400);
     });
@@ -97,7 +99,7 @@ describe("modules/shortener.integration", () => {
       });
 
       expect(response.json()).toEqual({
-        error: "Já existe um link com esse nome personalizado",
+        error: SHORTENER_ERRORS_RESPONSE.ALIAS_HAS_EXISTS,
       });
       expect(response.statusCode).toEqual(400);
     });
@@ -118,7 +120,7 @@ describe("modules/shortener.integration", () => {
       });
 
       expect(response.json()).toEqual({
-        error: "A url informada já existe",
+        error: SHORTENER_ERRORS_RESPONSE.URL_HAS_EXISTS,
       });
       expect(response.statusCode).toEqual(400);
     });
@@ -127,7 +129,7 @@ describe("modules/shortener.integration", () => {
       jest
         .spyOn(shortenerService, "getLinkByHashOrAlias")
         .mockResolvedValue([]);
-      jest.spyOn(shortenerService, "shortenerLinkCache").mockResolvedValue();
+      jest.spyOn(shortenerService, "saveOrUpdateLinkCache").mockResolvedValue();
       jest
         .spyOn(shortenerService, "shortenerLink")
         .mockResolvedValue(mockSaveLinkResponse);
@@ -152,7 +154,7 @@ describe("modules/shortener.integration", () => {
       jest
         .spyOn(shortenerService, "getLinkByHashOrAlias")
         .mockResolvedValue([]);
-      jest.spyOn(shortenerService, "shortenerLinkCache").mockResolvedValue();
+      jest.spyOn(shortenerService, "saveOrUpdateLinkCache").mockResolvedValue();
       jest
         .spyOn(shortenerService, "shortenerLink")
         .mockResolvedValue(mockSaveLinkResponse);
