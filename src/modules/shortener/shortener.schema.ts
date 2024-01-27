@@ -5,6 +5,7 @@ export enum SHORTENER_ERRORS_RESPONSE {
   URL_NOT_EXISTS = "A URL não foi informada",
   URL_HAS_EXISTS = "A URL informada já existe",
   ALIAS_HAS_EXISTS = "Já existe um link com esse nome personalizado",
+  LINK_SHORTENER_NOT_EXISTS = "O link informado não existe",
 }
 
 const shortenerBase = {

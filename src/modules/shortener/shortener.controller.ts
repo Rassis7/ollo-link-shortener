@@ -97,7 +97,7 @@ export async function editShortenerLinkHandler(
     const linkShorted = links.find((link) => link.id === params.id);
 
     if (!linkShorted) {
-      throw new Error(APPLICATION_ERRORS.INTERNAL_ERROR);
+      throw new Error(SHORTENER_ERRORS_RESPONSE.LINK_SHORTENER_NOT_EXISTS);
     }
 
     const { redirectTo, active, validAt, metadata, alias, hash } =

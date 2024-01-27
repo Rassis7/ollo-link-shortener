@@ -13,7 +13,7 @@ export const mockEditLinkResponse: Link = {
   createdAt: faker.date.past(),
   metadata: {
     title: faker.lorem.words(2),
-    description: faker.lorem.sentences(),
+    description: faker.lorem.words(5),
     photo: faker.image.url(),
   },
 };
@@ -27,7 +27,7 @@ export const mockEditLinkInput: EditLinkInput = {
   validAt: faker.date.future().toISOString(),
   metadata: {
     title: faker.lorem.words(2),
-    description: faker.lorem.sentences(),
+    description: faker.lorem.words(5),
     photo: faker.image.url(),
   },
 };

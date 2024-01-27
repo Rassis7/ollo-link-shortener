@@ -10,8 +10,20 @@ import { faker } from "@faker-js/faker";
 import { mockGetLinkByHashFromCacheResponse } from "../__mocks__/get-by-hash";
 import { SHORTENER_ERRORS_RESPONSE } from "../shortener.schema";
 import { APPLICATION_ERRORS } from "@/helpers";
+import {
+  mockEditLinkInput,
+  mockEditLinkResponse,
+} from "../__mocks__/edit-link";
 
 const BASE_URL = "/api/shortener";
+
+function sendWithoutRequiredFields(
+  originalObject: Record<string, unknown>,
+  attributeName: string
+) {
+  const { [attributeName]: _omit, ...rest } = originalObject;
+  return rest;
+}
 
 describe("modules/shortener.integration", () => {
   describe("Save", () => {
@@ -159,7 +171,7 @@ describe("modules/shortener.integration", () => {
         .spyOn(shortenerService, "shortenerLink")
         .mockResolvedValue(mockSaveLinkResponse);
 
-      const { alias, ...mockLinkToShortenerInputWithoutAlias } =
+      const { alias: _alias, ...mockLinkToShortenerInputWithoutAlias } =
         mockLinkToShortenerInput;
 
       const response = await app.inject({
@@ -173,6 +185,94 @@ describe("modules/shortener.integration", () => {
         shortLink: `https://ollo.li/${hash}`,
       });
       expect(response.statusCode).toBe(201);
+    });
+  });
+
+  describe("Update", () => {
+    it("Should be able to return a error if not be unauthorized", async () => {
+      const response = await app.inject({
+        method: "PUT",
+        url: `${BASE_URL}/not_found`,
+        body: mockEditLinkInput,
+      });
+
+      expect(response.json()).toEqual({
+        error: "Não autorizado",
+      });
+      expect(response.statusCode).toEqual(401);
+    });
+
+    it("Should be able to return a error if link not exists", async () => {
+      jest
+        .spyOn(shortenerService, "getLinkByHashOrAlias")
+        .mockResolvedValue([]);
+
+      const response = await app.inject({
+        method: "PUT",
+        url: `${BASE_URL}/not_found`,
+        headers: { authorization: `Bearer ${MOCK_JWT_TOKEN}` },
+        body: mockEditLinkInput,
+      });
+
+      expect(response.statusCode).toEqual(400);
+      expect(response.json()).toEqual({
+        error: SHORTENER_ERRORS_RESPONSE.LINK_SHORTENER_NOT_EXISTS,
+      });
+    });
+
+    it("Should be able to return a error if alias already exists", async () => {
+      const alias = faker.lorem.word();
+      const [firstResponseLinkByAliasOrHash] = mockGetLinkByAliasOrHashResponse;
+
+      jest.spyOn(shortenerService, "getLinkByHashOrAlias").mockResolvedValue([
+        {
+          ...firstResponseLinkByAliasOrHash,
+          id: faker.string.uuid(),
+          alias,
+        },
+      ]);
+
+      const response = await app.inject({
+        method: "PUT",
+        url: `${BASE_URL}/${firstResponseLinkByAliasOrHash.id}`,
+        headers: { authorization: `Bearer ${MOCK_JWT_TOKEN}` },
+        body: { ...mockEditLinkInput, alias },
+      });
+
+      expect(response.statusCode).toEqual(400);
+      expect(response.json()).toEqual({
+        error: SHORTENER_ERRORS_RESPONSE.ALIAS_HAS_EXISTS,
+      });
+    });
+
+    it("Should be able to update a link", async () => {
+      const [firstResponseLinkByAliasOrHash] = mockGetLinkByAliasOrHashResponse;
+
+      jest
+        .spyOn(shortenerService, "updateLink")
+        .mockResolvedValue(mockEditLinkResponse);
+      jest
+        .spyOn(shortenerService, "getLinkByHashOrAlias")
+        .mockResolvedValue([firstResponseLinkByAliasOrHash]);
+      jest.spyOn(redis, "set");
+      jest.spyOn(redis, "expire");
+
+      const response = await app.inject({
+        method: "PUT",
+        url: `${BASE_URL}/${firstResponseLinkByAliasOrHash.id}`,
+        headers: { authorization: `Bearer ${MOCK_JWT_TOKEN}` },
+        body: { ...mockEditLinkInput },
+      });
+
+      expect(response.statusCode).toEqual(200);
+      expect(response.json()).toEqual({
+        redirectTo: mockEditLinkResponse.redirectTo,
+        active: mockEditLinkResponse.active,
+        validAt: mockEditLinkResponse.validAt?.toISOString(),
+        metadata: mockEditLinkResponse.metadata,
+        alias: mockEditLinkResponse.alias,
+        hash: mockEditLinkResponse.hash,
+      });
     });
   });
 });
