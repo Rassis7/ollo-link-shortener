@@ -17,21 +17,16 @@ import {
 
 const BASE_URL = "/api/shortener";
 
-function sendWithoutRequiredFields(
-  originalObject: Record<string, unknown>,
-  attributeName: string
-) {
-  const { [attributeName]: _omit, ...rest } = originalObject;
-  return rest;
-}
-
 describe("modules/shortener.integration", () => {
   describe("Save", () => {
     it("Should be able to return a error if not send url field", async () => {
       const dateInPast = faker.date.past();
 
-      const { url, validAt, ...mockLinkToShortenerInputWithError } =
-        mockLinkToShortenerInput;
+      const {
+        url: _url,
+        validAt: _validAt,
+        ...mockLinkToShortenerInputWithError
+      } = mockLinkToShortenerInput;
       const response = await app.inject({
         method: "POST",
         url: BASE_URL,
