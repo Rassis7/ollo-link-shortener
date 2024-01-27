@@ -6,6 +6,7 @@ import {
   getRedirectLinkValues,
   shortenerLink,
   saveOrUpdateLinkCache,
+  updateLink,
 } from "../shortener.service";
 import { createHash } from "node:crypto";
 import { mockContext, context, redis } from "@/tests";
@@ -26,6 +27,10 @@ import {
   mockSaveLinkResponse,
 } from "../__mocks__/save-link";
 import { expireCacheInSeconds } from "@/helpers";
+import {
+  mockEditLinkResponse,
+  mockEditLinkInput,
+} from "../__mocks__/edit-link";
 
 describe("modules/shortener.unit", () => {
   it("Should be able to generate hash", async () => {
@@ -191,5 +196,24 @@ describe("modules/shortener.unit", () => {
     });
 
     expect(newLink).toEqual(mockSaveLinkResponse);
+  });
+
+  it("Should be able to edit an existing link", async () => {
+    mockContext.prisma.link.update.mockResolvedValue(mockEditLinkResponse);
+
+    const response = await updateLink({
+      data: mockEditLinkInput,
+      context,
+    });
+
+    expect(mockContext.prisma.link.update).toHaveBeenCalledTimes(1);
+
+    const { id, ...restMockEditLinkInput } = mockEditLinkInput;
+    expect(mockContext.prisma.link.update).toHaveBeenCalledWith({
+      data: restMockEditLinkInput,
+      where: { id },
+    });
+
+    expect(response).toEqual(mockEditLinkResponse);
   });
 });
