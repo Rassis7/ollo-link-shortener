@@ -18,7 +18,7 @@
     "prisma:studio": "npx prisma studio",
     "new:module": "chmod +x ./scripts/create_module.sh && ./scripts/create_module.sh",
     "commit": "git cz",
-    "lint": "eslint --fix --ext .ts,.ts ./src"
+    "lint": "npx eslint --fix --ext .ts,.ts ./src"
   },
   "config": {
     "commitizen": {
