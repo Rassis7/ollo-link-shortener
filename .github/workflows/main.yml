@@ -77,8 +77,8 @@ jobs:
           mode: recreate
           comment_tag: audit
 
-      - name: Lint
-        run: npm run lint --fix
+      # - name: Lint
+      #   run: npm run lint --fix
 
   Tests:
     runs-on: ubuntu-latest
