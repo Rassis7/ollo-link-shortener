@@ -103,7 +103,6 @@ jobs:
 
       - name: Run test
         run: |
-          which jest    
           NODE_ENV=test npx jest --ci --collect-coverage --coverage
 
   Coverage:
