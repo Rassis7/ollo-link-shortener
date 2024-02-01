@@ -34,6 +34,7 @@ jobs:
             ${{ runner.OS }}-npm-cache-
 
       - name: Install dependencies
+        if: steps.cache-primes.outputs.cache-hit != 'true'
         run: |
           npm install
 
@@ -102,7 +103,8 @@ jobs:
 
       - name: Run test
         run: |
-          npm run test:ci
+          which jest    
+          NODE_ENV=test npx jest --ci --collect-coverage --coverage
 
   Coverage:
     runs-on: ubuntu-latest
