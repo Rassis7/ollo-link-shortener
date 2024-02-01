@@ -10,6 +10,7 @@
   "license": "ISC",
   "scripts": {
     "test": "NODE_ENV=test jest --coverage",
+    "test:ci": "NODE_ENV=test jest --ci --collect-coverage --coverage",
     "test:watch": "NODE_ENV=test jest --watchAll",
     "nvm": "nvm use",
     "docker": "docker-compose up & npm install",
