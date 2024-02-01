@@ -1,7 +1,14 @@
 name: Main Workflow
 
 on:
-  workflow_call:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
 
 jobs:
   InstallDeps:
