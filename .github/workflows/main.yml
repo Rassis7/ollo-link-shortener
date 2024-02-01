@@ -34,7 +34,6 @@ jobs:
             ${{ runner.OS }}-npm-cache-
 
       - name: Install dependencies
-        if: steps.cache-primes.outputs.cache-hit != 'true'
         run: |
           npm install
 
@@ -103,9 +102,6 @@ jobs:
 
       - name: Run test
         run: |
-          node --version
-          npm --version
-          witch jest
           npm run test:ci
 
   Coverage:
