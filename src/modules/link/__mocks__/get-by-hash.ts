@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { GetByLinkHashFromCacheResponse } from "../shortener.schema";
+import { GetByLinkHashFromCacheResponse } from "../link.schema";
 
 export const mockHashInput = faker.string.alphanumeric(8);
 

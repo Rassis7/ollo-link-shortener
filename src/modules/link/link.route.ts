@@ -1,7 +1,11 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
-import { getAllLinksResponseSchema } from "./link.schema";
-import { getAllLinksHandler } from "./link.controller";
+import {
+  editLinkSchema,
+  getAllLinksResponseSchema,
+  updateLinkResponseSchema,
+} from "./link.schema";
+import { editLinkHandler, getAllLinksHandler } from "./link.controller";
 
 export async function linkRoutes(fastify: FastifyInstance) {
   fastify.withTypeProvider<ZodTypeProvider>().route({
@@ -14,5 +18,18 @@ export async function linkRoutes(fastify: FastifyInstance) {
       },
     },
     handler: getAllLinksHandler,
+  });
+
+  fastify.withTypeProvider<ZodTypeProvider>().route({
+    method: "PUT",
+    url: "/:id",
+    preHandler: [fastify.authenticate],
+    schema: {
+      body: editLinkSchema,
+      response: {
+        200: updateLinkResponseSchema,
+      },
+    },
+    handler: editLinkHandler,
   });
 }

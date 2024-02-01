@@ -8,7 +8,7 @@ export enum SHORTENER_ERRORS_RESPONSE {
   LINK_SHORTENER_NOT_EXISTS = "O link informado não existe",
 }
 
-const shortenerBase = {
+export const shortLinkBase = {
   url: z
     .string({
       required_error: "A url é obrigatória",
@@ -69,32 +69,12 @@ const shortenerBase = {
     .optional(),
 };
 
-export const createShortenerLinkSchema = z.object(shortenerBase);
-
-const { url, ...restShortenerBase } = shortenerBase;
-export const editShortenerLinkSchema = z.object({
-  ...restShortenerBase,
-  redirectTo: url.optional(),
-  active: z.boolean().optional(),
-  hash: z
-    .string({
-      invalid_type_error: "Deve ser uma string",
-      required_error: "Campo obrigatório",
-    })
-    .min(8, "O hash deve conter 8 caracteres"),
-});
+export const createShortenerLinkSchema = z.object(shortLinkBase);
 
 export const createShortenerLinkResponseSchema = z.object({
   shortLink: z.string().url(),
   active: z.boolean().optional(),
 });
-
-const editLinkSchema = z.intersection(
-  editShortenerLinkSchema,
-  z.object({
-    id: z.string().uuid(),
-  })
-);
 
 const saveLinkSchema = z.object({
   redirectTo: z.string().url(),
@@ -110,13 +90,6 @@ const saveLinkSchema = z.object({
       photo: z.string().optional(),
     })
     .optional(),
-});
-
-const getByLinkHashFromCacheSchema = z.object({
-  counter: z.number(),
-  redirectTo: z.string().url(),
-  validAt: z.string().transform((validAt) => new Date(validAt).toISOString()),
-  active: z.boolean(),
 });
 
 const getRedirectLinkValuesSchema = z.object({
@@ -141,19 +114,9 @@ export const updateShortenerLinkResponseSchema = z.object({
 });
 
 export type CreateShortenerLink = z.infer<typeof createShortenerLinkSchema>;
-export type EditShortenerLink = z.infer<typeof editShortenerLinkSchema>;
-
-export type GetByLinkHashFromCacheResponse = z.infer<
-  typeof getByLinkHashFromCacheSchema
->;
 
 export type SaveLinkInput = z.infer<typeof saveLinkSchema>;
-export type EditLinkInput = z.infer<typeof editLinkSchema>;
 
 export type GetRedirectLinkValuesInput = z.infer<
   typeof getRedirectLinkValuesSchema
->;
-
-export type UpdateShortenerLinkResponse = z.infer<
-  typeof updateShortenerLinkResponseSchema
 >;

@@ -1,14 +1,9 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
-import {
-  registerShortenerLinkHandler,
-  editShortenerLinkHandler,
-} from "./shortener.controller";
+import { registerShortenerLinkHandler } from "./shortener.controller";
 import {
   createShortenerLinkResponseSchema,
   createShortenerLinkSchema,
-  editShortenerLinkSchema,
-  updateShortenerLinkResponseSchema,
 } from "./shortener.schema";
 
 export async function shortenerRoutes(fastify: FastifyInstance) {
@@ -23,18 +18,5 @@ export async function shortenerRoutes(fastify: FastifyInstance) {
       },
     },
     handler: registerShortenerLinkHandler,
-  });
-
-  fastify.withTypeProvider<ZodTypeProvider>().route({
-    method: "PUT",
-    url: "/:id",
-    preHandler: [fastify.authenticate],
-    schema: {
-      body: editShortenerLinkSchema,
-      response: {
-        200: updateShortenerLinkResponseSchema,
-      },
-    },
-    handler: editShortenerLinkHandler,
   });
 }
