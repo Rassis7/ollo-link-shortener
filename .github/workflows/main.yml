@@ -1,5 +1,8 @@
 name: Main Workflow
 
+env:
+  NODE_VERSION: "20"
+
 on:
   pull_request:
     branches:
@@ -17,7 +20,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: $NODE_VERSION
           cache: "npm"
 
       - name: Cache NPM dependencies
@@ -39,7 +42,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: $NODE_VERSION
           cache: "npm"
 
       - name: Cache NPM dependencies
@@ -83,7 +86,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: $NODE_VERSION
           cache: "npm"
 
       - name: Cache NPM dependencies
