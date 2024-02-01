@@ -11,7 +11,7 @@ on:
       - "v*"
 
 env:
-  NODE_VERSION: "20"
+  NODE_VERSION: "20.9.0"
 
 jobs:
   InstallDeps:
@@ -103,6 +103,9 @@ jobs:
 
       - name: Run test
         run: |
+          node --version
+          npm --version
+          witch jest
           npm run test:ci
 
   Coverage:
