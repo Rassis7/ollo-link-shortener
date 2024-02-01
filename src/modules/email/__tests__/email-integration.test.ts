@@ -1,7 +1,7 @@
 import { app } from "@/configurations/app";
-import * as emailService from "./email.service";
-import { mockEmailInput } from "./__mocks__/verify-code";
-import { VERIFY_EMAIL_RESPONSE } from "./email.schema";
+import * as emailService from "../email.service";
+import { mockEmailInput } from "../__mocks__/verify-code";
+import { VERIFY_EMAIL_RESPONSE } from "../email.schema";
 
 const BASE_URL = "api/email";
 
@@ -32,7 +32,7 @@ describe("modules/email.integration", () => {
     });
 
     expect(response.json()).toEqual({
-      message: "Error: O código está expirado ou não existe",
+      error: "O código está expirado ou não existe",
     });
     expect(response.statusCode).toEqual(401);
   });
@@ -61,7 +61,7 @@ describe("modules/email.integration", () => {
     });
 
     expect(response.json()).toEqual({
-      message: "Error: some_error",
+      error: "some_error",
     });
     expect(response.statusCode).toEqual(400);
   });

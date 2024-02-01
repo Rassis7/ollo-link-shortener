@@ -26,7 +26,7 @@ export async function registerUserHandler(
     }
 
     const user = await createUser({ input: body, context: { prisma } });
-    await sendVerifyEmailHandler(user.email);
+    sendVerifyEmailHandler(user.email);
 
     return reply.code(201).send(user);
   } catch (e) {

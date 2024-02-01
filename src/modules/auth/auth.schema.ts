@@ -17,8 +17,17 @@ export const authSchema = z.object({
   password: z.string(),
 });
 
+const jwtAuthValues = z.object({
+  id: z.string().uuid(),
+  email: z.string(),
+  name: z.string(),
+  iat: z.number(),
+  exp: z.number(),
+});
+
 export const authResponseSchema = z.object({
   accessToken: z.string(),
 });
 
 export type AuthInput = z.infer<typeof authSchema>;
+export type JwtAuthProps = z.infer<typeof jwtAuthValues>;
