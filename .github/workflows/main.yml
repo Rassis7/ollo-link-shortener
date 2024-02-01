@@ -72,11 +72,7 @@ jobs:
           comment_tag: audit
 
       - name: Lint
-        uses: sibiraj-s/action-eslint@v3
-        with:
-          eslint-args: "--ignore-path=.gitignore --quiet"
-          extensions: "js,ts"
-          annotations: true
+        run: npm run lint --fix
 
   Tests:
     runs-on: ubuntu-latest
