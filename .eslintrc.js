@@ -4,11 +4,8 @@ module.exports = {
     node: true,
     jest: true,
   },
-  extends: [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended",
-  ],
+  plugins: ["@typescript-eslint"],
+  extends: ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
   overrides: [
     {
       env: {
@@ -26,7 +23,6 @@ module.exports = {
     ecmaVersion: "latest",
     sourceType: "module",
   },
-  plugins: ["@typescript-eslint"],
   rules: {
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": [
