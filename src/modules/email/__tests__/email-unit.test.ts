@@ -7,7 +7,6 @@ import { emailProviderInstance } from "@/configurations/email";
 import { join } from "node:path";
 import { readFileSync } from "node:fs";
 import { emailTemplateParamMock } from "../__mocks__/email-template-param";
-import { addHours } from "date-fns";
 
 const templatePath = join(__dirname, "../templates", "email-verify.html");
 const htmlTemplate = readFileSync(templatePath, "utf8");

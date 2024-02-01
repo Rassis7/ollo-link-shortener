@@ -1,7 +1,7 @@
 import { faker } from "@faker-js/faker";
 import { JsonValue } from "@prisma/client/runtime/library";
 
-export const mockGetAllLinksResponse = Array()
+export const mockGetAllLinksResponse = []
   .fill(3)
   .map(() => ({
     id: faker.string.uuid(),
