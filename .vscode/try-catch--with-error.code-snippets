@@ -14,7 +14,7 @@
 			"$1"
 			"} catch (e) {"
 			"	const error = new ErrorHandler(e);"
-			"	return reply.send(400).send(error);"
+			"	return reply.code(400).send(error);"
 			"}"
 		],
 		"description": "Log output to console"

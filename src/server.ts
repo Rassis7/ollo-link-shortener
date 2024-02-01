@@ -8,6 +8,7 @@ import {
   serializerCompiler,
   validatorCompiler,
 } from "fastify-type-provider-zod";
+import { linkRoutes } from "./modules/link/link.route";
 
 declare module "fastify" {
   export interface FastifyInstance {
@@ -31,6 +32,7 @@ app.register(userRoutes, { prefix: "api/users" });
 app.register(authRoutes, { prefix: "api/auth" });
 app.register(emailRoutes, { prefix: "api/email" });
 app.register(shortenerRoutes, { prefix: "api/shortener" });
+app.register(linkRoutes, { prefix: "api/links" });
 
 async function main() {
   if (process.env.NODE_ENV === "test") {
