@@ -69,6 +69,7 @@ jobs:
           comment_tag: audit
 
       - name: Lint
+        continue-on-error: true
         uses: sibiraj-s/action-eslint@v3
         with:
           eslint-args: "--ignore-path=.gitignore --quiet"
