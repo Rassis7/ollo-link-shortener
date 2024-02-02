@@ -23,6 +23,9 @@ jobs:
           node-version: ${{env.NODE_VERSION}}
           cache: "npm"
 
+      - name: Invalidate Cache
+        run: echo "::set-env name=INVALIDATE_CACHE::$(date)"
+
       - name: Cache NPM dependencies
         uses: actions/cache@v3
         id: cache-primes
@@ -103,7 +106,7 @@ jobs:
 
       - name: Run test
         run: |
-          NODE_ENV=test npx jest --ci --collect-coverage --coverage
+          npm run test:ci
 
   Coverage:
     runs-on: ubuntu-latest
