@@ -1,7 +1,7 @@
 const dotenv = require("dotenv");
 const path = require("node:path");
 
-dotenv.config({ path: path.resolve(__dirname, "./.env") });
+dotenv.config({ path: path.resolve(__dirname, "./.env.test") });
 
 jest.mock("ioredis", () => jest.requireActual("ioredis-mock"));
 
