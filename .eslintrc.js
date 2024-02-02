@@ -4,7 +4,8 @@ module.exports = {
     node: true,
     jest: true,
   },
-  extends: "eslint:recommended",
+  plugins: ["@typescript-eslint"],
+  extends: ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
   overrides: [
     {
       env: {
@@ -22,16 +23,17 @@ module.exports = {
     ecmaVersion: "latest",
     sourceType: "module",
   },
-  plugins: ["@typescript-eslint"],
   rules: {
+    "@typescript-eslint/no-var-requires": "warn",
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": [
-      "warn",
+      "error",
       {
         argsIgnorePattern: "^_",
         varsIgnorePattern: "^_",
         caughtErrorsIgnorePattern: "^_",
       },
     ],
+    "@typescript-eslint/no-explicit-any": "warn",
   },
 };

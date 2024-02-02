@@ -11,7 +11,7 @@ type ErrorInstanceType = {
 };
 
 function mappedZodErrors(zodErrors: ZodError) {
-  let zodErrosMapped = {};
+  const zodErrosMapped = {};
 
   zodErrors.errors.forEach((error) => {
     let mappedErrors = {};

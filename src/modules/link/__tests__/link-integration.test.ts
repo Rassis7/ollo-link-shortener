@@ -37,7 +37,22 @@ describe("modules/Link/link-integration", () => {
         headers: { authorization: `Bearer ${MOCK_JWT_TOKEN}` },
       });
 
-      expect(response.json()).toEqual(mockGetAllLinksResponse);
+      const mockGetAllLinksResponseToResponse = mockGetAllLinksResponse.map(
+        (response) => {
+          const {
+            id: _id,
+            userId: _userId,
+            createdAt: _createdAt,
+            ...restResponse
+          } = response;
+
+          return {
+            ...restResponse,
+            validAt: response.validAt.toISOString(),
+          };
+        }
+      );
+      expect(response.json()).toEqual(mockGetAllLinksResponseToResponse);
       expect(response.statusCode).toBe(200);
     });
 

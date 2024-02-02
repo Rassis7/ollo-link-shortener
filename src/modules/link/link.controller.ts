@@ -8,12 +8,7 @@ import {
   saveOrUpdateLinkCache,
   updateLink,
 } from "./link.service";
-import {
-  EditLink,
-  EditLinkInput,
-  EditLinkResponse,
-  LINK_ERRORS_RESPONSE,
-} from "./link.schema";
+import { EditLink, EditLinkInput, LINK_ERRORS_RESPONSE } from "./link.schema";
 
 export async function getAllLinksHandler(
   request: FastifyRequest,
