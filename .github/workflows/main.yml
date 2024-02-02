@@ -11,7 +11,7 @@ on:
       - "v*"
 
 env:
-  NODE_VERSION: "20.9.0"
+  NODE_VERSION: "20.0.0"
 
 jobs:
   InstallDeps:
@@ -22,9 +22,6 @@ jobs:
         with:
           node-version: ${{env.NODE_VERSION}}
           cache: "npm"
-
-      - name: Invalidate Cache
-        run: echo "::set-env name=INVALIDATE_CACHE::$(date)"
 
       - name: Cache NPM dependencies
         uses: actions/cache@v3
