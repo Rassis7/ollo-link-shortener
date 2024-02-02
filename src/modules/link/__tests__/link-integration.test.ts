@@ -38,10 +38,19 @@ describe("modules/Link/link-integration", () => {
       });
 
       const mockGetAllLinksResponseToResponse = mockGetAllLinksResponse.map(
-        (response) => ({
-          ...response,
-          validAt: response.validAt.toISOString(),
-        })
+        (response) => {
+          const {
+            id: _id,
+            userId: _userId,
+            createdAt: _createdAt,
+            ...restResponse
+          } = response;
+
+          return {
+            ...restResponse,
+            validAt: response.validAt.toISOString(),
+          };
+        }
       );
       expect(response.json()).toEqual(mockGetAllLinksResponseToResponse);
       expect(response.statusCode).toBe(200);

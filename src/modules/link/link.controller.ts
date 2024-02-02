@@ -22,8 +22,6 @@ export async function getAllLinksHandler(
       context: { prisma },
     });
 
-    console.log({ links }, "FILE: link.controller.ts", "LINE NUMBER: 25");
-
     return reply.code(200).send(links ?? []);
   } catch (e) {
     const error = new ErrorHandler(e);
