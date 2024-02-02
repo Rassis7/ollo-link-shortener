@@ -12,15 +12,18 @@
 
 > API que controla todas as features da OLLO.li, **essa API não contempla o MVP**
 
+[![codecov](https://codecov.io/gh/olloapp/ollo-link-api/graph/badge.svg?token=i92IIJ25y9)](https://codecov.io/gh/olloapp/ollo-link-api)
+
 ### Ajustes e melhorias
 
-O projeto ainda está em desenvolvimento e as próximas atualizações serão voltadas nas seguintes tarefas:
+O projeto ainda está em desenvolvimento e as próximas atualizações serão voltadas nas seguintes tópicos:
 
-- [x] Tarefa 1
-- [x] Tarefa 2
-- [x] Tarefa 3
-- [ ] Tarefa 4
-- [ ] Tarefa 5
+- [x] Trazer o encurtador do MVP para cá
+- [x] Configurar o github actions
+- [ ] Fazer o deploy para um ambiente de prod
+- [ ] Envio de email por fila
+- [ ] Configurar swagger
+- [ ] Observabilidade
 
 ## 💻 Pré-requisitos
 
@@ -82,6 +85,14 @@ npm run new:module MODULE_NAME
 ```
 
 > Substitua o `MODULE_NAME` pelo nome do módulo
+
+## 👀 Rodando os testes
+
+Temos um script que faz a criação automática do novo módulo
+
+```
+npm run test:watch [path do arquivo se quiser rodar individualmente]
+```
 
 ## 🤝 Colaboradores
 
