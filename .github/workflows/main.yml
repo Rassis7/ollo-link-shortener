@@ -101,6 +101,9 @@ jobs:
           restore-keys: |
             ${{ runner.OS }}-npm-cache-
 
+      - name: Regenerate Prisma Type Definitions
+        run: npx prisma generate
+
       - name: Run test
         run: |
           npm run test:ci
