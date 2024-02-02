@@ -1,26 +1,23 @@
-# OLLO.li API
-
-![GitHub repo size](https://img.shields.io/github/repo-size/iuricode/README-template?style=for-the-badge)
-![GitHub language count](https://img.shields.io/github/languages/count/iuricode/README-template?style=for-the-badge)
-![GitHub forks](https://img.shields.io/github/forks/iuricode/README-template?style=for-the-badge)
-![Bitbucket open issues](https://img.shields.io/bitbucket/issues/iuricode/README-template?style=for-the-badge)
-![Bitbucket open pull requests](https://img.shields.io/bitbucket/pr-raw/iuricode/README-template?style=for-the-badge)
-
 <div align="center">
-<img src="./resource/images/logo-ollo.png" width="450px;" height="400px">
+<img src="./resource/images/logo-ollo.png" width="200px;" height="150px">
 </div>
+
+# OLLO.li
 
 > API que controla todas as features da OLLO.li, **essa API não contempla o MVP**
 
+[![codecov](https://codecov.io/gh/olloapp/ollo-link-api/graph/badge.svg?token=i92IIJ25y9)](https://codecov.io/gh/olloapp/ollo-link-api)
+
 ### Ajustes e melhorias
 
-O projeto ainda está em desenvolvimento e as próximas atualizações serão voltadas nas seguintes tarefas:
+O projeto ainda está em desenvolvimento e as próximas atualizações serão voltadas nas seguintes tópicos:
 
-- [x] Tarefa 1
-- [x] Tarefa 2
-- [x] Tarefa 3
-- [ ] Tarefa 4
-- [ ] Tarefa 5
+- [x] Trazer o encurtador do MVP para cá
+- [x] Configurar o github actions
+- [ ] Fazer o deploy para um ambiente de prod
+- [ ] Envio de email por fila
+- [ ] Configurar swagger
+- [ ] Observabilidade
 
 ## 💻 Pré-requisitos
 
@@ -82,6 +79,14 @@ npm run new:module MODULE_NAME
 ```
 
 > Substitua o `MODULE_NAME` pelo nome do módulo
+
+## 👀 Rodando os testes
+
+Temos um script que faz a criação automática do novo módulo
+
+```
+npm run test:watch [path do arquivo se quiser rodar individualmente]
+```
 
 ## 🤝 Colaboradores
 
