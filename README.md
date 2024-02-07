@@ -28,11 +28,23 @@ Antes de começar, verifique se você atendeu aos seguintes requisitos:
 - Ter o Docker instalado na máquina
 - Ler esse README
 
-## 🏗️ Arquitetura
+## 🏛️ Estrutural
+
+<details>
+<summary>🏗️ Arquitetura</summary>
 
 <div align="center">
-<img src="./resource/images/architecture.png" width="600px;">
+<img src="./docs/architecture.drawio.png" width="600px;">
 </div>
+</details>
+
+<details>
+<summary>👷 CI/CD</summary>
+
+<div align="center">
+<img src="./docs/deploy.drawio.png" width="600px;">
+</div>
+</details>
 
 ## 🚀 Instalando OLLO.li API
 
