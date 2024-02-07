@@ -12,100 +12,12 @@ on:
 
 jobs:
   InstallDeps:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{env.NODE_VERSION}}
-          cache: "npm"
-
-      - name: Cache NPM dependencies
-        uses: actions/cache@v4
-        id: cache-primes
-        with:
-          path: node_modules
-          key: |
-            ${{ runner.os }}-npm-v3-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.OS }}-npm-cache-
-
-      - name: Install dependencies
-        if: steps.cache-primes.outputs.cache-hit != 'true'
-        run: |
-          npm install
+    uses: olloapp/pipelines/templates/install-deps.yml@main
 
   CodeAnalysis:
-    runs-on: ubuntu-latest
+    uses: olloapp/pipelines/templates/code-analysis.yml@main
     needs: [InstallDeps]
 
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{env.NODE_VERSION}}
-          cache: "npm"
-
-      - name: Cache NPM dependencies
-        uses: actions/cache@v4
-        with:
-          path: node_modules
-          key: |
-            ${{ runner.os }}-npm-v3-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.OS }}-npm-cache-
-
-      - name: Audit vulnerability
-        continue-on-error: true
-        id: npm_audit
-        run: |
-          AUDIT_OUTPUT=$(npm audit --audit-level moderate)
-          echo "audit_output=$AUDIT_OUTPUT" >> $GITHUB_OUTPUT
-
-      - name: Display Alert Message for npm audit failure
-        if: ${{ steps.npm_audit.outputs.audit_output != '' }}
-        continue-on-error: true
-        uses: thollander/actions-comment-pull-request@v2
-        with:
-          message: |
-            ## 🚨 Result of `npm audit`
-            ```
-            ${{steps.npm_audit.outputs.audit_output}}
-            ```
-          mode: recreate
-          comment_tag: audit
-
-      - name: Lint
-        run: npm run lint --fix
-
   Tests:
-    runs-on: ubuntu-latest
+    uses: olloapp/pipelines/templates/tests.yml@main
     needs: [InstallDeps, CodeAnalysis]
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{env.NODE_VERSION}}
-          cache: "npm"
-
-      - name: Cache NPM dependencies
-        uses: actions/cache@v4
-        with:
-          path: node_modules
-          key: |
-            ${{ runner.os }}-npm-v3-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.OS }}-npm-cache-
-
-      - name: Regenerate Prisma Type Definitions
-        run: npx prisma generate
-
-      - name: Run test
-        run: |
-          npm run test:ci
-
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v3
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN  }}
