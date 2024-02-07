@@ -12,12 +12,12 @@ on:
 
 jobs:
   InstallDeps:
-    uses: olloapp/pipelines/templates/install-deps.yml@main
+    uses: olloapp/pipelines/.github/workflows/install-deps.yml@main
 
   CodeAnalysis:
-    uses: olloapp/pipelines/templates/code-analysis.yml@main
+    uses: olloapp/pipelines/.github/workflows/code-analysis.yml@main
     needs: [InstallDeps]
 
   Tests:
-    uses: olloapp/pipelines/templates/tests.yml@main
+    uses: olloapp/pipelines/.github/workflows/tests.yml@main
     needs: [InstallDeps, CodeAnalysis]
