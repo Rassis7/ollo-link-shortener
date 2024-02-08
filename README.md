@@ -30,16 +30,20 @@ Antes de começar, verifique se você atendeu aos seguintes requisitos:
 
 ## 🏛️ Estrutural
 
+### 🏗️ Arquitetura
+
 <details>
-<summary>🏗️ Arquitetura</summary>
+<summary>Ver mais</summary>
 
 <div align="center">
 <img src="./docs/architecture.drawio.png" width="600px;">
 </div>
 </details>
 
+### 👷 CI/CD
+
 <details>
-<summary>👷 CI/CD</summary>
+<summary>Ver mais</summary>
 
 <div align="center">
 <img src="./docs/deploy.drawio.png" width="600px;">
