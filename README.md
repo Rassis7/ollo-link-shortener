@@ -83,7 +83,7 @@ npm run prisma:newMigration MIGRATION_NAME
 Para abrir o Prisma Studio
 
 ```
-npm run prisma:studio
+npm run prisma studio
 ```
 
 ## 🗂️ Para criar um novo módulo

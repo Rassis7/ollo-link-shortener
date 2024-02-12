@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es2016",
+    "target": "esnext",
     "module": "commonjs",
     "resolveJsonModule": true,
     "esModuleInterop": true,
@@ -8,11 +8,18 @@
     "strict": true,
     "noImplicitAny": false,
     "skipLibCheck": true,
-    "baseUrl": "./",
+    "removeComments": true,
+    "noEmitOnError": true,
+    "baseUrl": ".",
+    "rootDir": ".",
     "paths": {
       "@/*": ["src/*"]
-    }
+    },
+    "outDir": "dist"
+  },
+  "ts-node": {
+    "files": true
   },
   "exclude": ["node_modules"],
-  "include": ["src/**/*.ts"]
+  "include": ["src", "global.d.ts"]
 }
