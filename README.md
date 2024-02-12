@@ -66,15 +66,19 @@ Para usar **OLLO.li API**, siga estas etapas:
 npm run dev
 ```
 
-### -> Response
+<details>
+<summary>Response</summary>
 
+<div align="center">
 <img src="./docs/debug-mode-inactive.png"/>
+</div>
+</details>
 
 > Pronto, seus containers já estarão criados e as dependências instaladas, agora você usará a API sem nenhuma preocupação com ambiente
 
 ## 🪲 Ativando o modo de debug
 
-Vá até o `.env` e habilite a flag `DEBUG_OPTION`
+Vá até o `.env-{production | test | development}` e habilite a flag `DEBUG_OPTION`
 
 ```
 DEBUG_MODE=true
@@ -86,9 +90,21 @@ E dê o start normal da API
 npm run dev
 ```
 
-### -> Response
+<details>
+<summary>Response</summary>
 
+<div align="center">
 <img src="./docs/debug-mode-active.png"/>
+</div>
+</details>
+
+<details>
+<summary>Quando alguma request for feita, aparecerá no terminal</summary>
+
+<div align="center">
+<img src="./docs/request-debug-on.png"/>
+</div>
+</details>
 
 ## 💽 Lidando com o Banco de dados
 
@@ -142,13 +158,19 @@ Para rodar a API em modo de prod:
 npm run prod
 ```
 
+<details>
+<summary>Response</summary>
+
+<div align="center">
 <img src="./docs/prod.png"/>
+</div>
+</details>
 
 > Se tudo deu certo, a API estará rodando em modo de produção
 
 ## 🌳 Env files
 
-Existe o .env.example que é a base para as variáveis de ambiente:
+Existe o `.env.example` que é a base para as variáveis de ambiente:
 
 ```
 # env.example
