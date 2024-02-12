@@ -66,7 +66,29 @@ Para usar **OLLO.li API**, siga estas etapas:
 npm run dev
 ```
 
-Pronto, seus containers já estarão criados e as dependências instaladas, agora você usará a API sem nenhuma preocupação com ambiente
+### -> Response
+
+<img src="./docs/debug-mode-inactive.png"/>
+
+> Pronto, seus containers já estarão criados e as dependências instaladas, agora você usará a API sem nenhuma preocupação com ambiente
+
+## 🪲 Ativando o modo de debug
+
+Vá até o `.env` e habilite a flag `DEBUG_OPTION`
+
+```
+DEBUG_MODE=true
+```
+
+E dê o start normal da API
+
+```
+npm run dev
+```
+
+### -> Response
+
+<img src="./docs/debug-mode-active.png"/>
 
 ## 💽 Lidando com o Banco de dados
 
@@ -104,19 +126,22 @@ Temos um script que faz a criação automática do novo módulo
 npm run test:watch [path do arquivo se quiser rodar individualmente]
 ```
 
-## 🤝 Colaboradores
+## 💻 Build
 
-Agradecemos às seguintes pessoas que contribuíram para este projeto:
+Para gerar o build da aplicação, rode:
 
-<table>
-  <tr>
-    <td align="center">
-      <a href="#">
-        <img src="https://avatars.githubusercontent.com/u/6963242?s=400&u=270414c180ec18e159a1c57f870880f5fbda2e3f&v=4" width="100px;" alt=""/><br>
-        <sub>
-          <b>Romulo Assis</b>
-        </sub>
-      </a>
-    </td>
-  </tr>
-</table>
+```
+npm run build
+```
+
+Será criado uma pasta `dist` na raiz do projeto.
+
+Para rodar a API em modo de prod:
+
+```
+npm start
+```
+
+<img src="./docs/prod.png"/>
+
+> Se tudo deu certo, a API estará rodando em modo de produção
