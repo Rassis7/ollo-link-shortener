@@ -55,10 +55,8 @@ Antes de começar, verifique se você atendeu aos seguintes requisitos:
 Para instalar o **OLLO.li API**, siga estas etapas:
 
 ```
-npm run docker
+npm run install
 ```
-
-Pronto, seus containers já estarão criados e as dependências instaladas
 
 ## ☕ Usando OLLO.li API
 
@@ -67,6 +65,8 @@ Para usar **OLLO.li API**, siga estas etapas:
 ```
 npm run dev
 ```
+
+Pronto, seus containers já estarão criados e as dependências instaladas, agora você usará a API sem nenhuma preocupação com ambiente
 
 ## 💽 Lidando com o Banco de dados
 
