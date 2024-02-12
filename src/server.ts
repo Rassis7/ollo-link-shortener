@@ -36,6 +36,9 @@ async function main() {
 
   try {
     logger.info(`API RUN IN PORT ${port} 🚀`);
+    if (process.env.DEBUG_MODE === "true") {
+      logger.info("DEBUG MODE ACTIVE! 🪲");
+    }
     await app.listen({ port, host: "0.0.0.0" });
   } catch (error) {
     logger.error(error);
