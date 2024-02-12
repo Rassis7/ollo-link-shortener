@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import { resolve } from "node:path";
 
-dotenv.config({ path: resolve(__dirname, "../.env") });
+dotenv.config({ path: resolve(__dirname, `../.env.${process.env.NODE_ENV}`) });
 
 import { app, logger } from "@/configurations/app";
 import { userRoutes } from "@/modules/user/user.route";

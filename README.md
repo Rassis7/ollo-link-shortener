@@ -139,9 +139,61 @@ Será criado uma pasta `dist` na raiz do projeto.
 Para rodar a API em modo de prod:
 
 ```
-npm start
+npm run prod
 ```
 
 <img src="./docs/prod.png"/>
 
 > Se tudo deu certo, a API estará rodando em modo de produção
+
+## 🌳 Env files
+
+Existe o .env.example que é a base para as variáveis de ambiente:
+
+```
+# env.example
+DEBUG_MODE=
+SERVER_PORT=
+FASTIFY_JWT_SECRET=
+FASTIFY_JWT_SECRET_EXPIRES_IN=
+FASTIFY_RATE_LIMIT_MAX=
+FASTIFY_RATE_LIMIT_TIME_WINDOW=
+VERIFY_EMAIL_TEMPLATE_ID=
+INTERNAL_OLLO_LI_BASE_URL=
+OLLO_LI_BASE_URL=
+VERIFY_EMAIL_SUBJECT=
+VERIFY_EMAIL_FROM_EMAIL=
+VERIFY_EMAIL_FROM_NAME=
+RECOVERY_PASSWORD_EMAIL_SUBJECT=
+
+DATABASE_URL=
+MAILERSEND_API_KEY=
+REDIS_URL=
+```
+
+### Development
+
+```
+# env.development
+DEBUG_MODE=false
+SERVER_PORT=3000
+[...]
+```
+
+### Test
+
+```
+# env.test
+DEBUG_MODE=false
+SERVER_PORT=4200
+[...]
+```
+
+### Production
+
+```
+# env.production
+DEBUG_MODE=false
+SERVER_PORT=4000
+[...]
+```
