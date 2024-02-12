@@ -6,7 +6,7 @@ services:
     image: postgres:latest
     restart: always
     env_file:
-      - .env
+      - .env.development
     ports:
       - "5432:5432"
     volumes:
@@ -19,7 +19,7 @@ services:
     ports:
       - "6379:6379"
     env_file:
-      - .env
+      - .env.development
 
   # API (Development)
   api:
@@ -31,7 +31,7 @@ services:
     ports:
       - "3000:3000"
     env_file:
-      - .env
+      - .env.development
     volumes:
       - .:/src
       - nodemodules:/src/node_modules
