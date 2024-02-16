@@ -5,10 +5,8 @@ services:
   postgres:
     image: postgres:latest
     restart: always
-    environment:
-      POSTGRES_USER: ollo
-      POSTGRES_PASSWORD: ollo_password
-      POSTGRES_DB: ollo_li
+    env_file:
+      - .env.development
     ports:
       - "5432:5432"
     volumes:
@@ -20,6 +18,30 @@ services:
     restart: always
     ports:
       - "6379:6379"
+    env_file:
+      - .env.development
+
+  # API (Development)
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: npm run dev:docker
+    restart: always
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.development
+    volumes:
+      - .:/src
+      - nodemodules:/src/node_modules
+    links:
+      - postgres
+      - redis
+    depends_on:
+      - postgres
+      - redis
 
 volumes:
   postgres-data:
+  nodemodules: {}

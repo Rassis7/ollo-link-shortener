@@ -55,10 +55,8 @@ Antes de começar, verifique se você atendeu aos seguintes requisitos:
 Para instalar o **OLLO.li API**, siga estas etapas:
 
 ```
-npm run docker
+npm run install
 ```
-
-Pronto, seus containers já estarão criados e as dependências instaladas
 
 ## ☕ Usando OLLO.li API
 
@@ -67,6 +65,46 @@ Para usar **OLLO.li API**, siga estas etapas:
 ```
 npm run dev
 ```
+
+<details>
+<summary>Response</summary>
+
+<div align="center">
+<img src="./docs/debug-mode-inactive.png"/>
+</div>
+</details>
+
+> Pronto, seus containers já estarão criados e as dependências instaladas, agora você usará a API sem nenhuma preocupação com ambiente
+
+## 🪲 Ativando o modo de debug
+
+Vá até o `.env-{production | test | development}` e habilite a flag `DEBUG_OPTION`
+
+```
+DEBUG_MODE=true
+```
+
+E dê o start normal da API
+
+```
+npm run dev
+```
+
+<details>
+<summary>Response</summary>
+
+<div align="center">
+<img src="./docs/debug-mode-active.png"/>
+</div>
+</details>
+
+<details>
+<summary>Quando alguma request for feita, aparecerá no terminal</summary>
+
+<div align="center">
+<img src="./docs/request-debug-on.png"/>
+</div>
+</details>
 
 ## 💽 Lidando com o Banco de dados
 
@@ -83,7 +121,7 @@ npm run prisma:newMigration MIGRATION_NAME
 Para abrir o Prisma Studio
 
 ```
-npm run prisma:studio
+npm run prisma studio
 ```
 
 ## 🗂️ Para criar um novo módulo
@@ -104,19 +142,80 @@ Temos um script que faz a criação automática do novo módulo
 npm run test:watch [path do arquivo se quiser rodar individualmente]
 ```
 
-## 🤝 Colaboradores
+## 💻 Build
 
-Agradecemos às seguintes pessoas que contribuíram para este projeto:
+Para gerar o build da aplicação, rode:
 
-<table>
-  <tr>
-    <td align="center">
-      <a href="#">
-        <img src="https://avatars.githubusercontent.com/u/6963242?s=400&u=270414c180ec18e159a1c57f870880f5fbda2e3f&v=4" width="100px;" alt=""/><br>
-        <sub>
-          <b>Romulo Assis</b>
-        </sub>
-      </a>
-    </td>
-  </tr>
-</table>
+```
+npm run build
+```
+
+Será criado uma pasta `dist` na raiz do projeto.
+
+Para rodar a API em modo de prod:
+
+```
+npm run prod
+```
+
+<details>
+<summary>Response</summary>
+
+<div align="center">
+<img src="./docs/prod.png"/>
+</div>
+</details>
+
+> Se tudo deu certo, a API estará rodando em modo de produção
+
+## 🌳 Env files
+
+Existe o `.env.example` que é a base para as variáveis de ambiente:
+
+```
+# env.example
+DEBUG_MODE=
+SERVER_PORT=
+FASTIFY_JWT_SECRET=
+FASTIFY_JWT_SECRET_EXPIRES_IN=
+FASTIFY_RATE_LIMIT_MAX=
+FASTIFY_RATE_LIMIT_TIME_WINDOW=
+VERIFY_EMAIL_TEMPLATE_ID=
+INTERNAL_OLLO_LI_BASE_URL=
+OLLO_LI_BASE_URL=
+VERIFY_EMAIL_SUBJECT=
+VERIFY_EMAIL_FROM_EMAIL=
+VERIFY_EMAIL_FROM_NAME=
+RECOVERY_PASSWORD_EMAIL_SUBJECT=
+
+DATABASE_URL=
+MAILERSEND_API_KEY=
+REDIS_URL=
+```
+
+### Development
+
+```
+# env.development
+DEBUG_MODE=false
+SERVER_PORT=3000
+[...]
+```
+
+### Test
+
+```
+# env.test
+DEBUG_MODE=false
+SERVER_PORT=4200
+[...]
+```
+
+### Production
+
+```
+# env.production
+DEBUG_MODE=false
+SERVER_PORT=4000
+[...]
+```

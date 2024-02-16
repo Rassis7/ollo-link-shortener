@@ -5,8 +5,6 @@ import pretty from "pino-pretty";
 import pino from "pino";
 import { ZodError } from "zod";
 
-const IS_DEV = process.env.NODE_ENV === "development";
-
 const logger = pino(
   pretty({
     colorize: true,
@@ -15,7 +13,7 @@ const logger = pino(
 );
 
 const fastify = Fastify({
-  logger: IS_DEV && logger,
+  logger: process.env.DEBUG_MODE === "true" && logger,
 });
 
 fastify.register(import("@fastify/rate-limit"), {

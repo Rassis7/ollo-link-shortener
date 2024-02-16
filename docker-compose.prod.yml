@@ -1,0 +1,37 @@
+version: "3"
+
+services:
+  postgres:
+    extends:
+      file: docker-compose.yml
+      service: postgres
+
+  redis:
+    extends:
+      file: docker-compose.yml
+      service: redis
+
+    # API (Production)
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: npm start
+    restart: always
+    ports:
+      - "4000:4000"
+    env_file:
+      - .env.prod
+    volumes:
+      - .:/src
+      - nodemodules:/src/node_modules
+    links:
+      - postgres
+      - redis
+    depends_on:
+      - postgres
+      - redis
+
+volumes:
+  postgres-data:
+  nodemodules: {}
