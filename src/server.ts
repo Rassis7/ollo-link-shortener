@@ -15,8 +15,7 @@ import {
 } from "fastify-type-provider-zod";
 import { linkRoutes } from "./modules/link/link.route";
 
-const port =
-  process.env.NODE_ENV !== "test" ? Number(process.env.SERVER_PORT) : 4200;
+const port = Number(process.env.SERVER_PORT ?? 3000);
 
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);

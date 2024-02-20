@@ -10,7 +10,6 @@ declare global {
       FASTIFY_JWT_SECRET_EXPIRES_IN: string;
       FASTIFY_RATE_LIMIT_MAX: string;
       FASTIFY_RATE_LIMIT_TIME_WINDOW: string;
-      VERIFY_EMAIL_TEMPLATE_ID: string;
       MAILERSEND_API_KEY: string;
       OLLO_LI_BASE_URL: string;
       INTERNAL_OLLO_LI_BASE_URL: string;
