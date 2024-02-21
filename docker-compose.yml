@@ -4,34 +4,39 @@ services:
   # PostgreSQL
   postgres:
     image: postgres:latest
+    container_name: ollo-li-postgres
     restart: always
-    env_file:
-      - .env.development
+    environment:
+      POSTGRES_USER: ollo
+      POSTGRES_PASSWORD: ollo_password
+      POSTGRES_DB: ollo_li
     ports:
-      - "5432:5432"
+      - 5432:5432
     volumes:
       - postgres-data:/var/lib/postgresql/data
 
   # Redis
   redis:
-    image: redis:latest
+    image: redis
+    container_name: ollo-li-redis
     restart: always
     ports:
-      - "6379:6379"
-    env_file:
-      - .env.development
+      - 6379:6379
 
   # API (Development)
   api:
+    container_name: ollo-api
     build:
       context: .
       dockerfile: Dockerfile
     command: npm run dev:docker
     restart: always
     ports:
-      - "3000:3000"
+      - 3000:3000
     env_file:
       - .env.development
+    environment:
+      DATABASE_URL: postgresql://ollo:ollo_password@ollo-li-postgres:5432/ollo_li?schema=public
     volumes:
       - .:/src
       - nodemodules:/src/node_modules

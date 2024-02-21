@@ -1,17 +1,17 @@
 FROM node:18-alpine
 
+RUN npm install -g prisma
+
 WORKDIR /src
 
 COPY package*.json ./
 
-COPY ./prisma/schema.prisma ./prisma/
+COPY prisma ./prisma/
 
-RUN npm install --silent
+RUN npm install
 
 COPY . /src
 
 EXPOSE 3000
 
-RUN npm run build
-
-CMD ["npm", "start"]
+CMD ["npm", "run", "dev"]

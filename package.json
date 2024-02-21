@@ -23,7 +23,9 @@
     "new:module": "chmod +x ./scripts/create_module.sh && ./scripts/create_module.sh",
     "commit": "git cz",
     "lint": "npx eslint --fix --ext .ts,.ts ./src",
-    "postinstall": "npm run prisma generate"
+    "postinstall": "npm run prisma generate",
+    "seed": "NODE_ENV=development node ./scripts/seed.js",
+    "release": "npx release-it"
   },
   "config": {
     "commitizen": {
@@ -56,6 +58,7 @@
     "pino": "^8.16.2",
     "pino-pretty": "^10.2.3",
     "prisma": "^5.9.1",
+    "release-it": "^17.1.1",
     "ts-jest": "^29.1.2",
     "ts-node-dev": "^2.0.0",
     "tsc-alias": "^1.8.8",
