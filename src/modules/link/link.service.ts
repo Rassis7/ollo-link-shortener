@@ -5,7 +5,7 @@ import {
   LINK_ERRORS_RESPONSE,
 } from "./link.schema";
 import { expireCacheInSeconds } from "@/helpers";
-import { redis } from "@/infra";
+import { Cache } from "@/infra";
 import { SaveLinkInput } from "../shortener/shortener.schema";
 
 export async function getAllLinksByUser({
@@ -64,7 +64,7 @@ export async function updateLink({
 export async function getLinkByHashFromCache(
   hash: string
 ): Promise<GetByLinkHashFromCacheResponse | null> {
-  const linkResponse = await redis.get(hash);
+  const linkResponse = await Cache.get("LINK_REFIX", hash);
 
   if (!linkResponse) {
     return null;
@@ -90,10 +90,10 @@ export async function saveOrUpdateLinkCache({
   }
 
   const key = alias ?? hash;
-  await redis.set(key, JSON.stringify({ ...rest }));
+  await Cache.set("LINK_REFIX", key, rest);
 
   if (rest.validAt) {
     const validAt = expireCacheInSeconds(rest?.validAt);
-    await redis.expire(key, validAt);
+    await Cache.expire("LINK_REFIX", key, validAt);
   }
 }
