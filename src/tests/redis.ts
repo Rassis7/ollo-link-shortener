@@ -1,7 +1,7 @@
-import { redis } from "@/infra";
+import { Cache } from "@/infra";
 
 afterAll(async () => {
-  await redis.quit();
+  await Cache.quit();
 });
 
-export { redis };
+export { Cache };

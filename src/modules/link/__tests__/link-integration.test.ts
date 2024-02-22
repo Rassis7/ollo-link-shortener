@@ -1,5 +1,5 @@
 import { app } from "@/configurations/app";
-import { MOCK_JWT_TOKEN, redis } from "@/tests";
+import { MOCK_JWT_TOKEN, Cache } from "@/tests";
 import * as linkService from "../link.service";
 import { mockGetAllLinksResponse } from "../__mocks__/get-all";
 import {
@@ -149,8 +149,8 @@ describe("modules/Link/link-integration", () => {
       jest
         .spyOn(linkService, "getLinkByHashOrAlias")
         .mockResolvedValue([firstResponseLinkByAliasOrHash]);
-      jest.spyOn(redis, "set");
-      jest.spyOn(redis, "expire");
+      jest.spyOn(Cache, "set");
+      jest.spyOn(Cache, "expire");
 
       const response = await app.inject({
         method: "PUT",

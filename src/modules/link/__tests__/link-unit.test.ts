@@ -7,7 +7,7 @@ import {
   saveOrUpdateLinkCache,
   updateLink,
 } from "../link.service";
-import { mockContext, context, redis } from "@/tests";
+import { mockContext, context, Cache } from "@/tests";
 import { expireCacheInSeconds } from "@/helpers";
 import {
   mockGetLinkByAliasInput,
@@ -97,31 +97,31 @@ describe("modules/link-unit", () => {
 
   it("Should be able to return link by hash from cache", async () => {
     jest
-      .spyOn(redis, "get")
+      .spyOn(Cache, "get")
       .mockResolvedValue(JSON.stringify(mockGetLinkByHashFromCacheResponse));
 
     const linkFromCache = await getLinkByHashFromCache(mockHashInput);
 
-    expect(redis.get).toHaveBeenCalledTimes(1);
-    expect(redis.get).toHaveBeenCalledWith(mockHashInput);
+    expect(Cache.get).toHaveBeenCalledTimes(1);
+    expect(Cache.get).toHaveBeenCalledWith(mockHashInput);
 
     expect(linkFromCache).toEqual(mockGetLinkByHashFromCacheResponse);
   });
 
   it("Should be able to return null if not exists link by hash in cache", async () => {
-    jest.spyOn(redis, "get").mockResolvedValue(null);
+    jest.spyOn(Cache, "get").mockResolvedValue(null);
 
     const linkFromCache = await getLinkByHashFromCache(mockHashInput);
 
-    expect(redis.get).toHaveBeenCalledTimes(1);
-    expect(redis.get).toHaveBeenCalledWith(mockHashInput);
+    expect(Cache.get).toHaveBeenCalledTimes(1);
+    expect(Cache.get).toHaveBeenCalledWith(mockHashInput);
 
     expect(linkFromCache).toEqual(null);
   });
 
   it("Should be able to response error if exists link when create link in cache", async () => {
     jest
-      .spyOn(redis, "get")
+      .spyOn(Cache, "get")
       .mockResolvedValue(JSON.stringify(mockGetLinkByHashFromCacheResponse));
 
     expect(async () =>
@@ -130,9 +130,9 @@ describe("modules/link-unit", () => {
   });
 
   it("Should be able to create link in cache and save key as alias", async () => {
-    jest.spyOn(redis, "get").mockResolvedValue(null);
-    jest.spyOn(redis, "set");
-    jest.spyOn(redis, "expire");
+    jest.spyOn(Cache, "get").mockResolvedValue(null);
+    jest.spyOn(Cache, "set");
+    jest.spyOn(Cache, "expire");
 
     await saveOrUpdateLinkCache(mockSaveLinkInput);
 
@@ -140,32 +140,32 @@ describe("modules/link-unit", () => {
       alias,
       hash: _hash,
       userId: _userId,
-      ...redisSettableParams
+      ...CacheSettableParams
     } = mockSaveLinkInput;
 
-    expect(redis.set).toHaveBeenCalledTimes(1);
-    expect(redis.set).toHaveBeenCalledWith(
+    expect(Cache.set).toHaveBeenCalledTimes(1);
+    expect(Cache.set).toHaveBeenCalledWith(
       alias,
-      JSON.stringify(redisSettableParams)
+      JSON.stringify(CacheSettableParams)
     );
-    expect(redis.expire).toHaveBeenCalledTimes(1);
+    expect(Cache.expire).toHaveBeenCalledTimes(1);
 
     const validAt = expireCacheInSeconds(mockSaveLinkInput.validAt!);
-    expect(redis.expire).toHaveBeenCalledWith(alias, validAt);
+    expect(Cache.expire).toHaveBeenCalledWith(alias, validAt);
   });
 
   it("Should be able to create link in cache and save key as hash", async () => {
-    jest.spyOn(redis, "get").mockResolvedValue(null);
-    jest.spyOn(redis, "set");
+    jest.spyOn(Cache, "get").mockResolvedValue(null);
+    jest.spyOn(Cache, "set");
 
-    const { alias: _alias, hash, ...redisSettableParams } = mockSaveLinkInput;
+    const { alias: _alias, hash, ...CacheSettableParams } = mockSaveLinkInput;
 
-    await saveOrUpdateLinkCache({ hash, ...redisSettableParams });
+    await saveOrUpdateLinkCache({ hash, ...CacheSettableParams });
 
-    expect(redis.set).toHaveBeenCalledTimes(1);
+    expect(Cache.set).toHaveBeenCalledTimes(1);
 
-    const { userId: _userId, ...redisResponse } = redisSettableParams;
-    expect(redis.set).toHaveBeenCalledWith(hash, JSON.stringify(redisResponse));
+    const { userId: _userId, ...CacheResponse } = CacheSettableParams;
+    expect(Cache.set).toHaveBeenCalledWith(hash, JSON.stringify(CacheResponse));
   });
 
   it("Should be able to edit an existing link", async () => {

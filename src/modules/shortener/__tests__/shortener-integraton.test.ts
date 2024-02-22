@@ -3,7 +3,7 @@ import {
   mockLinkToShortenerInput,
   mockSaveLinkResponse,
 } from "../__mocks__/save-link";
-import { MOCK_JWT_TOKEN, redis } from "@/tests";
+import { MOCK_JWT_TOKEN, Cache } from "@/tests";
 import * as shortenerService from "../shortener.service";
 import { mockGetLinkByAliasOrHashResponse } from "../../link/__mocks__/get-by-alias-or-hash";
 import { faker } from "@faker-js/faker";
@@ -110,7 +110,7 @@ describe("modules/shortener.integration", () => {
   it("Should be able to return error if save in cache and already exists that hash", async () => {
     jest.spyOn(linkService, "getLinkByHashOrAlias").mockResolvedValue([]);
     jest
-      .spyOn(redis, "get")
+      .spyOn(Cache, "get")
       .mockResolvedValue(JSON.stringify(mockGetLinkByHashFromCacheResponse));
 
     const response = await app.inject({
