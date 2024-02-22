@@ -4,16 +4,15 @@
   "description": "OLLO.li api",
   "main": "index.js",
   "engines": {
-    "node": ">=18.12.0 <=20.9.0"
+    "node": ">=18.12.0 <=20.11.1"
   },
   "author": "Romulo Assis",
   "license": "ISC",
   "scripts": {
     "build": "tsc -p tsconfig.json && tsc-alias",
-    "dev": "docker-compose up",
-    "dev:docker": "NODE_ENV=development ts-node-dev -T -r tsconfig-paths/register ./src/server.ts",
+    "dev": "NODE_ENV=development ts-node-dev -T -r tsconfig-paths/register ./src/server.ts",
     "start": "NODE_ENV=production node ./dist/src/server.js",
-    "prod": "docker-compose -f docker-compose.prod.yml up -d --build",
+    "docker": "docker-compose up -d && npm run prisma:generate",
     "test": "NODE_ENV=test jest --coverage",
     "test:ci": "NODE_ENV=test jest --ci --collect-coverage --coverage",
     "test:watch": "NODE_ENV=test jest --watchAll",
@@ -66,8 +65,10 @@
     "typescript": "^5.3.2"
   },
   "dependencies": {
+    "@fastify/cookie": "^9.3.1",
     "@fastify/jwt": "^7.2.3",
     "@fastify/rate-limit": "^9.0.0",
+    "@fastify/redis": "^6.1.1",
     "@fastify/swagger": "^8.12.0",
     "@fastify/swagger-ui": "^1.10.1",
     "@prisma/client": "^5.5.2",
