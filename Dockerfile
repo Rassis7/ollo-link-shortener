@@ -5,12 +5,11 @@ RUN npm install -g prisma
 WORKDIR /src
 
 COPY package*.json ./
-
-COPY prisma ./prisma/
+COPY prisma ./prisma
 
 RUN npm install
 
-COPY . /src
+COPY . ./
 
 EXPOSE 3000
 
