@@ -43,13 +43,13 @@ describe("modules/email.unit", () => {
     // set
     expect(CacheSetSpy).toHaveBeenCalledTimes(1);
     const uuid = randomUUID();
-    expect(CacheSetSpy).toHaveBeenCalledWith(key, uuid);
+    expect(CacheSetSpy).toHaveBeenCalledWith("LINK_REFIX", key, uuid);
 
     // expire
     expect(CacheExpireSet).toHaveBeenCalledTimes(1);
 
     const validAt = 48 * 3600; // 48 hours in seconds
-    expect(CacheExpireSet).toHaveBeenCalledWith(key, validAt);
+    expect(CacheExpireSet).toHaveBeenCalledWith("LINK_REFIX", key, validAt);
 
     expect(mailSendSpy).toHaveBeenCalledTimes(1);
 
@@ -91,12 +91,12 @@ describe("modules/email.unit", () => {
 
     const key = `emailVerification/${email}`;
     expect(Cache.ttl).toHaveBeenCalledTimes(1);
-    expect(Cache.ttl).toHaveBeenCalledWith(key);
+    expect(Cache.ttl).toHaveBeenCalledWith("LINK_REFIX", key);
 
     expect(Cache.get).toHaveBeenCalledTimes(1);
 
     expect(Cache.del).toHaveBeenCalledTimes(1);
-    expect(Cache.del).toHaveBeenCalledWith(key);
+    expect(Cache.del).toHaveBeenCalledWith("LINK_REFIX", key);
   });
 
   it.each([

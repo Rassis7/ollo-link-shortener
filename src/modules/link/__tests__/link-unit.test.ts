@@ -103,7 +103,7 @@ describe("modules/link-unit", () => {
     const linkFromCache = await getLinkByHashFromCache(mockHashInput);
 
     expect(Cache.get).toHaveBeenCalledTimes(1);
-    expect(Cache.get).toHaveBeenCalledWith(mockHashInput);
+    expect(Cache.get).toHaveBeenCalledWith("LINK_REFIX", mockHashInput);
 
     expect(linkFromCache).toEqual(mockGetLinkByHashFromCacheResponse);
   });
@@ -114,7 +114,7 @@ describe("modules/link-unit", () => {
     const linkFromCache = await getLinkByHashFromCache(mockHashInput);
 
     expect(Cache.get).toHaveBeenCalledTimes(1);
-    expect(Cache.get).toHaveBeenCalledWith(mockHashInput);
+    expect(Cache.get).toHaveBeenCalledWith("LINK_REFIX", mockHashInput);
 
     expect(linkFromCache).toEqual(null);
   });
@@ -145,13 +145,14 @@ describe("modules/link-unit", () => {
 
     expect(Cache.set).toHaveBeenCalledTimes(1);
     expect(Cache.set).toHaveBeenCalledWith(
+      "LINK_REFIX",
       alias,
-      JSON.stringify(CacheSettableParams)
+      CacheSettableParams
     );
     expect(Cache.expire).toHaveBeenCalledTimes(1);
 
     const validAt = expireCacheInSeconds(mockSaveLinkInput.validAt!);
-    expect(Cache.expire).toHaveBeenCalledWith(alias, validAt);
+    expect(Cache.expire).toHaveBeenCalledWith("LINK_REFIX", alias, validAt);
   });
 
   it("Should be able to create link in cache and save key as hash", async () => {
@@ -165,7 +166,7 @@ describe("modules/link-unit", () => {
     expect(Cache.set).toHaveBeenCalledTimes(1);
 
     const { userId: _userId, ...CacheResponse } = CacheSettableParams;
-    expect(Cache.set).toHaveBeenCalledWith(hash, JSON.stringify(CacheResponse));
+    expect(Cache.set).toHaveBeenCalledWith("LINK_REFIX", hash, CacheResponse);
   });
 
   it("Should be able to edit an existing link", async () => {
