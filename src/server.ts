@@ -15,6 +15,10 @@ import {
 } from "fastify-type-provider-zod";
 import { linkRoutes } from "./modules/link/link.route";
 
+import "./configurations/auth";
+import "./configurations/rate-limit";
+import "./configurations/error-handler";
+
 const port = Number(process.env.SERVER_PORT ?? 3000);
 
 app.setValidatorCompiler(validatorCompiler);
@@ -25,6 +29,10 @@ app.register(authRoutes, { prefix: "api/auth" });
 app.register(emailRoutes, { prefix: "api/email" });
 app.register(shortenerRoutes, { prefix: "api/shortener" });
 app.register(linkRoutes, { prefix: "api/links" });
+
+app.get("/healthcheck", async () => {
+  return { status: "OK" };
+});
 
 async function main() {
   if (process.env.NODE_ENV === "test") {
