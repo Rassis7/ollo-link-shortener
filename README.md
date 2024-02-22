@@ -108,6 +108,8 @@ npm run dev
 
 ## 💽 Lidando com o Banco de dados
 
+### Prisma
+
 > Usamos o Prisma como ORM
 
 Para criar uma nova Migration
@@ -124,9 +126,17 @@ Para abrir o Prisma Studio
 npm run prisma studio
 ```
 
+### Infra + Docker
+
+Pro hora usamos o docker somente para infra, então para subir o ambiente com o Prisma, só rodar:
+
+```
+npm run docker
+```
+
 ### String de conexão
 
-O docker já vai lidar com sua conexão, mas se quiser usar para conectar com algum db cliente pode apontar para localhost
+Para acessar tanto o `Postgres` quanto o `Redis`, precisará das seguintes strings de conexão
 
 ```
 ## para uso de client
