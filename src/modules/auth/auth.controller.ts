@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { findUserByEmail } from "@/modules/user/user.service";
-import { verifyPassword } from "@/helpers";
+import { HTTP_STATUS_CODE, verifyPassword } from "@/helpers";
 import { app } from "@/configurations/app";
 import { AUTH_ERRORS_RESPONSE, AuthInput } from "./auth.schema";
 import { ErrorHandler } from "@/helpers";
@@ -35,11 +35,15 @@ export async function authHandler(
     }
     const { id, email, name } = user;
 
+    const token = app.jwt.sign({ id, email, name });
     return reply
-      .code(200)
-      .send({ accessToken: app.jwt.sign({ id, email, name }) });
+      .code(HTTP_STATUS_CODE.NO_CONTENT)
+      .cookie("access_token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+      });
   } catch (error) {
     const e = new ErrorHandler(error);
-    return reply.code(401).send(e);
+    return reply.code(HTTP_STATUS_CODE.UNAUTHORIZED).send(e);
   }
 }

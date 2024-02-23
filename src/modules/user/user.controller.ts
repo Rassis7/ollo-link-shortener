@@ -2,7 +2,7 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { createUser, findUserByEmail, findUsers } from "./user.service";
 import { CreateUserInput, USER_ERRORS_RESPONSE } from "./user.schema";
 import { sendVerifyEmailHandler } from "../email/email.service";
-import { ErrorHandler } from "@/helpers";
+import { ErrorHandler, HTTP_STATUS_CODE } from "@/helpers";
 import { prisma } from "@/infra";
 
 type RegisterUserHandlerRequestProps = FastifyRequest<{
@@ -28,10 +28,10 @@ export async function registerUserHandler(
     const user = await createUser({ input: body, context: { prisma } });
     sendVerifyEmailHandler(user.email);
 
-    return reply.code(201).send(user);
+    return reply.code(HTTP_STATUS_CODE.CREATED).send(user);
   } catch (e) {
     const error = new ErrorHandler(e);
-    return reply.code(400).send(error);
+    return reply.code(HTTP_STATUS_CODE.BAD_REQUEST).send(error);
   }
 }
 
@@ -41,6 +41,6 @@ export async function getUsersHandler(_, reply: FastifyReply) {
     return users;
   } catch (e) {
     const error = new ErrorHandler(e, "Ocorreu um erro ao listar os usuários");
-    return reply.code(400).send(error);
+    return reply.code(HTTP_STATUS_CODE.BAD_REQUEST).send(error);
   }
 }
