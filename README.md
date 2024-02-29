@@ -54,7 +54,7 @@ Antes de começar, verifique se você atendeu aos seguintes requisitos:
 
 Para instalar o **OLLO.li API**, siga estas etapas:
 
-```
+```bash
 npm run install
 ```
 
@@ -62,7 +62,7 @@ npm run install
 
 Para usar **OLLO.li API**, siga estas etapas:
 
-```
+```bash
 npm run dev
 ```
 
@@ -86,7 +86,7 @@ DEBUG_MODE=true
 
 E dê o start normal da API
 
-```
+```bash
 npm run dev
 ```
 
@@ -114,7 +114,7 @@ npm run dev
 
 Para criar uma nova Migration
 
-```
+```bash
 npm run prisma:newMigration MIGRATION_NAME
 ```
 
@@ -122,7 +122,7 @@ npm run prisma:newMigration MIGRATION_NAME
 
 Para abrir o Prisma Studio
 
-```
+```bash
 npm run prisma studio
 ```
 
@@ -130,7 +130,7 @@ npm run prisma studio
 
 Pro hora usamos o docker somente para infra, então para subir o ambiente com o Prisma, só rodar:
 
-```
+```bash
 npm run docker
 ```
 
@@ -138,7 +138,7 @@ npm run docker
 
 Para acessar tanto o `Postgres` quanto o `Redis`, precisará das seguintes strings de conexão
 
-```
+```bash
 ## para uso de client
 DATABASE_URL="postgresql://ollo:ollo_password@localhost:5432/ollo_li?schema=public"
 REDIS_URL="redis://localhost:6379"
@@ -148,7 +148,7 @@ REDIS_URL="redis://localhost:6379"
 
 Temos um script que faz a criação automática do novo módulo
 
-```
+```bash
 npm run new:module MODULE_NAME
 ```
 
@@ -158,7 +158,7 @@ npm run new:module MODULE_NAME
 
 Temos um script que faz a criação automática do novo módulo
 
-```
+```bash
 npm run test:watch [path do arquivo se quiser rodar individualmente]
 ```
 
@@ -166,7 +166,7 @@ npm run test:watch [path do arquivo se quiser rodar individualmente]
 
 Para gerar o build da aplicação, rode:
 
-```
+```bash
 npm run build
 ```
 
@@ -174,7 +174,7 @@ Será criado uma pasta `dist` na raiz do projeto.
 
 Para rodar a API em modo de prod:
 
-```
+```bash
 npm run prod
 ```
 
@@ -228,3 +228,5 @@ DEBUG_MODE=false
 SERVER_PORT=4000
 [...]
 ```
+
+---
