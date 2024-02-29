@@ -1,2 +1,2 @@
 export * from "./database/prisma";
-export * from "./database/redis";
+export * from "./database/cache";
