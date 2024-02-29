@@ -7,6 +7,7 @@ import { emailProviderInstance } from "@/configurations/email";
 import { join } from "node:path";
 import { readFileSync } from "node:fs";
 import { emailTemplateParamMock } from "../__mocks__/email-template-param";
+import { CACHE_PREFIX } from "@/infra";
 
 const templatePath = join(__dirname, "../templates", "email-verify.html");
 const htmlTemplate = readFileSync(templatePath, "utf8");
@@ -43,13 +44,17 @@ describe("modules/email.unit", () => {
     // set
     expect(CacheSetSpy).toHaveBeenCalledTimes(1);
     const uuid = randomUUID();
-    expect(CacheSetSpy).toHaveBeenCalledWith("LINK_REFIX", key, uuid);
+    expect(CacheSetSpy).toHaveBeenCalledWith(CACHE_PREFIX.LINK, key, uuid);
 
     // expire
     expect(CacheExpireSet).toHaveBeenCalledTimes(1);
 
     const validAt = 48 * 3600; // 48 hours in seconds
-    expect(CacheExpireSet).toHaveBeenCalledWith("LINK_REFIX", key, validAt);
+    expect(CacheExpireSet).toHaveBeenCalledWith(
+      CACHE_PREFIX.LINK,
+      key,
+      validAt
+    );
 
     expect(mailSendSpy).toHaveBeenCalledTimes(1);
 
@@ -91,12 +96,12 @@ describe("modules/email.unit", () => {
 
     const key = `emailVerification/${email}`;
     expect(Cache.ttl).toHaveBeenCalledTimes(1);
-    expect(Cache.ttl).toHaveBeenCalledWith("LINK_REFIX", key);
+    expect(Cache.ttl).toHaveBeenCalledWith(CACHE_PREFIX.LINK, key);
 
     expect(Cache.get).toHaveBeenCalledTimes(1);
 
     expect(Cache.del).toHaveBeenCalledTimes(1);
-    expect(Cache.del).toHaveBeenCalledWith("LINK_REFIX", key);
+    expect(Cache.del).toHaveBeenCalledWith(CACHE_PREFIX.LINK, key);
   });
 
   it.each([

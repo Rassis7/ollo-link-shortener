@@ -5,7 +5,7 @@ import {
   LINK_ERRORS_RESPONSE,
 } from "./link.schema";
 import { expireCacheInSeconds } from "@/helpers";
-import { Cache } from "@/infra";
+import { CACHE_PREFIX, Cache } from "@/infra";
 import { SaveLinkInput } from "../shortener/shortener.schema";
 
 export async function getAllLinksByUser({
@@ -64,17 +64,7 @@ export async function updateLink({
 export async function getLinkByHashFromCache(
   hash: string
 ): Promise<GetByLinkHashFromCacheResponse | null> {
-  const linkResponse = await Cache.get("LINK_REFIX", hash);
-
-  if (!linkResponse) {
-    return null;
-  }
-
-  if (typeof linkResponse === "string") {
-    return JSON.parse(linkResponse);
-  }
-
-  return linkResponse;
+  return Cache.get(CACHE_PREFIX.LINK, hash);
 }
 
 export async function saveOrUpdateLinkCache({
@@ -90,10 +80,10 @@ export async function saveOrUpdateLinkCache({
   }
 
   const key = alias ?? hash;
-  await Cache.set("LINK_REFIX", key, rest);
+  await Cache.set(CACHE_PREFIX.LINK, key, rest);
 
   if (rest.validAt) {
     const validAt = expireCacheInSeconds(rest?.validAt);
-    await Cache.expire("LINK_REFIX", key, validAt);
+    await Cache.expire(CACHE_PREFIX.LINK, key, validAt);
   }
 }
