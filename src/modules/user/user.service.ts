@@ -1,8 +1,4 @@
-import {
-  CreateUserInput,
-  FindUserByEmailResponse,
-  FindUsersResponse,
-} from "./user.schema";
+import { CreateUserInput, FindUserByEmailResponse } from "./user.schema";
 import { generateHash } from "@/helpers";
 import { Context } from "@/configurations/context";
 import { User } from "@prisma/client";
@@ -35,20 +31,6 @@ export async function findUserByEmail({
   return context.prisma.user.findUnique({
     where: {
       email,
-    },
-  });
-}
-
-export async function findUsers({
-  context,
-}: {
-  context: Context;
-}): Promise<FindUsersResponse> {
-  return context.prisma.user.findMany({
-    select: {
-      id: true,
-      email: true,
-      name: true,
     },
   });
 }
