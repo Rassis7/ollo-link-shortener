@@ -5,8 +5,6 @@ const secretKey = String(process.env.FASTIFY_JWT_SECRET);
 
 export const MOCK_JWT_PAYLOAD = {
   id: faker.string.uuid(),
-  email: "john_doe@email.com",
-  name: "John Doe",
 };
 
 const signOptions = {
