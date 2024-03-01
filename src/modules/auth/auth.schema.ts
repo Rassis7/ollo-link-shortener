@@ -3,6 +3,9 @@ import { z } from "zod";
 export enum AUTH_ERRORS_RESPONSE {
   USER_OR_PASSWORD_INVALID = "O usuário ou a senha estão inválidos",
   USER_NOT_FOUND = "Usuário não encontrado",
+  USER_WITHOUT_TOKEN = "Token não informado",
+  SESSION_INVALID_TOKEN = "Token não é válido",
+  NOT_AUTHORIZED = "Não autorizado, por favor faça o login",
 }
 
 export const authSchema = z.object({
@@ -19,15 +22,27 @@ export const authSchema = z.object({
 
 const jwtAuthValues = z.object({
   id: z.string().uuid(),
-  email: z.string(),
-  name: z.string(),
+  hash: z.string(),
   iat: z.number(),
   exp: z.number(),
 });
 
-export const authResponseSchema = z.object({
-  accessToken: z.string(),
+const sessionScheme = z.intersection(
+  jwtAuthValues,
+  z.object({
+    email: z.string(),
+    name: z.string(),
+    enabled: z.boolean(),
+  })
+);
+
+const generateSessionSchema = z.object({
+  email: z.string(),
+  name: z.string(),
+  id: z.string(),
 });
 
 export type AuthInput = z.infer<typeof authSchema>;
-export type JwtAuthProps = z.infer<typeof jwtAuthValues>;
+export type JwtProps = z.infer<typeof jwtAuthValues>;
+export type SessionProps = z.infer<typeof sessionScheme>;
+export type GenerateSessionProps = z.infer<typeof generateSessionSchema>;
