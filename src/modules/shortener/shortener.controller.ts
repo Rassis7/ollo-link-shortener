@@ -6,7 +6,6 @@ import {
 import { APPLICATION_ERRORS, ErrorHandler, HTTP_STATUS_CODE } from "@/helpers";
 import { generateUrlHash, shortenerLink } from "./shortener.service";
 import { prisma } from "@/infra";
-import { JwtProps } from "../auth/auth.schema";
 import {
   getLinkByHashOrAlias,
   saveOrUpdateLinkCache,
@@ -22,7 +21,6 @@ export async function registerShortenerLinkHandler(
 ) {
   try {
     const { body } = request;
-    const user = await request.jwtDecode<JwtProps>();
 
     const { url, alias, ...restBody } = body;
     const hash = generateUrlHash(url);
@@ -44,11 +42,12 @@ export async function registerShortenerLinkHandler(
       });
     }
 
+    const userId = request.user.id;
     const linkInputValues = {
       hash,
       redirectTo: url,
       active: true,
-      userId: user.id,
+      userId,
       alias,
       ...restBody,
     };

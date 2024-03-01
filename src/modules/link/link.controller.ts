@@ -1,6 +1,5 @@
 import { ErrorHandler, HTTP_STATUS_CODE } from "@/helpers";
 import { FastifyReply, FastifyRequest } from "fastify";
-import { JwtProps } from "../auth/auth.schema";
 import { prisma } from "@/infra";
 import {
   getAllLinksByUser,
@@ -15,10 +14,9 @@ export async function getAllLinksHandler(
   reply: FastifyReply
 ) {
   try {
-    const user = await request.jwtDecode<JwtProps>();
-
+    const userId = request.user.id;
     const links = await getAllLinksByUser({
-      input: { userId: user.id },
+      input: { userId },
       context: { prisma },
     });
 
