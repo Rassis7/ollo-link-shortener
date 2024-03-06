@@ -3,7 +3,7 @@ import {
   mockLinkToShortenerInput,
   mockSaveLinkResponse,
 } from "../__mocks__/save-link";
-import { MOCK_JWT_TOKEN, Cache } from "@/tests";
+import { Cache } from "@/tests";
 import * as shortenerService from "../shortener.service";
 import { mockGetLinkByAliasOrHashResponse } from "../../link/__mocks__/get-by-alias-or-hash";
 import { faker } from "@faker-js/faker";
@@ -11,6 +11,9 @@ import { mockGetLinkByHashFromCacheResponse } from "../../link/__mocks__/get-by-
 import { SHORTENER_ERRORS_RESPONSE } from "../shortener.schema";
 import { APPLICATION_ERRORS } from "@/helpers";
 import * as linkService from "../../link/link.service";
+import { AUTH_ERRORS_RESPONSE } from "@/modules/auth/auth.schema";
+import { inject } from "@/tests/app";
+import { createHash } from "node:crypto";
 
 const BASE_URL = "/api/shortener";
 
@@ -23,10 +26,10 @@ describe("modules/shortener.integration", () => {
       validAt: _validAt,
       ...mockLinkToShortenerInputWithError
     } = mockLinkToShortenerInput;
-    const response = await app.inject({
+
+    const response = await inject({
       method: "POST",
       url: BASE_URL,
-      headers: { authorization: `Bearer ${MOCK_JWT_TOKEN}` },
       body: { ...mockLinkToShortenerInputWithError, validAt: dateInPast },
     });
 
@@ -57,7 +60,7 @@ describe("modules/shortener.integration", () => {
     });
 
     expect(response.json()).toEqual({
-      error: "Não autorizado",
+      error: AUTH_ERRORS_RESPONSE.USER_WITHOUT_TOKEN,
     });
     expect(response.statusCode).toEqual(401);
   });
@@ -72,11 +75,10 @@ describe("modules/shortener.integration", () => {
       .spyOn(linkService, "getLinkByHashOrAlias")
       .mockResolvedValue([{ ...firstLink, hash }]);
 
-    const response = await app.inject({
+    const response = await inject({
       method: "POST",
       url: BASE_URL,
       body: mockLinkToShortenerInput,
-      headers: { authorization: `Bearer ${MOCK_JWT_TOKEN}` },
     });
 
     expect(response.json()).toEqual({
@@ -86,6 +88,11 @@ describe("modules/shortener.integration", () => {
   });
 
   it("Should be able to return a error if exists other link with same alias", async () => {
+    (createHash as jest.Mock).mockReturnValue({
+      update: jest.fn().mockReturnThis(),
+      digest: jest.fn().mockReturnValue(Buffer.from("0123456789", "hex")),
+    });
+
     const alias = faker.lorem.word();
 
     const [firstLink] = mockGetLinkByAliasOrHashResponse;
@@ -94,11 +101,10 @@ describe("modules/shortener.integration", () => {
       .spyOn(linkService, "getLinkByHashOrAlias")
       .mockResolvedValue([{ ...firstLink, alias }]);
 
-    const response = await app.inject({
+    const response = await inject({
       method: "POST",
       url: BASE_URL,
       body: { ...mockLinkToShortenerInput, alias },
-      headers: { authorization: `Bearer ${MOCK_JWT_TOKEN}` },
     });
 
     expect(response.json()).toEqual({
@@ -113,11 +119,10 @@ describe("modules/shortener.integration", () => {
       .spyOn(Cache, "get")
       .mockResolvedValue(JSON.stringify(mockGetLinkByHashFromCacheResponse));
 
-    const response = await app.inject({
+    const response = await inject({
       method: "POST",
       url: BASE_URL,
       body: mockLinkToShortenerInput,
-      headers: { authorization: `Bearer ${MOCK_JWT_TOKEN}` },
     });
 
     expect(response.json()).toEqual({
@@ -133,11 +138,10 @@ describe("modules/shortener.integration", () => {
       .spyOn(shortenerService, "shortenerLink")
       .mockResolvedValue(mockSaveLinkResponse);
 
-    const response = await app.inject({
+    const response = await inject({
       method: "POST",
       url: BASE_URL,
       body: mockLinkToShortenerInput,
-      headers: { authorization: `Bearer ${MOCK_JWT_TOKEN}` },
     });
 
     expect(response.json()).toEqual({
@@ -159,11 +163,10 @@ describe("modules/shortener.integration", () => {
     const { alias: _alias, ...mockLinkToShortenerInputWithoutAlias } =
       mockLinkToShortenerInput;
 
-    const response = await app.inject({
+    const response = await inject({
       method: "POST",
       url: BASE_URL,
       body: mockLinkToShortenerInputWithoutAlias,
-      headers: { authorization: `Bearer ${MOCK_JWT_TOKEN}` },
     });
 
     expect(response.json()).toEqual({

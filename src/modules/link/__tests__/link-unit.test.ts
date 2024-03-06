@@ -99,7 +99,7 @@ describe("modules/link-unit", () => {
   it("Should be able to return link by hash from cache", async () => {
     jest
       .spyOn(Cache, "get")
-      .mockResolvedValue(JSON.stringify(mockGetLinkByHashFromCacheResponse));
+      .mockResolvedValue(mockGetLinkByHashFromCacheResponse);
 
     const linkFromCache = await getLinkByHashFromCache(mockHashInput);
 

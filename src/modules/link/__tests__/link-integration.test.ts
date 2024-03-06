@@ -1,5 +1,4 @@
-import { app } from "@/configurations/app";
-import { MOCK_JWT_TOKEN, Cache } from "@/tests";
+import { Cache } from "@/tests";
 import * as linkService from "../link.service";
 import { mockGetAllLinksResponse } from "../__mocks__/get-all";
 import {
@@ -9,19 +8,22 @@ import {
 import { faker } from "@faker-js/faker";
 import { LINK_ERRORS_RESPONSE } from "../link.schema";
 import { mockGetLinkByAliasOrHashResponse } from "../__mocks__/get-by-alias-or-hash";
+import { inject } from "@/tests/app";
+import { AUTH_ERRORS_RESPONSE } from "@/modules/auth/auth.schema";
 
 const BASE_URL = "/api/links";
 
 describe("modules/Link/link-integration", () => {
   describe("Get All", () => {
     it("Should return error if not authenticated", async () => {
-      const response = await app.inject({
+      const response = await inject({
         method: "GET",
         url: BASE_URL,
+        isAuthorized: false,
       });
 
       expect(response.json()).toEqual({
-        error: "Não autorizado",
+        error: AUTH_ERRORS_RESPONSE.NOT_AUTHORIZED,
       });
       expect(response.statusCode).toEqual(401);
     });
@@ -31,10 +33,9 @@ describe("modules/Link/link-integration", () => {
         .spyOn(linkService, "getAllLinksByUser")
         .mockResolvedValueOnce(mockGetAllLinksResponse);
 
-      const response = await app.inject({
+      const response = await inject({
         method: "GET",
         url: BASE_URL,
-        headers: { authorization: `Bearer ${MOCK_JWT_TOKEN}` },
       });
 
       const mockGetAllLinksResponseToResponse = mockGetAllLinksResponse.map(
@@ -59,10 +60,9 @@ describe("modules/Link/link-integration", () => {
     it("Should be able to return empty array if return nothing", async () => {
       jest.spyOn(linkService, "getAllLinksByUser").mockResolvedValueOnce([]);
 
-      const response = await app.inject({
+      const response = await inject({
         method: "GET",
         url: BASE_URL,
-        headers: { authorization: `Bearer ${MOCK_JWT_TOKEN}` },
       });
 
       expect(response.json()).toEqual([]);
@@ -74,10 +74,9 @@ describe("modules/Link/link-integration", () => {
         .spyOn(linkService, "getAllLinksByUser")
         .mockRejectedValue(new Error("any error"));
 
-      const response = await app.inject({
+      const response = await inject({
         method: "GET",
         url: BASE_URL,
-        headers: { authorization: `Bearer ${MOCK_JWT_TOKEN}` },
       });
 
       expect(response.json()).toEqual({ error: "any error" });
@@ -87,14 +86,15 @@ describe("modules/Link/link-integration", () => {
 
   describe("Update", () => {
     it("Should be able to return a error if not be unauthorized", async () => {
-      const response = await app.inject({
+      const response = await inject({
         method: "PUT",
         url: `${BASE_URL}/not_found`,
         body: mockEditLinkInput,
+        isAuthorized: false,
       });
 
       expect(response.json()).toEqual({
-        error: "Não autorizado",
+        error: AUTH_ERRORS_RESPONSE.NOT_AUTHORIZED,
       });
       expect(response.statusCode).toEqual(401);
     });
@@ -102,10 +102,9 @@ describe("modules/Link/link-integration", () => {
     it("Should be able to return a error if link not exists", async () => {
       jest.spyOn(linkService, "getLinkByHashOrAlias").mockResolvedValue([]);
 
-      const response = await app.inject({
+      const response = await inject({
         method: "PUT",
         url: `${BASE_URL}/not_found`,
-        headers: { authorization: `Bearer ${MOCK_JWT_TOKEN}` },
         body: mockEditLinkInput,
       });
 
@@ -127,10 +126,9 @@ describe("modules/Link/link-integration", () => {
         },
       ]);
 
-      const response = await app.inject({
+      const response = await inject({
         method: "PUT",
         url: `${BASE_URL}/${firstResponseLinkByAliasOrHash.id}`,
-        headers: { authorization: `Bearer ${MOCK_JWT_TOKEN}` },
         body: { ...mockEditLinkInput, alias },
       });
 
@@ -152,10 +150,9 @@ describe("modules/Link/link-integration", () => {
       jest.spyOn(Cache, "set");
       jest.spyOn(Cache, "expire");
 
-      const response = await app.inject({
+      const response = await inject({
         method: "PUT",
         url: `${BASE_URL}/${firstResponseLinkByAliasOrHash.id}`,
-        headers: { authorization: `Bearer ${MOCK_JWT_TOKEN}` },
         body: { ...mockEditLinkInput },
       });
 

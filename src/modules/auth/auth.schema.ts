@@ -22,7 +22,6 @@ export const authSchema = z.object({
 
 const jwtAuthValues = z.object({
   id: z.string().uuid(),
-  hash: z.string(),
   iat: z.number(),
   exp: z.number(),
 });
