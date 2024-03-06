@@ -1,16 +1,15 @@
 import { faker } from "@faker-js/faker";
-import jwt from "jsonwebtoken";
+import { createSigner } from "fast-jwt";
 
-const secretKey = String(process.env.FASTIFY_JWT_SECRET);
+export const SECRET_KEY = String(process.env.FASTIFY_JWT_SECRET);
+export const EXPIRES_IN = String(process.env.FASTIFY_JWT_SECRET_EXPIRES_IN);
+
+const signSync = createSigner({ key: SECRET_KEY, expiresIn: EXPIRES_IN });
 
 export const MOCK_JWT_PAYLOAD = {
   id: faker.string.uuid(),
 };
 
-const signOptions = {
-  expiresIn: String(process.env.FASTIFY_JWT_SECRET_EXPIRES_IN),
-};
-
-const MOCK_JWT_TOKEN = jwt.sign(MOCK_JWT_PAYLOAD, secretKey, signOptions);
+const MOCK_JWT_TOKEN = signSync(MOCK_JWT_PAYLOAD);
 
 export { MOCK_JWT_TOKEN };
