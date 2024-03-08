@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
 import { sendVerifyEmailHandler, verifyEmail } from "../email.service";
-import { Cache } from "@/tests";
+import { cache } from "@/tests";
 import { randomUUID } from "node:crypto";
 import { RANDOM_UUID_MOCK } from "@/tests/__mocks__";
 import { emailProviderInstance } from "@/configurations/email";
@@ -25,9 +25,9 @@ describe("modules/email.unit", () => {
   });
 
   it("Should be abe to call email provider and send verification email with template", async () => {
-    const CacheSetSpy = jest.spyOn(Cache, "set").mockImplementation(jest.fn());
+    const CacheSetSpy = jest.spyOn(cache, "set").mockImplementation(jest.fn());
     const CacheExpireSet = jest
-      .spyOn(Cache, "expire")
+      .spyOn(cache, "expire")
       .mockImplementation(jest.fn());
 
     const mailSendSpy = jest
@@ -86,31 +86,31 @@ describe("modules/email.unit", () => {
   it("Should be abe to check if verification email is valid", async () => {
     const code = faker.number.int({ min: 100, max: 999 }).toString();
 
-    jest.spyOn(Cache, "ttl").mockResolvedValue(1);
-    jest.spyOn(Cache, "get").mockResolvedValue(code);
-    jest.spyOn(Cache, "del").mockImplementation(jest.fn());
+    jest.spyOn(cache, "ttl").mockResolvedValue(1);
+    jest.spyOn(cache, "get").mockResolvedValue(code);
+    jest.spyOn(cache, "del").mockImplementation(jest.fn());
 
     const email = faker.internet.email();
 
     await verifyEmail(code, email);
 
     const key = `emailVerification/${email}`;
-    expect(Cache.ttl).toHaveBeenCalledTimes(1);
-    expect(Cache.ttl).toHaveBeenCalledWith(CACHE_PREFIX.LINK, key);
+    expect(cache.ttl).toHaveBeenCalledTimes(1);
+    expect(cache.ttl).toHaveBeenCalledWith(CACHE_PREFIX.LINK, key);
 
-    expect(Cache.get).toHaveBeenCalledTimes(1);
+    expect(cache.get).toHaveBeenCalledTimes(1);
 
-    expect(Cache.del).toHaveBeenCalledTimes(1);
-    expect(Cache.del).toHaveBeenCalledWith(CACHE_PREFIX.LINK, key);
+    expect(cache.del).toHaveBeenCalledTimes(1);
+    expect(cache.del).toHaveBeenCalledWith(CACHE_PREFIX.LINK, key);
   });
 
   it.each([
     ["code was expired", -1],
     ["email not exists", -2],
   ])(
-    "Should reject to email verification if %s in Cache",
+    "Should reject to email verification if %s in cache",
     async (_, CacheResponse: number) => {
-      jest.spyOn(Cache, "ttl").mockResolvedValue(CacheResponse);
+      jest.spyOn(cache, "ttl").mockResolvedValue(CacheResponse);
 
       const email = faker.internet.email();
       const code = faker.number.int({ min: 100, max: 999 }).toString();
@@ -124,8 +124,8 @@ describe("modules/email.unit", () => {
   it("Should be abe to check if verification code is wrong", async () => {
     const code = faker.number.int({ min: 100, max: 999 }).toString();
 
-    jest.spyOn(Cache, "ttl").mockResolvedValue(1);
-    jest.spyOn(Cache, "get").mockResolvedValue(code);
+    jest.spyOn(cache, "ttl").mockResolvedValue(1);
+    jest.spyOn(cache, "get").mockResolvedValue(code);
 
     const email = faker.internet.email();
 

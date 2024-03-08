@@ -1,4 +1,4 @@
-import { Cache } from "@/tests";
+import { cache } from "@/tests";
 import * as linkService from "../link.service";
 import { mockGetAllLinksResponse } from "../__mocks__/get-all";
 import {
@@ -147,8 +147,8 @@ describe("modules/Link/link-integration", () => {
       jest
         .spyOn(linkService, "getLinkByHashOrAlias")
         .mockResolvedValue([firstResponseLinkByAliasOrHash]);
-      jest.spyOn(Cache, "set");
-      jest.spyOn(Cache, "expire");
+      jest.spyOn(cache, "set");
+      jest.spyOn(cache, "expire");
 
       const response = await inject({
         method: "PUT",
