@@ -1,7 +1,7 @@
-import { Cache } from "@/infra";
+import { cache } from "@/infra";
 
 afterAll(async () => {
-  await Cache.quit();
+  await cache.quit();
 });
 
-export { Cache };
+export { cache };

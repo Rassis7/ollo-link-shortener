@@ -1,4 +1,4 @@
-import { CACHE_PREFIX, Cache } from "@/infra";
+import { CACHE_PREFIX, cache } from "@/infra";
 import { GenerateSessionProps, SessionProps } from "./auth.schema";
 
 export async function generateSession({ id, ...rest }: GenerateSessionProps) {
@@ -7,7 +7,7 @@ export async function generateSession({ id, ...rest }: GenerateSessionProps) {
     return session;
   }
 
-  await Cache.set(
+  await cache.set(
     CACHE_PREFIX.AUTH,
     id,
     { id, enabled: true, ...rest },
@@ -16,11 +16,11 @@ export async function generateSession({ id, ...rest }: GenerateSessionProps) {
 }
 
 export async function getSession(hash: string): Promise<SessionProps | null> {
-  const restTime = await Cache.ttl(CACHE_PREFIX.AUTH, hash);
+  const restTime = await cache.ttl(CACHE_PREFIX.AUTH, hash);
 
   if (restTime <= 1) {
     return null;
   }
 
-  return Cache.get<SessionProps>(CACHE_PREFIX.AUTH, hash);
+  return cache.get<SessionProps>(CACHE_PREFIX.AUTH, hash);
 }
