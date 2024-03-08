@@ -4,7 +4,7 @@ import { GenerateSessionProps, SessionProps } from "./auth.schema";
 export async function generateSession({ id, ...rest }: GenerateSessionProps) {
   const session = await getSession(id);
   if (session) {
-    return session;
+    return;
   }
 
   await cache.set(
