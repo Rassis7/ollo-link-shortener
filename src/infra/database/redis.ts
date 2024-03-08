@@ -1,7 +1,4 @@
-import IoRedis, {
-  // Redis as MockRedis,
-  RedisOptions as IoRedisOptions,
-} from "ioredis";
+import IoRedis, { RedisOptions as IoRedisOptions } from "ioredis";
 
 export enum CACHE_PREFIX {
   LINK = "link",
@@ -10,7 +7,6 @@ export enum CACHE_PREFIX {
 
 export interface RedisOptions {
   redisUrl: string;
-  redisInstance?: IoRedis;
   redisOptions?: IoRedisOptions;
 }
 
@@ -18,19 +14,22 @@ export class Redis {
   private static instance: Redis | null = null;
   private readonly redisClient: IoRedis;
 
-  constructor({ redisInstance, redisUrl, redisOptions }: RedisOptions) {
-    this.redisClient =
-      redisInstance ?? new IoRedis(redisUrl, redisOptions ?? {});
+  constructor({ redisUrl, redisOptions }: RedisOptions) {
+    this.redisClient = new IoRedis(redisUrl, redisOptions ?? {});
   }
 
-  public static getInstance(options: RedisOptions): Redis {
+  static getInstance(options: RedisOptions): Redis {
     if (!Redis.instance) {
       Redis.instance = new Redis(options);
     }
     return Redis.instance;
   }
 
-  public async set(
+  getClient() {
+    return this.redisClient;
+  }
+
+  async set(
     prefix: CACHE_PREFIX,
     key: string,
     value: string | Record<string, unknown>,
@@ -46,7 +45,7 @@ export class Redis {
     }
   }
 
-  public async expire(
+  async expire(
     prefix: CACHE_PREFIX,
     key: string,
     value: number
@@ -54,14 +53,11 @@ export class Redis {
     await this.redisClient.expire(`${prefix}:${key}`, value);
   }
 
-  public async del(prefix: CACHE_PREFIX, key: string): Promise<void> {
+  async del(prefix: CACHE_PREFIX, key: string): Promise<void> {
     await this.redisClient.del(`${prefix}:${key}`);
   }
 
-  public async get<T = unknown>(
-    prefix: CACHE_PREFIX,
-    key: string
-  ): Promise<T | null> {
+  async get<T = unknown>(prefix: CACHE_PREFIX, key: string): Promise<T | null> {
     try {
       const value = await this.redisClient.get(`${prefix}:${key}`);
 
@@ -79,11 +75,11 @@ export class Redis {
     }
   }
 
-  public async ttl(prefix: CACHE_PREFIX, key: string): Promise<number> {
+  async ttl(prefix: CACHE_PREFIX, key: string): Promise<number> {
     return this.redisClient.ttl(`${prefix}:${key}`);
   }
 
-  public async quit(): Promise<void> {
+  async quit(): Promise<void> {
     await this.redisClient.quit();
   }
 }

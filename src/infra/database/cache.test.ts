@@ -1,44 +1,40 @@
 import { faker } from "@faker-js/faker";
 import { CACHE_PREFIX } from "./cache";
 import { Redis as Cache } from "./redis";
-import IORedisMock from "ioredis-mock";
-
-const redisClientMock = new IORedisMock();
 
 describe("database/cache", () => {
   let cache: Cache;
 
   beforeEach(() => {
-    cache = new Cache({ redisInstance: redisClientMock, redisUrl: "" });
+    cache = new Cache({ redisUrl: "" });
   });
 
   afterEach(() => {
     cache.quit();
-    jest.clearAllMocks();
     jest.restoreAllMocks();
   });
 
   it("Should be able to save a cache", async () => {
-    jest.spyOn(redisClientMock, "set");
+    jest.spyOn(cache.getClient(), "set");
 
     const value = { company: faker.company.name() };
     await cache.set(CACHE_PREFIX.AUTH, "any_key", value);
 
-    expect(redisClientMock.set).toHaveBeenCalledTimes(1);
-    expect(redisClientMock.set).toHaveBeenCalledWith(
+    expect(cache.getClient().set).toHaveBeenCalledTimes(1);
+    expect(cache.getClient().set).toHaveBeenCalledWith(
       `${CACHE_PREFIX.AUTH}:any_key`,
       JSON.stringify(value)
     );
   });
 
   it("Should be able to save a cache with expire in", async () => {
-    jest.spyOn(redisClientMock, "set");
-    jest.spyOn(redisClientMock, "expire");
+    jest.spyOn(cache.getClient(), "set");
+    jest.spyOn(cache.getClient(), "expire");
 
     await cache.set(CACHE_PREFIX.LINK, "any_key", "value", 60);
 
-    expect(redisClientMock.expire).toHaveBeenCalledTimes(1);
-    expect(redisClientMock.expire).toHaveBeenCalledWith(
+    expect(cache.getClient().expire).toHaveBeenCalledTimes(1);
+    expect(cache.getClient().expire).toHaveBeenCalledWith(
       `${CACHE_PREFIX.LINK}:any_key`,
       60
     );
@@ -46,7 +42,7 @@ describe("database/cache", () => {
 
   it("Should be able to return cache value like a object format", async () => {
     const payload = JSON.stringify({ company: faker.company.name() });
-    jest.spyOn(redisClientMock, "get").mockResolvedValue(payload);
+    jest.spyOn(cache.getClient(), "get").mockResolvedValue(payload);
 
     const response = await cache.get(CACHE_PREFIX.AUTH, "any_key");
 
@@ -55,7 +51,7 @@ describe("database/cache", () => {
 
   it("Should be able to return cache value like a normal value", async () => {
     const payload = faker.number.int();
-    jest.spyOn(redisClientMock, "get").mockResolvedValue(payload.toString());
+    jest.spyOn(cache.getClient(), "get").mockResolvedValue(payload.toString());
 
     const response = await cache.get(CACHE_PREFIX.AUTH, "any_key");
 
@@ -63,7 +59,7 @@ describe("database/cache", () => {
   });
 
   it("Should be able to return cache value like a nullable value", async () => {
-    jest.spyOn(redisClientMock, "get").mockResolvedValue(null);
+    jest.spyOn(cache.getClient(), "get").mockResolvedValue(null);
 
     const response = await cache.get(CACHE_PREFIX.AUTH, "any_key");
 
@@ -71,7 +67,7 @@ describe("database/cache", () => {
   });
 
   it("Should be able to return cache value like a nullable value if happen a exception", async () => {
-    jest.spyOn(redisClientMock, "get").mockRejectedValue(new Error());
+    jest.spyOn(cache.getClient(), "get").mockRejectedValue(new Error());
 
     const response = await cache.get(CACHE_PREFIX.AUTH, "any_key");
 
@@ -79,18 +75,18 @@ describe("database/cache", () => {
   });
 
   it("Should be able to delete a cache", async () => {
-    jest.spyOn(redisClientMock, "del");
+    jest.spyOn(cache.getClient(), "del");
 
     await cache.del(CACHE_PREFIX.AUTH, "any_key");
 
-    expect(redisClientMock.del).toHaveBeenCalledTimes(1);
-    expect(redisClientMock.del).toHaveBeenCalledWith(
+    expect(cache.getClient().del).toHaveBeenCalledTimes(1);
+    expect(cache.getClient().del).toHaveBeenCalledWith(
       `${CACHE_PREFIX.AUTH}:any_key`
     );
   });
 
   it("Should be able to return time to live (TTL) of a key in cache", async () => {
-    jest.spyOn(redisClientMock, "ttl");
+    jest.spyOn(cache.getClient(), "ttl");
 
     const ttlInSeconds = 60;
 
@@ -98,10 +94,16 @@ describe("database/cache", () => {
 
     const ttl = await cache.ttl(CACHE_PREFIX.LINK, "any_key");
 
-    expect(redisClientMock.ttl).toHaveBeenCalledWith(
+    expect(cache.getClient().ttl).toHaveBeenCalledWith(
       `${CACHE_PREFIX.LINK}:any_key`
     );
 
     expect(ttl).toBe(ttlInSeconds);
+  });
+
+  it("Should be able to call quit method", async () => {
+    jest.spyOn(cache.getClient(), "quit");
+    await cache.quit();
+    expect(cache.getClient().quit).toHaveBeenCalledTimes(1);
   });
 });
