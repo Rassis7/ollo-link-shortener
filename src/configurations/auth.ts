@@ -2,7 +2,7 @@ import fastifyJwt, { FastifyJWT } from "@fastify/jwt";
 import { app as fastify } from "./app";
 import { FastifyReply, FastifyRequest } from "fastify";
 import fastifyCookie from "@fastify/cookie";
-import { sessionHandler } from "@/modules/auth/auth.controller";
+import { sessionHandler } from "@/modules/session/session.controller";
 
 fastify.register(fastifyJwt, () => ({
   secret: String(process.env.FASTIFY_JWT_SECRET),

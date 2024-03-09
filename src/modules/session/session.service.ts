@@ -1,5 +1,5 @@
 import { CACHE_PREFIX, cache } from "@/infra";
-import { GenerateSessionProps, SessionProps } from "./auth.schema";
+import { GenerateSessionProps, SessionProps } from "./session.schema";
 
 export async function generateSession({ id, ...rest }: GenerateSessionProps) {
   await cache.set(

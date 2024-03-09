@@ -2,7 +2,7 @@ import { app } from "@/configurations/app";
 import { InjectOptions } from "fastify";
 import { createVerifier } from "fast-jwt";
 import { MOCK_JWT_TOKEN, SECRET_KEY } from "./jwt";
-import * as authService from "@/modules/auth/auth.service";
+import * as sessionService from "@/modules/session/session.service";
 
 type InjectType = InjectOptions & {
   isAuthorized?: boolean;
@@ -14,7 +14,7 @@ export async function inject({ isAuthorized = true, ...rest }: InjectType) {
     const payload = verifySync(MOCK_JWT_TOKEN);
 
     if (payload) {
-      jest.spyOn(authService, "getSession").mockResolvedValue({
+      jest.spyOn(sessionService, "getSession").mockResolvedValue({
         ...payload,
         enabled: true,
         name: "John Due",

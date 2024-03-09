@@ -11,9 +11,9 @@ import { mockGetLinkByHashFromCacheResponse } from "../../link/__mocks__/get-by-
 import { SHORTENER_ERRORS_RESPONSE } from "../shortener.schema";
 import { APPLICATION_ERRORS } from "@/helpers";
 import * as linkService from "../../link/link.service";
-import { AUTH_ERRORS_RESPONSE } from "@/modules/auth/auth.schema";
 import { inject } from "@/tests/app";
 import { createHash } from "node:crypto";
+import { SESSION_ERRORS_RESPONSE } from "@/modules/session/session.schema";
 
 const BASE_URL = "/api/shortener";
 
@@ -60,7 +60,7 @@ describe("modules/shortener.integration", () => {
     });
 
     expect(response.json()).toEqual({
-      error: AUTH_ERRORS_RESPONSE.USER_WITHOUT_TOKEN,
+      error: SESSION_ERRORS_RESPONSE.WITHOUT_TOKEN,
     });
     expect(response.statusCode).toEqual(401);
   });

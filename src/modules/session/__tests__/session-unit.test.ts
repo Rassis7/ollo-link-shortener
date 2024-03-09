@@ -1,11 +1,11 @@
 import { CACHE_PREFIX, cache } from "@/infra";
-import { generateSession, getSession } from "../auth.service";
 import { faker } from "@faker-js/faker";
-import { mockGenerationSessionInput } from "../__mocks__/auth";
+import { generateSession, getSession } from "../session.service";
+import { mockGenerationSessionInput } from "../__mocks__/session";
 
 const hash = faker.string.sample(5);
 
-describe("modules/auth-unit", () => {
+describe("modules/session-unit", () => {
   it("Should be able to return correct session values", async () => {
     jest.spyOn(cache, "ttl").mockReturnValue(Promise.resolve(60));
     jest.spyOn(cache, "get");

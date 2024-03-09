@@ -6,12 +6,12 @@ import {
 import { app } from "@/configurations/app";
 import * as hashFunctions from "@/helpers/hash";
 import { HTTP_STATUS_CODE } from "@/helpers";
-import { AUTH_ERRORS_RESPONSE } from "../auth.schema";
+import { SESSION_ERRORS_RESPONSE } from "@/modules/session/session.schema";
 
 const BASE_URL = "api/auth";
 
 describe("module/auth.integration", () => {
-  it("Should be able to do login and return jwt token", async () => {
+  it("Should be able to do login and create auth cookie", async () => {
     jest
       .spyOn(userService, "findUserByEmail")
       .mockResolvedValue(mockAuthFindUserByEmailResponse);
@@ -80,7 +80,7 @@ describe("module/auth.integration", () => {
     });
 
     expect(response.json()).toEqual({
-      error: AUTH_ERRORS_RESPONSE.USER_WITHOUT_TOKEN,
+      error: SESSION_ERRORS_RESPONSE.WITHOUT_TOKEN,
     });
     expect(response.statusCode).toEqual(401);
   });
