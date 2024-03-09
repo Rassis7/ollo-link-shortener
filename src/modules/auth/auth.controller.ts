@@ -85,10 +85,6 @@ export async function sessionHandler(
       throw new Error(AUTH_ERRORS_RESPONSE.NOT_AUTHORIZED);
     }
 
-    if (session.id !== decodedToken.id) {
-      throw new Error(AUTH_ERRORS_RESPONSE.SESSION_INVALID_TOKEN);
-    }
-
     request.user = { id: session.id, name: session.name, email: session.email };
   } catch (error) {
     if (

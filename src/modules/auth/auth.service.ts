@@ -2,11 +2,6 @@ import { CACHE_PREFIX, cache } from "@/infra";
 import { GenerateSessionProps, SessionProps } from "./auth.schema";
 
 export async function generateSession({ id, ...rest }: GenerateSessionProps) {
-  const session = await getSession(id);
-  if (session) {
-    return;
-  }
-
   await cache.set(
     CACHE_PREFIX.AUTH,
     id,

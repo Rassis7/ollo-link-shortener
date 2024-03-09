@@ -36,12 +36,4 @@ describe("modules/auth-unit", () => {
       process.env.REDIS_TOKEN_EXPIRE_IN
     );
   });
-  it("Should not be able to call create session if session existis", async () => {
-    jest.spyOn(cache, "set");
-    jest.spyOn(cache, "get").mockReturnValue(Promise.resolve("anything"));
-
-    await generateSession(mockGenerationSessionInput);
-
-    expect(cache.set).not.toHaveBeenCalled();
-  });
 });
