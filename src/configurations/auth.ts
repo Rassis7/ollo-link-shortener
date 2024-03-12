@@ -14,7 +14,7 @@ fastify.register(fastifyJwt, () => ({
     badRequestErrorMessage: AUTH_ERRORS_RESPONSE.TOKEN_WRONG,
     authorizationTokenUntrusted: AUTH_ERRORS_RESPONSE.TOKEN_UNTRUSTED,
     authorizationTokenUnsigned: AUTH_ERRORS_RESPONSE.TOKEN_UNSIGNED,
-    authorizationTokenInvalid: AUTH_ERRORS_RESPONSE.NOT_AUTHORIZED,
+    authorizationTokenInvalid: AUTH_ERRORS_RESPONSE.TOKEN_INVALID,
     noAuthorizationInHeaderMessage: AUTH_ERRORS_RESPONSE.TOKEN_NOT_SENDED,
     noAuthorizationInCookieMessage: AUTH_ERRORS_RESPONSE.TOKEN_NOT_SENDED,
     badCookieRequestErrorMessage: AUTH_ERRORS_RESPONSE.TOKEN_INVALID,

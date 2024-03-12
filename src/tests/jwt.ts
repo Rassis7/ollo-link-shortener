@@ -10,6 +10,4 @@ export const MOCK_JWT_PAYLOAD = {
   id: faker.string.uuid(),
 };
 
-const MOCK_JWT_TOKEN = signSync(MOCK_JWT_PAYLOAD);
-
-export { MOCK_JWT_TOKEN };
+export const MOCK_JWT_TOKEN = signSync(MOCK_JWT_PAYLOAD);
