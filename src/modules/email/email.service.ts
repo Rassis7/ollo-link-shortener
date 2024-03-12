@@ -1,4 +1,8 @@
-import { SendEmailProps, VERIFY_EMAIL_RESPONSE } from "./email.schema";
+import {
+  SendEmailProps,
+  VERIFY_EMAIL_PROPS,
+  VERIFY_EMAIL_RESPONSE,
+} from "./email.schema";
 import { join } from "node:path";
 import { readFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";
@@ -48,6 +52,10 @@ function getEmailParams({
 }
 
 async function sendEmail(props: SendEmailProps) {
+  if (process.env.NODE_ENV !== "production") {
+    return;
+  }
+
   const emailParams = getEmailParams(props);
   await emailProviderInstance.email.send(emailParams);
 }
@@ -71,9 +79,9 @@ export async function sendVerifyEmailHandler(email: string) {
   const verifyUrl = await generateVerifyEmailUrl(email);
 
   const emailProps: SendEmailProps = {
-    subject: process.env.VERIFY_EMAIL_SUBJECT,
-    fromEmail: process.env.VERIFY_EMAIL_FROM_EMAIL,
-    fromName: process.env.VERIFY_EMAIL_FROM_NAME,
+    subject: VERIFY_EMAIL_PROPS.VERIFY_EMAIL_SUBJECT,
+    fromEmail: VERIFY_EMAIL_PROPS.VERIFY_EMAIL_FROM_EMAIL,
+    fromName: VERIFY_EMAIL_PROPS.VERIFY_EMAIL_FROM_NAME,
     templateId: null,
     htmlTemplate,
     recipients: [

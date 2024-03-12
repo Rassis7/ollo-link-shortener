@@ -6,6 +6,12 @@ export enum VERIFY_EMAIL_RESPONSE {
   WAS_HAPPENED_AN_ERROR_WHEN_RESEND_EMAIL = "Ocorreu um erro ao reenviar o email de verificação",
 }
 
+export enum VERIFY_EMAIL_PROPS {
+  VERIFY_EMAIL_SUBJECT = "Confirme Seu Cadastro - Importante!",
+  VERIFY_EMAIL_FROM_EMAIL = "no-reply@ollo.li",
+  VERIFY_EMAIL_FROM_NAME = "Vera da OLLO.li",
+}
+
 const emailCore = z.object({
   fromEmail: z.string().email(),
   fromName: z.string(),

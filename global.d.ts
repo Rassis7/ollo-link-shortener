@@ -17,9 +17,6 @@ declare global {
       OLLO_LI_BASE_URL: string;
       INTERNAL_OLLO_LI_BASE_URL: string;
       REDIS_URL: string;
-      VERIFY_EMAIL_SUBJECT: string;
-      VERIFY_EMAIL_FROM_EMAIL: string;
-      VERIFY_EMAIL_FROM_NAME: string;
     }
   }
 }
