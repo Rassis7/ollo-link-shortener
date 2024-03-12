@@ -6,7 +6,7 @@ import {
 import { app } from "@/configurations/app";
 import * as hashFunctions from "@/helpers/hash";
 import { HTTP_STATUS_CODE } from "@/helpers";
-import { SESSION_ERRORS_RESPONSE } from "@/modules/session/session.schema";
+import { AUTH_ERRORS_RESPONSE } from "../auth.schema";
 
 const BASE_URL = "api/auth";
 
@@ -80,7 +80,7 @@ describe("module/auth.integration", () => {
     });
 
     expect(response.json()).toEqual({
-      error: SESSION_ERRORS_RESPONSE.WITHOUT_TOKEN,
+      error: AUTH_ERRORS_RESPONSE.TOKEN_NOT_PROVIDED,
     });
     expect(response.statusCode).toEqual(401);
   });

@@ -4,7 +4,6 @@ import { AUTH_ERRORS_RESPONSE, JwtProps } from "../auth/auth.schema";
 import { generateSession, getSession } from "./session.service";
 import { app } from "@/configurations/app";
 import { ErrorHandler, HTTP_STATUS_CODE } from "@/helpers";
-import { SESSION_ERRORS_RESPONSE } from "./session.schema";
 
 export async function sessionHandler(
   request: FastifyRequestWithCookie,
@@ -14,15 +13,10 @@ export async function sessionHandler(
     const jwt = request.cookies.access_token;
 
     if (!jwt) {
-      throw new Error(SESSION_ERRORS_RESPONSE.WITHOUT_TOKEN);
+      throw new Error(AUTH_ERRORS_RESPONSE.TOKEN_NOT_PROVIDED);
     }
 
     const decodedToken = await request.jwtVerify<JwtProps>();
-
-    if (!decodedToken) {
-      throw new Error(SESSION_ERRORS_RESPONSE.SESSION_INVALID_TOKEN);
-    }
-
     const session = await getSession(decodedToken.id);
 
     if (!session || !session.enabled) {

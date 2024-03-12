@@ -17,7 +17,7 @@ import { linkRoutes } from "./modules/link/link.route";
 
 import "./configurations/auth";
 import "./configurations/rate-limit";
-import "./configurations/error-handler";
+import "./configurations/errors";
 
 const port = Number(process.env.SERVER_PORT ?? 3000);
 

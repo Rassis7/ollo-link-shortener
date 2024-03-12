@@ -3,6 +3,7 @@ import { app as fastify } from "./app";
 import { FastifyReply, FastifyRequest } from "fastify";
 import fastifyCookie from "@fastify/cookie";
 import { sessionHandler } from "@/modules/session/session.controller";
+import { AUTH_ERRORS_RESPONSE } from "@/modules/auth/auth.schema";
 
 fastify.register(fastifyJwt, () => ({
   secret: String(process.env.FASTIFY_JWT_SECRET),
@@ -10,14 +11,14 @@ fastify.register(fastifyJwt, () => ({
     expiresIn: process.env.FASTIFY_JWT_SECRET_EXPIRES_IN,
   },
   messages: {
-    badRequestErrorMessage: "Token informado de maneira incorreta",
-    authorizationTokenUntrusted: "Token não confiável",
-    authorizationTokenUnsigned: "Token não assinado",
-    authorizationTokenInvalid: "Token não autorizado",
-    noAuthorizationInHeaderMessage: "Token não enviado",
-    noAuthorizationInCookieMessage: "Token não enviado",
-    badCookieRequestErrorMessage: "Token inválido",
-    authorizationTokenExpiredMessage: "Token expirado",
+    badRequestErrorMessage: AUTH_ERRORS_RESPONSE.TOKEN_WRONG,
+    authorizationTokenUntrusted: AUTH_ERRORS_RESPONSE.TOKEN_UNTRUSTED,
+    authorizationTokenUnsigned: AUTH_ERRORS_RESPONSE.TOKEN_UNSIGNED,
+    authorizationTokenInvalid: AUTH_ERRORS_RESPONSE.NOT_AUTHORIZED,
+    noAuthorizationInHeaderMessage: AUTH_ERRORS_RESPONSE.TOKEN_NOT_SENDED,
+    noAuthorizationInCookieMessage: AUTH_ERRORS_RESPONSE.TOKEN_NOT_SENDED,
+    badCookieRequestErrorMessage: AUTH_ERRORS_RESPONSE.TOKEN_INVALID,
+    authorizationTokenExpiredMessage: AUTH_ERRORS_RESPONSE.TOKEN_EXPIRED,
   },
 }));
 

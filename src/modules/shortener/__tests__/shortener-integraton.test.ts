@@ -13,7 +13,7 @@ import { APPLICATION_ERRORS } from "@/helpers";
 import * as linkService from "../../link/link.service";
 import { inject } from "@/tests/app";
 import { createHash } from "node:crypto";
-import { SESSION_ERRORS_RESPONSE } from "@/modules/session/session.schema";
+import { AUTH_ERRORS_RESPONSE } from "@/modules/auth/auth.schema";
 
 const BASE_URL = "/api/shortener";
 
@@ -60,7 +60,7 @@ describe("modules/shortener.integration", () => {
     });
 
     expect(response.json()).toEqual({
-      error: SESSION_ERRORS_RESPONSE.WITHOUT_TOKEN,
+      error: AUTH_ERRORS_RESPONSE.TOKEN_NOT_PROVIDED,
     });
     expect(response.statusCode).toEqual(401);
   });
