@@ -39,14 +39,12 @@ describe("modules/email.unit", () => {
     const email = faker.internet.email();
     await sendVerifyEmailHandler(email);
 
-    const key = `emailVerification/${email}`;
-
     // set
     expect(CacheSetSpy).toHaveBeenCalledTimes(1);
     const uuid = randomUUID();
     expect(CacheSetSpy).toHaveBeenCalledWith(
       CACHE_PREFIX.ACCOUNT_VERIFICATION_EMAIL,
-      key,
+      email,
       uuid
     );
 
@@ -56,7 +54,7 @@ describe("modules/email.unit", () => {
     const validAt = 48 * 3600; // 48 hours in seconds
     expect(CacheExpireSet).toHaveBeenCalledWith(
       CACHE_PREFIX.ACCOUNT_VERIFICATION_EMAIL,
-      key,
+      email,
       validAt
     );
 
@@ -78,7 +76,7 @@ describe("modules/email.unit", () => {
               var: "expire_in",
             },
             {
-              value: `${process.env.INTERNAL_OLLO_LI_BASE_URL}/verification/${uuid}?${emailParsed}`,
+              value: `${process.env.INTERNAL_OLLO_LI_BASE_URL}/verify/${uuid}?${emailParsed}`,
               var: "verification_url",
             },
           ],
@@ -98,11 +96,10 @@ describe("modules/email.unit", () => {
 
     await verifyEmail(code, email);
 
-    const key = `emailVerification/${email}`;
     expect(cache.ttl).toHaveBeenCalledTimes(1);
     expect(cache.ttl).toHaveBeenCalledWith(
       CACHE_PREFIX.ACCOUNT_VERIFICATION_EMAIL,
-      key
+      email
     );
 
     expect(cache.get).toHaveBeenCalledTimes(1);
@@ -110,7 +107,7 @@ describe("modules/email.unit", () => {
     expect(cache.del).toHaveBeenCalledTimes(1);
     expect(cache.del).toHaveBeenCalledWith(
       CACHE_PREFIX.ACCOUNT_VERIFICATION_EMAIL,
-      key
+      email
     );
   });
 

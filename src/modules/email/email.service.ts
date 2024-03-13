@@ -66,11 +66,10 @@ async function generateVerifyEmailUrl(email: string) {
 
   const validAt = addHours(new Date(), EXPIRE_IN);
   const validAtInSeconds = expireCacheInSeconds(validAt);
-  const key = `emailVerification/${email}`;
-  await cache.set(CACHE_PREFIX.ACCOUNT_VERIFICATION_EMAIL, key, urlSuffix);
+  await cache.set(CACHE_PREFIX.ACCOUNT_VERIFICATION_EMAIL, email, urlSuffix);
   await cache.expire(
     CACHE_PREFIX.ACCOUNT_VERIFICATION_EMAIL,
-    key,
+    email,
     validAtInSeconds
   );
 
@@ -107,11 +106,9 @@ export async function sendVerifyEmailHandler(email: string) {
 }
 
 export async function verifyEmail(code: string, email: string) {
-  const key = `emailVerification/${email}`;
-
   const restTime = await cache.ttl(
     CACHE_PREFIX.ACCOUNT_VERIFICATION_EMAIL,
-    key
+    email
   );
 
   if (restTime <= -1) {
@@ -120,12 +117,12 @@ export async function verifyEmail(code: string, email: string) {
 
   const verificationCode = await cache.get(
     CACHE_PREFIX.ACCOUNT_VERIFICATION_EMAIL,
-    key
+    email
   );
 
   if (verificationCode !== code) {
     throw new Error(VERIFY_EMAIL_RESPONSE.CODE_IS_WRONG);
   }
 
-  await cache.del(CACHE_PREFIX.ACCOUNT_VERIFICATION_EMAIL, key);
+  await cache.del(CACHE_PREFIX.ACCOUNT_VERIFICATION_EMAIL, email);
 }
