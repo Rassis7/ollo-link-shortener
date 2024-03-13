@@ -8,17 +8,6 @@
 
 [![codecov](https://codecov.io/gh/olloapp/ollo-link-api/graph/badge.svg?token=i92IIJ25y9)](https://codecov.io/gh/olloapp/ollo-link-api)
 
-### Ajustes e melhorias
-
-O projeto ainda está em desenvolvimento e as próximas atualizações serão voltadas nas seguintes tópicos:
-
-- [x] Trazer o encurtador do MVP para cá
-- [x] Configurar o github actions
-- [ ] Fazer o deploy para um ambiente de prod
-- [ ] Envio de email por fila
-- [ ] Configurar swagger
-- [ ] Observabilidade
-
 ## 💻 Pré-requisitos
 
 Antes de começar, verifique se você atendeu aos seguintes requisitos:
