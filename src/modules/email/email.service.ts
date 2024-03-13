@@ -52,7 +52,7 @@ function getEmailParams({
 }
 
 async function sendEmail(props: SendEmailProps) {
-  if (process.env.NODE_ENV !== "production") {
+  if (process.env.NODE_ENV === "development") {
     return;
   }
 
@@ -67,8 +67,12 @@ async function generateVerifyEmailUrl(email: string) {
   const validAt = addHours(new Date(), EXPIRE_IN);
   const validAtInSeconds = expireCacheInSeconds(validAt);
   const key = `emailVerification/${email}`;
-  await cache.set(CACHE_PREFIX.LINK, key, urlSuffix);
-  await cache.expire(CACHE_PREFIX.LINK, key, validAtInSeconds);
+  await cache.set(CACHE_PREFIX.ACCOUNT_VERIFICATION_EMAIL, key, urlSuffix);
+  await cache.expire(
+    CACHE_PREFIX.ACCOUNT_VERIFICATION_EMAIL,
+    key,
+    validAtInSeconds
+  );
 
   return `${process.env.INTERNAL_OLLO_LI_BASE_URL}/verification/${urlSuffix}?${emailParsed}`;
 }
@@ -105,17 +109,23 @@ export async function sendVerifyEmailHandler(email: string) {
 export async function verifyEmail(code: string, email: string) {
   const key = `emailVerification/${email}`;
 
-  const restTime = await cache.ttl(CACHE_PREFIX.LINK, key);
+  const restTime = await cache.ttl(
+    CACHE_PREFIX.ACCOUNT_VERIFICATION_EMAIL,
+    key
+  );
 
   if (restTime <= -1) {
     throw new Error(VERIFY_EMAIL_RESPONSE.CODE_EXPIRED_OR_NOT_EXISTS);
   }
 
-  const verificationCode = await cache.get(CACHE_PREFIX.LINK, key);
+  const verificationCode = await cache.get(
+    CACHE_PREFIX.ACCOUNT_VERIFICATION_EMAIL,
+    key
+  );
 
   if (verificationCode !== code) {
     throw new Error(VERIFY_EMAIL_RESPONSE.CODE_IS_WRONG);
   }
 
-  await cache.del(CACHE_PREFIX.LINK, key);
+  await cache.del(CACHE_PREFIX.ACCOUNT_VERIFICATION_EMAIL, key);
 }
