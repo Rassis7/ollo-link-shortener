@@ -93,6 +93,10 @@ jobs:
           restore-keys: |
             ${{ runner.OS }}-npm-cache-
 
+      - name: Get a gist env and create a .env.test
+        run: |
+          curl -o .env.test "https://gist.githubusercontent.com/Rassis7/f23b0c1f8cfb4fe0001e2b85b04d8836/raw"
+
       - name: Regenerate Prisma Type Definitions
         run: npx prisma generate
 
