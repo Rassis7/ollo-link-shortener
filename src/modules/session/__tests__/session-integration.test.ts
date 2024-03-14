@@ -43,6 +43,12 @@ async function handleRequest(token?: string) {
   });
 }
 
+const signJWTSync = ({ key }: { key: string }) =>
+  createSigner({
+    key,
+    expiresIn: process.env.FASTIFY_JWT_SECRET_EXPIRES_IN,
+  });
+
 describe("modules/session-integration", () => {
   beforeEach(() => {
     jest.resetAllMocks();
@@ -58,12 +64,8 @@ describe("modules/session-integration", () => {
   });
 
   it("Should be able to return an error if is not possible decoded the token", async () => {
-    const signSync = createSigner({
-      key: faker.word.verb(),
-      expiresIn: "1h",
-    });
-
-    const wrongToken = signSync({
+    const generateTokenFn = signJWTSync({ key: faker.string.alphanumeric() });
+    const wrongToken = generateTokenFn({
       id: faker.string.uuid(),
     });
 
@@ -125,8 +127,15 @@ describe("modules/session-integration", () => {
       .mockResolvedValue(Promise.resolve(mockSession as SessionProps));
     jest.spyOn(sessionService, "generateSession");
 
-    const tokenInPass =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijc2NDljNmVjLTEwOWEtNGVhOC1hMWYzLTNlMTYzYzRmMzM5YiIsImlhdCI6MTcxMDIwNTAxMSwiZXhwIjoxNzEwMjA4NjExfQ.UH5ZRK2yciD2SZ19mynflyGp1bqsYb4tCdwV4-cVZYs";
+    const generateTokenFn = signJWTSync({
+      key: process.env.FASTIFY_JWT_SECRET,
+    });
+    const tokenInPass = generateTokenFn({
+      id: mockSession.id,
+      iat: Math.floor(Date.now() / 1000) - 3600, // Emitido há 1 hora
+      exp: Math.floor(Date.now() / 1000) - 1800, // Expirou há 30 minutos
+    });
+
     const response = await handleRequest(tokenInPass);
 
     expect(sessionService.generateSession).toHaveBeenCalledTimes(1);
