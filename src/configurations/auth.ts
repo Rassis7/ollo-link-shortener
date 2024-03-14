@@ -4,6 +4,7 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import fastifyCookie from "@fastify/cookie";
 import { sessionHandler } from "@/modules/session/session.controller";
 import { AUTH_ERRORS_RESPONSE } from "@/modules/auth/auth.schema";
+import { accountConfirmedHandler } from "@/modules/auth/auth.controller";
 
 fastify.register(fastifyJwt, () => ({
   secret: String(process.env.FASTIFY_JWT_SECRET),
@@ -35,7 +36,14 @@ fastify.after(() => {
   fastify.decorate(
     "authenticate",
     async (request: FastifyRequestWithCookie, reply: FastifyReply) => {
+      // TODO: move this to auth (is necessary??)
       await sessionHandler(request, reply);
+    }
+  );
+  fastify.decorate(
+    "confirmAccount",
+    async (request: FastifyRequestWithCookie, reply: FastifyReply) => {
+      await accountConfirmedHandler(request, reply);
     }
   );
 });

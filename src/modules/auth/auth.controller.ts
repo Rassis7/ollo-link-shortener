@@ -60,3 +60,15 @@ export async function authHandler(
     return reply.code(HTTP_STATUS_CODE.UNAUTHORIZED).send(e);
   }
 }
+
+export function accountConfirmedHandler(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  try {
+    // TODO: criar aqui a lógica de autorizar somente se a conta estiver confirmada
+  } catch (e) {
+    const error = new ErrorHandler(e);
+    return reply.code(400).send(error);
+  }
+}
