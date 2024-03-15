@@ -8,17 +8,6 @@
 
 [![codecov](https://codecov.io/gh/olloapp/ollo-link-api/graph/badge.svg?token=i92IIJ25y9)](https://codecov.io/gh/olloapp/ollo-link-api)
 
-### Ajustes e melhorias
-
-O projeto ainda está em desenvolvimento e as próximas atualizações serão voltadas nas seguintes tópicos:
-
-- [x] Trazer o encurtador do MVP para cá
-- [x] Configurar o github actions
-- [ ] Fazer o deploy para um ambiente de prod
-- [ ] Envio de email por fila
-- [ ] Configurar swagger
-- [ ] Observabilidade
-
 ## 💻 Pré-requisitos
 
 Antes de começar, verifique se você atendeu aos seguintes requisitos:
@@ -32,13 +21,36 @@ Antes de começar, verifique se você atendeu aos seguintes requisitos:
 
 ### 🏗️ Arquitetura
 
-<details>
-<summary>Ver mais</summary>
+<details open>
+<summary>Modulos</summary>
 
-<div align="center">
-<img src="./docs/architecture.drawio.png" width="600px;">
-</div>
+Um módulo basicamente é a representação de algo maior, ou seja, ele pode ser divido em várias funcionalidades.
+Podemos ter vários controllers, schemas, services e o que mais for necessário, o ideal é quebrar ao máximo as funcionalidades de um módulo em vários arquivos, respeitando o principio da responsabilidade única.
+
+  <div align="center">
+    <img src="./docs/architecture-module.drawio.png" width="600px;">
+  </div>
 </details>
+
+<details open>
+<summary>Separação dos módulos</summary>
+
+Devemos ficar atentos a não misturar as coisas, lembre-se cada parte tem sua responsabilidade:
+
+- Controller -> Deve fazer a comunicação externa, ou seja, só pode ser chamado pode ser com routes ou um decorator do fastify, mas pode usar service (do mesmo ou de outro módulos) e schemas
+- Router -> Pode somente chamar um controller
+- Schema -> Devemos concentrar os tipos e validações de tipos aqui, de sempre preferencia ao uso do `zod`. Pode transitar entre as outras
+- Service -> Responsável por comunicação externas e regras de negócio, também é aqui onde um módulo pode se comunicar com outro.
+- Extras -> Podemos ter outras coisas dentro de um módulo, como um middleware, template, ou qualquer outra coisa, desde que faça sentido dentro do módulo
+- **tests** -> concentramos os testes aqui, sempre com um sufixo `[TESTE].unit.test.ts` e/ou `[TESTE].unit.integration.ts`
+
+  - unit: onde fazer a menor unidade dos testes, de preferencia testar o que está dentro da pasta `services`
+  - integration: onde fazemos o teste da integração, de modo geral pode ser o teste da rota, ou seja, é testado o que está no arquivo `MODULE.route.ts`
+
+    <div align="center">
+      <img src="./docs/architecture.drawio.png" width="600px;">
+    </div>
+  </details>
 
 ### 👷 CI/CD
 
