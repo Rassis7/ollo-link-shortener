@@ -17,7 +17,7 @@
     "test:ci": "NODE_ENV=test jest --ci --collect-coverage --coverage",
     "test:watch": "NODE_ENV=test jest --watchAll",
     "nvm": "nvm use",
-    "prisma": "dotenv -e .env prisma",
+    "prisma": "dotenv -e .env.development prisma",
     "prisma:newMigration": "npm run prisma migrate dev --name",
     "new:module": "chmod +x ./scripts/create_module.sh && ./scripts/create_module.sh",
     "commit": "git cz",

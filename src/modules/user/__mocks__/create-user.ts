@@ -13,13 +13,15 @@ export const mockCreateUserInput: CreateUserInput = {
 export const mockCreatedUserResponse = {
   id: faker.string.uuid(),
   createdAt: new Date(),
+  accountConfirmed: false,
   ...mockCreateUserInput,
 };
 
-const { id, name, email } = mockCreatedUserResponse;
+const { id, name, email, accountConfirmed } = mockCreatedUserResponse;
 
 export const mockIntegrationCreateUserResponse: CreateUserResponse = {
   id,
   name,
   email,
+  accountConfirmed,
 };

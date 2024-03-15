@@ -7,4 +7,5 @@ export const mockFindUserByEmailResponse: FindUserByEmailResponse = {
   email: faker.internet.email(),
   name: faker.person.fullName(),
   password: faker.internet.password(),
+  accountConfirmed: false,
 };

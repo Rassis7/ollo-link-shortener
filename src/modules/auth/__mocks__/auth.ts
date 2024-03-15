@@ -9,5 +9,6 @@ export const mockAuthFindUserByEmailResponse = {
   id: faker.string.uuid(),
   createdAt: new Date(),
   name: faker.person.fullName(),
+  accountConfirmed: false,
   ...mockAuthInput,
 };

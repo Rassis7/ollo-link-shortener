@@ -31,6 +31,7 @@ export const createUserSchema = z.object({
 
 export const createUserResponseSchema = z.object({
   id: z.string().uuid(),
+  accountConfirmed: z.boolean(),
   ...userCore,
 });
 
