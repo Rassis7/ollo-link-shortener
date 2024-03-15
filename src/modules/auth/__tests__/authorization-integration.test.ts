@@ -16,7 +16,7 @@ async function fakeApi(fastify: FastifyInstance) {
   fastify.route({
     method: "GET",
     url: "/",
-    preHandler: [fastify.authorization],
+    preHandler: [fastify.isAuthorized],
     handler: (request: FastifyRequest, reply: FastifyReply) => {
       try {
         mockRequestObject = request;

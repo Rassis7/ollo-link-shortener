@@ -1,4 +1,4 @@
-import { FastifyRequestWithCookie } from "@/configurations/auth";
+import { FastifyRequestWithCookie } from "@/configurations/decorators";
 import { FastifyReply } from "fastify";
 import { AUTH_ERRORS_RESPONSE, JwtProps } from "../schemas";
 import { generateSession, getSession } from "../services";
