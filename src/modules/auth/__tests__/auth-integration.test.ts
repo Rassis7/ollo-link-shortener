@@ -1,4 +1,4 @@
-import * as userService from "@/modules/user/user.service";
+import * as userService from "@/modules/user/services/user.service";
 import {
   mockAuthFindUserByEmailResponse,
   mockAuthInput,
@@ -6,7 +6,7 @@ import {
 import { app } from "@/configurations/app";
 import * as hashFunctions from "@/helpers/hash";
 import { HTTP_STATUS_CODE } from "@/helpers";
-import { AUTH_ERRORS_RESPONSE } from "../auth.schema";
+import { AUTH_ERRORS_RESPONSE } from "../schemas/auth.schema";
 
 const BASE_URL = "api/auth";
 

@@ -4,16 +4,16 @@ import { resolve } from "node:path";
 dotenv.config({ path: resolve(__dirname, `../.env.${process.env.NODE_ENV}`) });
 
 import { app, logger } from "@/configurations/app";
-import { userRoutes } from "@/modules/user/user.route";
-import { authRoutes } from "@/modules/auth/auth.route";
-import { emailRoutes } from "./modules/email/email.route";
-import { shortenerRoutes } from "./modules/shortener/shortener.route";
+import { userRoutes } from "@/modules/user/routes/user.route";
+import { authRoutes } from "@/modules/auth/routes/auth.route";
+import { emailRoutes } from "./modules/email/routes/email.route";
+import { shortenerRoutes } from "./modules/link/routes/shortener.route";
 
 import {
   serializerCompiler,
   validatorCompiler,
 } from "fastify-type-provider-zod";
-import { linkRoutes } from "./modules/link/link.route";
+import { linkRoutes } from "./modules/link/routes/link.route";
 
 import "./configurations/auth";
 import "./configurations/rate-limit";

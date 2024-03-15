@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { FindUserByEmailResponse } from "../user.schema";
+import { FindUserByEmailResponse } from "../schemas/user.schema";
 
 export const mockFindUserByEmailResponse: FindUserByEmailResponse = {
   id: faker.string.uuid(),

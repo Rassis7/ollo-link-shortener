@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { CreateUserInput, CreateUserResponse } from "../user.schema";
+import { CreateUserInput, CreateUserResponse } from "../schemas/user.schema";
 
 export const mockCreateUserInput: CreateUserInput = {
   email: faker.internet.email(),
