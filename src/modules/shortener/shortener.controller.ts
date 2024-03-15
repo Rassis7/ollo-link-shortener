@@ -3,10 +3,9 @@ import {
   SHORTENER_ERRORS_RESPONSE,
   type CreateShortenerLink,
 } from "./shortener.schema";
-import { APPLICATION_ERRORS, ErrorHandler } from "@/helpers";
+import { APPLICATION_ERRORS, ErrorHandler, HTTP_STATUS_CODE } from "@/helpers";
 import { generateUrlHash, shortenerLink } from "./shortener.service";
 import { prisma } from "@/infra";
-import { JwtAuthProps } from "../auth/auth.schema";
 import {
   getLinkByHashOrAlias,
   saveOrUpdateLinkCache,
@@ -22,7 +21,6 @@ export async function registerShortenerLinkHandler(
 ) {
   try {
     const { body } = request;
-    const user = await request.jwtDecode<JwtAuthProps>();
 
     const { url, alias, ...restBody } = body;
     const hash = generateUrlHash(url);
@@ -44,11 +42,12 @@ export async function registerShortenerLinkHandler(
       });
     }
 
+    const userId = request.user.id;
     const linkInputValues = {
       hash,
       redirectTo: url,
       active: true,
-      userId: user.id,
+      userId,
       alias,
       ...restBody,
     };
@@ -59,9 +58,11 @@ export async function registerShortenerLinkHandler(
     const shortenerLinkResponse = `${process.env.OLLO_LI_BASE_URL}/${
       alias ?? hash
     }`;
-    return reply.code(201).send({ shortLink: shortenerLinkResponse });
+    return reply
+      .code(HTTP_STATUS_CODE.CREATED)
+      .send({ shortLink: shortenerLinkResponse });
   } catch (e) {
     const error = new ErrorHandler(e);
-    return reply.code(400).send(error);
+    return reply.code(HTTP_STATUS_CODE.BAD_REQUEST).send(error);
   }
 }

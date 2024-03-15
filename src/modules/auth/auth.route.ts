@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { authHandler } from "./auth.controller";
-import { authResponseSchema, authSchema } from "./auth.schema";
+import { authSchema } from "./auth.schema";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 
 export async function authRoutes(fastify: FastifyInstance) {
@@ -9,9 +9,6 @@ export async function authRoutes(fastify: FastifyInstance) {
     url: "/",
     schema: {
       body: authSchema,
-      response: {
-        201: authResponseSchema,
-      },
     },
     handler: authHandler,
   });

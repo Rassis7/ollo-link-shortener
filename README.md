@@ -54,7 +54,7 @@ Antes de começar, verifique se você atendeu aos seguintes requisitos:
 
 Para instalar o **OLLO.li API**, siga estas etapas:
 
-```
+```bash
 npm run install
 ```
 
@@ -62,7 +62,7 @@ npm run install
 
 Para usar **OLLO.li API**, siga estas etapas:
 
-```
+```bash
 npm run dev
 ```
 
@@ -86,7 +86,7 @@ DEBUG_MODE=true
 
 E dê o start normal da API
 
-```
+```bash
 npm run dev
 ```
 
@@ -108,11 +108,13 @@ npm run dev
 
 ## 💽 Lidando com o Banco de dados
 
+### Prisma
+
 > Usamos o Prisma como ORM
 
 Para criar uma nova Migration
 
-```
+```bash
 npm run prisma:newMigration MIGRATION_NAME
 ```
 
@@ -120,15 +122,33 @@ npm run prisma:newMigration MIGRATION_NAME
 
 Para abrir o Prisma Studio
 
-```
+```bash
 npm run prisma studio
+```
+
+### Infra + Docker
+
+Pro hora usamos o docker somente para infra, então para subir o ambiente com o Prisma, só rodar:
+
+```bash
+npm run docker
+```
+
+### String de conexão
+
+Para acessar tanto o `Postgres` quanto o `Redis`, precisará das seguintes strings de conexão
+
+```bash
+## para uso de client
+DATABASE_URL="postgresql://ollo:ollo_password@localhost:5432/ollo_li?schema=public"
+REDIS_URL="redis://localhost:6379"
 ```
 
 ## 🗂️ Para criar um novo módulo
 
 Temos um script que faz a criação automática do novo módulo
 
-```
+```bash
 npm run new:module MODULE_NAME
 ```
 
@@ -138,7 +158,7 @@ npm run new:module MODULE_NAME
 
 Temos um script que faz a criação automática do novo módulo
 
-```
+```bash
 npm run test:watch [path do arquivo se quiser rodar individualmente]
 ```
 
@@ -146,7 +166,7 @@ npm run test:watch [path do arquivo se quiser rodar individualmente]
 
 Para gerar o build da aplicação, rode:
 
-```
+```bash
 npm run build
 ```
 
@@ -154,7 +174,7 @@ Será criado uma pasta `dist` na raiz do projeto.
 
 Para rodar a API em modo de prod:
 
-```
+```bash
 npm run prod
 ```
 
@@ -170,36 +190,25 @@ npm run prod
 
 ## 🌳 Env files
 
-Existe o `.env.example` que é a base para as variáveis de ambiente:
-
-```
-# env.example
-DEBUG_MODE=
-SERVER_PORT=
-FASTIFY_JWT_SECRET=
-FASTIFY_JWT_SECRET_EXPIRES_IN=
-FASTIFY_RATE_LIMIT_MAX=
-FASTIFY_RATE_LIMIT_TIME_WINDOW=
-VERIFY_EMAIL_TEMPLATE_ID=
-INTERNAL_OLLO_LI_BASE_URL=
-OLLO_LI_BASE_URL=
-VERIFY_EMAIL_SUBJECT=
-VERIFY_EMAIL_FROM_EMAIL=
-VERIFY_EMAIL_FROM_NAME=
-RECOVERY_PASSWORD_EMAIL_SUBJECT=
-
-DATABASE_URL=
-MAILERSEND_API_KEY=
-REDIS_URL=
-```
-
-### Development
+Existe o `.env.example` que é a base para as variáveis de ambiente, pra rodar local crie um `env.development` com as variáveis abaixo
 
 ```
 # env.development
 DEBUG_MODE=false
-SERVER_PORT=3000
-[...]
+FASTIFY_JWT_SECRET="EeFX62*-D4xsz[@SE?G;df/3Q44XHC&04ut3[,Ub[8m#£+DKf"
+FASTIFY_JWT_SECRET_EXPIRES_IN="7d"
+FASTIFY_RATE_LIMIT_MAX=100
+FASTIFY_RATE_LIMIT_TIME_WINDOW="1 minute"
+INTERNAL_OLLO_LI_BASE_URL="https://app.ollo.li"
+OLLO_LI_BASE_URL="https://ollo.li"
+VERIFY_EMAIL_SUBJECT="Confirme Seu Cadastro - Importante!"
+VERIFY_EMAIL_FROM_EMAIL="no-reply@ollo.li"
+VERIFY_EMAIL_FROM_NAME="Vera da OLLO.li"
+RECOVERY_PASSWORD_EMAIL_SUBJECT="Reinicie sua senha!"
+
+DATABASE_URL="postgresql://ollo:ollo_password@localhost:5432/ollo_li?schema=public"
+MAILERSEND_API_KEY=
+REDIS_URL="redis://ollo-li-redis:6379"
 ```
 
 ### Test
@@ -219,3 +228,5 @@ DEBUG_MODE=false
 SERVER_PORT=4000
 [...]
 ```
+
+---

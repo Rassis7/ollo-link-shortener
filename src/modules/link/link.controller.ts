@@ -1,6 +1,5 @@
-import { ErrorHandler } from "@/helpers";
+import { ErrorHandler, HTTP_STATUS_CODE } from "@/helpers";
 import { FastifyReply, FastifyRequest } from "fastify";
-import { JwtAuthProps } from "../auth/auth.schema";
 import { prisma } from "@/infra";
 import {
   getAllLinksByUser,
@@ -15,17 +14,16 @@ export async function getAllLinksHandler(
   reply: FastifyReply
 ) {
   try {
-    const user = await request.jwtDecode<JwtAuthProps>();
-
+    const userId = request.user.id;
     const links = await getAllLinksByUser({
-      input: { userId: user.id },
+      input: { userId },
       context: { prisma },
     });
 
-    return reply.code(200).send(links ?? []);
+    return reply.code(HTTP_STATUS_CODE.OK).send(links ?? []);
   } catch (e) {
     const error = new ErrorHandler(e);
-    return reply.code(400).send(error);
+    return reply.code(HTTP_STATUS_CODE.BAD_REQUEST).send(error);
   }
 }
 
@@ -75,7 +73,7 @@ export async function editLinkHandler(
 
     await saveOrUpdateLinkCache(linkUpdatedToCache);
 
-    return reply.code(200).send({
+    return reply.code(HTTP_STATUS_CODE.OK).send({
       redirectTo,
       active,
       validAt,

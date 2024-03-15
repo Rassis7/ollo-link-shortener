@@ -2,7 +2,7 @@ import { SendEmailProps, VERIFY_EMAIL_RESPONSE } from "./email.schema";
 import { join } from "node:path";
 import { readFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";
-import { redis } from "@/infra";
+import { CACHE_PREFIX, cache } from "@/infra";
 import { addHours } from "date-fns";
 import {
   EmailParams,
@@ -59,8 +59,8 @@ async function generateVerifyEmailUrl(email: string) {
   const validAt = addHours(new Date(), EXPIRE_IN);
   const validAtInSeconds = expireCacheInSeconds(validAt);
   const key = `emailVerification/${email}`;
-  await redis.set(key, urlSuffix);
-  await redis.expire(key, validAtInSeconds);
+  await cache.set(CACHE_PREFIX.LINK, key, urlSuffix);
+  await cache.expire(CACHE_PREFIX.LINK, key, validAtInSeconds);
 
   return `${process.env.INTERNAL_OLLO_LI_BASE_URL}/verification/${urlSuffix}?${emailParsed}`;
 }
@@ -97,17 +97,17 @@ export async function sendVerifyEmailHandler(email: string) {
 export async function verifyEmail(code: string, email: string) {
   const key = `emailVerification/${email}`;
 
-  const restTime = await redis.ttl(key);
+  const restTime = await cache.ttl(CACHE_PREFIX.LINK, key);
 
   if (restTime <= -1) {
     throw new Error(VERIFY_EMAIL_RESPONSE.CODE_EXPIRED_OR_NOT_EXISTS);
   }
 
-  const verificationCode = await redis.get(key);
+  const verificationCode = await cache.get(CACHE_PREFIX.LINK, key);
 
   if (verificationCode !== code) {
     throw new Error(VERIFY_EMAIL_RESPONSE.CODE_IS_WRONG);
   }
 
-  await redis.del(key);
+  await cache.del(CACHE_PREFIX.LINK, key);
 }

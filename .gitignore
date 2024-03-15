@@ -2,6 +2,8 @@ node_modules
 # Keep environment variables out of version control
 .env.production
 .env.development
+.env.test
 coverage
 # Build dir
 dist
+certs

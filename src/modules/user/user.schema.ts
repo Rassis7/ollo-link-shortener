@@ -34,19 +34,7 @@ export const createUserResponseSchema = z.object({
   ...userCore,
 });
 
-export const getUserResponseSchema = createUserResponseSchema;
-
-const findUsersSchema = z
-  .object({
-    ...userCore,
-    id: z.string().uuid(),
-    name: z.string().nullable(),
-  })
-  .array()
-  .nullable();
-
 export type CreateUserInput = z.infer<typeof createUserSchema>;
 export type CreateUserResponse = z.infer<typeof createUserResponseSchema>;
 
 export type FindUserByEmailResponse = User | null;
-export type FindUsersResponse = z.infer<typeof findUsersSchema>;

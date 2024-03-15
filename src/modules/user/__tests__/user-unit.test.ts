@@ -3,11 +3,10 @@ import {
   mockCreateUserInput,
   mockCreatedUserResponse,
 } from "../__mocks__/create-user";
-import { createUser, findUserByEmail, findUsers } from "../user.service";
+import { createUser, findUserByEmail } from "../user.service";
 import * as helpers from "@/helpers/hash";
 import { faker } from "@faker-js/faker";
 import { mockFindUserByEmailResponse } from "../__mocks__/find-user-by-email";
-import { mockFindUsersResponse } from "../__mocks__/find-users";
 
 describe("module/user.unit", () => {
   it("Should create a new user", async () => {
@@ -45,17 +44,5 @@ describe("module/user.unit", () => {
       where: { email },
     });
     expect(typeof user).toEqual(typeof mockFindUserByEmailResponse);
-  });
-
-  it("Should call findUsers with correctly params", async () => {
-    mockContext.prisma.user.findMany.mockResolvedValue(
-      mockFindUsersResponse as any
-    );
-
-    await findUsers({ context });
-
-    expect(mockContext.prisma.user.findMany).toHaveBeenCalledWith({
-      select: { id: true, email: true, name: true },
-    });
   });
 });

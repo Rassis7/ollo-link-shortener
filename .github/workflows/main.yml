@@ -4,11 +4,6 @@ on:
   pull_request:
     branches:
       - main
-  push:
-    branches:
-      - main
-    tags:
-      - "v*"
 
 jobs:
   InstallDeps:
@@ -17,7 +12,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{env.NODE_VERSION}}
+          node-version: ${{secrets.NODE_VERSION}}
           cache: "npm"
 
       - name: Cache NPM dependencies
@@ -43,7 +38,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{env.NODE_VERSION}}
+          node-version: ${{ secrets.NODE_VERSION }}
           cache: "npm"
 
       - name: Cache NPM dependencies
@@ -86,7 +81,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{env.NODE_VERSION}}
+          node-version: ${{ secrets.NODE_VERSION }}
           cache: "npm"
 
       - name: Cache NPM dependencies
@@ -97,6 +92,10 @@ jobs:
             ${{ runner.os }}-npm-v3-${{ hashFiles('package-lock.json') }}
           restore-keys: |
             ${{ runner.OS }}-npm-cache-
+
+      - name: Get a gist env and create a .env.test
+        run: |
+          curl -o .env.test "https://gist.githubusercontent.com/Rassis7/f23b0c1f8cfb4fe0001e2b85b04d8836/raw"
 
       - name: Regenerate Prisma Type Definitions
         run: npx prisma generate

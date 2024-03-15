@@ -1,10 +1,11 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { findUserByEmail } from "@/modules/user/user.service";
-import { verifyPassword } from "@/helpers";
+import { HTTP_STATUS_CODE, verifyPassword } from "@/helpers";
 import { app } from "@/configurations/app";
 import { AUTH_ERRORS_RESPONSE, AuthInput } from "./auth.schema";
 import { ErrorHandler } from "@/helpers";
 import { prisma } from "@/infra";
+import { generateSession } from "../session/session.service";
 
 type AuthHandlerRequestProps = FastifyRequest<{
   Body: AuthInput;
@@ -33,13 +34,29 @@ export async function authHandler(
     if (!correctPassword) {
       throw new Error(AUTH_ERRORS_RESPONSE.USER_OR_PASSWORD_INVALID);
     }
-    const { id, email, name } = user;
+
+    const { name, email } = user;
+
+    await generateSession({
+      id: user.id,
+      name: String(name ?? ""),
+      email,
+    });
+
+    const token = app.jwt.sign({ id: user.id });
+
+    request.user = { id: user.id, name, email };
 
     return reply
-      .code(200)
-      .send({ accessToken: app.jwt.sign({ id, email, name }) });
+      .setCookie("access_token", token, {
+        secure: process.env.NODE_ENV !== "production",
+        path: "/",
+        domain: process.env.FASTIFY_COOKIE_DOMAIN,
+      })
+      .code(HTTP_STATUS_CODE.NO_CONTENT)
+      .send();
   } catch (error) {
     const e = new ErrorHandler(error);
-    return reply.code(401).send(e);
+    return reply.code(HTTP_STATUS_CODE.UNAUTHORIZED).send(e);
   }
 }

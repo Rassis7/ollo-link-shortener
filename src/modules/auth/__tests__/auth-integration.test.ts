@@ -2,14 +2,16 @@ import * as userService from "@/modules/user/user.service";
 import {
   mockAuthFindUserByEmailResponse,
   mockAuthInput,
-} from "./__mocks__/auth";
+} from "../__mocks__/auth";
 import { app } from "@/configurations/app";
 import * as hashFunctions from "@/helpers/hash";
+import { HTTP_STATUS_CODE } from "@/helpers";
+import { AUTH_ERRORS_RESPONSE } from "../auth.schema";
 
 const BASE_URL = "api/auth";
 
 describe("module/auth.integration", () => {
-  it("Should be able to do login and return jwt token", async () => {
+  it("Should be able to do login and create auth cookie", async () => {
     jest
       .spyOn(userService, "findUserByEmail")
       .mockResolvedValue(mockAuthFindUserByEmailResponse);
@@ -21,11 +23,21 @@ describe("module/auth.integration", () => {
       body: mockAuthInput,
     });
 
-    const { id, name, email } = mockAuthFindUserByEmailResponse;
-    const responseToken = app.jwt.sign({ id, email, name });
+    const token = app.jwt.sign({
+      id: mockAuthFindUserByEmailResponse.id,
+    });
 
-    expect(response.json()).toEqual({ accessToken: responseToken });
-    expect(response.statusCode).toEqual(200);
+    expect(response.cookies).toEqual([
+      {
+        domain: "ollo.li",
+        name: "access_token",
+        path: "/",
+        secure: true,
+        value: token,
+      },
+    ]);
+
+    expect(response.statusCode).toEqual(HTTP_STATUS_CODE.NO_CONTENT);
   });
 
   it("Should be able to return error when user not found", async () => {
@@ -64,11 +76,11 @@ describe("module/auth.integration", () => {
   it("Should be able to return error when jwt token is wrong and route needs to authentication", async () => {
     const response = await app.inject({
       method: "GET",
-      url: "/api/users",
+      url: "/api/links",
     });
 
     expect(response.json()).toEqual({
-      error: "Não autorizado",
+      error: AUTH_ERRORS_RESPONSE.TOKEN_NOT_PROVIDED,
     });
     expect(response.statusCode).toEqual(401);
   });
