@@ -213,10 +213,6 @@ FASTIFY_RATE_LIMIT_MAX=100
 FASTIFY_RATE_LIMIT_TIME_WINDOW="1 minute"
 INTERNAL_OLLO_LI_BASE_URL="https://app.ollo.li"
 OLLO_LI_BASE_URL="https://ollo.li"
-VERIFY_EMAIL_SUBJECT="Confirme Seu Cadastro - Importante!"
-VERIFY_EMAIL_FROM_EMAIL="no-reply@ollo.li"
-VERIFY_EMAIL_FROM_NAME="Vera da OLLO.li"
-RECOVERY_PASSWORD_EMAIL_SUBJECT="Reinicie sua senha!"
 
 DATABASE_URL="postgresql://ollo:ollo_password@localhost:5432/ollo_li?schema=public"
 MAILERSEND_API_KEY=
