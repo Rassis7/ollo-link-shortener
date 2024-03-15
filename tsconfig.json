@@ -9,7 +9,6 @@
     "noImplicitAny": false,
     "skipLibCheck": true,
     "removeComments": true,
-    "noEmitOnError": true,
     "baseUrl": ".",
     "rootDir": ".",
     "paths": {
@@ -21,5 +20,5 @@
     "files": true
   },
   "exclude": ["node_modules"],
-  "include": ["src", "global.d.ts"]
+  "include": ["src", "./global.d.ts"]
 }

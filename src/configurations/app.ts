@@ -10,7 +10,7 @@ const logger = pino(
 );
 
 const fastify = Fastify({
-  logger: process.env.DEBUG_MODE === "true" && logger,
+  logger: process.env.DEBUG_MODE && logger,
 });
 
 export { fastify as app, logger };

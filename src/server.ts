@@ -38,18 +38,17 @@ function main() {
 
   // await addApplicationDocumentation(app);
 
-  try {
-    app.log.level = "silent";
+  app.log.level = "silent";
+  app.listen({ port, host }, (error, address) => {
+    if (error) {
+      logger.error(error);
+    }
 
-    app.listen({ port, host }, (error, address) => {
-      const debugMode =
-        process.env.DEBUG_MODE === "true" ? " ::: DEBUG MODE ACTIVE! 🪲" : "";
-      logger.info(`API RUN IN ${address} 🚀 ${debugMode}`);
-    });
-  } catch (error) {
-    logger.error(error);
-    process.exit(1);
-  }
+    const debugMode = process.env.DEBUG_MODE
+      ? "(🪲 DEBUG MODE ACTIVATED 🐞 )"
+      : "";
+    logger.info(`🚀🚀 API RUN IN ${address} ${debugMode}`);
+  });
 }
 
 main();
