@@ -1,6 +1,7 @@
 import IoRedis, { RedisOptions as IoRedisOptions } from "ioredis";
 
 export enum CACHE_PREFIX {
+  EMAIL_VERIFICATION = "emailVerification",
   LINK = "link",
   AUTH = "auth",
 }

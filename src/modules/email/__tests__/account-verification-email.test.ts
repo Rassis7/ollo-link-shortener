@@ -39,20 +39,22 @@ describe("modules/account-verification-email", () => {
     const email = faker.internet.email();
     await sendVerifyEmailHandler(email);
 
-    const key = `emailVerification/${email}`;
-
     // set
     expect(CacheSetSpy).toHaveBeenCalledTimes(1);
     const uuid = randomUUID();
-    expect(CacheSetSpy).toHaveBeenCalledWith(CACHE_PREFIX.LINK, key, uuid);
+    expect(CacheSetSpy).toHaveBeenCalledWith(
+      CACHE_PREFIX.EMAIL_VERIFICATION,
+      email,
+      uuid
+    );
 
     // expire
     expect(CacheExpireSet).toHaveBeenCalledTimes(1);
 
     const validAt = 48 * 3600; // 48 hours in seconds
     expect(CacheExpireSet).toHaveBeenCalledWith(
-      CACHE_PREFIX.LINK,
-      key,
+      CACHE_PREFIX.EMAIL_VERIFICATION,
+      email,
       validAt
     );
 
@@ -94,14 +96,19 @@ describe("modules/account-verification-email", () => {
 
     await verifyEmail(code, email);
 
-    const key = `emailVerification/${email}`;
     expect(cache.ttl).toHaveBeenCalledTimes(1);
-    expect(cache.ttl).toHaveBeenCalledWith(CACHE_PREFIX.LINK, key);
+    expect(cache.ttl).toHaveBeenCalledWith(
+      CACHE_PREFIX.EMAIL_VERIFICATION,
+      email
+    );
 
     expect(cache.get).toHaveBeenCalledTimes(1);
 
     expect(cache.del).toHaveBeenCalledTimes(1);
-    expect(cache.del).toHaveBeenCalledWith(CACHE_PREFIX.LINK, key);
+    expect(cache.del).toHaveBeenCalledWith(
+      CACHE_PREFIX.EMAIL_VERIFICATION,
+      email
+    );
   });
 
   it.each([
