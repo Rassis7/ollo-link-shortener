@@ -3,7 +3,7 @@ import {
   generateUrlHash,
   getRedirectLinkValues,
   shortenerLink,
-} from "../services/shortener.service";
+} from "../services";
 import { createHash } from "node:crypto";
 import { mockContext, context } from "@/tests";
 import {

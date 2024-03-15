@@ -1,4 +1,4 @@
-import { SendEmailProps } from "../schemas/account-verification-email.schema";
+import { SendEmailProps } from "../schemas";
 
 import {
   EmailParams,

@@ -1,8 +1,5 @@
 import { createHash } from "node:crypto";
-import {
-  GetRedirectLinkValuesInput,
-  SaveLinkInput,
-} from "../schemas/shortener.schema";
+import { GetRedirectLinkValuesInput, SaveLinkInput } from "../schemas";
 import { Context } from "@/configurations/context";
 
 export function generateUrlHash(url: string): string {

@@ -1,13 +1,13 @@
 import { app } from "@/configurations/app";
-import * as emailService from "../../email/services/account-verification-email.service";
+import * as emailService from "../../email/services";
 import {
   mockCreateUserInput,
   mockCreatedUserResponse,
   mockIntegrationCreateUserResponse,
 } from "../__mocks__/create-user";
-import * as userService from "../services/user.service";
+import * as userService from "../services";
 import { mockFindUserByEmailResponse } from "../__mocks__/find-user-by-email";
-import { USER_ERRORS_RESPONSE } from "../schemas/user.schema";
+import { USER_ERRORS_RESPONSE } from "../schemas";
 import { ErrorHandler } from "@/helpers";
 
 describe("module/user.integration", () => {

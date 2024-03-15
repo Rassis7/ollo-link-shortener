@@ -1,12 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import {
-  VerifyEmailInput,
-  VerifyEmailParams,
-} from "../schemas/account-verification-email.schema";
-import {
-  sendVerifyEmailHandler,
-  verifyEmail,
-} from "../services/account-verification-email.service";
+import { VerifyEmailInput, VerifyEmailParams } from "../schemas";
+import { sendVerifyEmailHandler, verifyEmail } from "../services";
 import { ErrorHandler, HTTP_STATUS_CODE } from "@/helpers";
 
 export async function verifyEmailHandler(

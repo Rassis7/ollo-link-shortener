@@ -4,9 +4,9 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 
 import { faker } from "@faker-js/faker";
 import { createSigner } from "fast-jwt";
-import { AUTH_ERRORS_RESPONSE } from "@/modules/auth/schemas/auth.schema";
-import * as sessionService from "@/modules/auth/services/session.service";
-import { SessionProps } from "../schemas/session.schema";
+import { AUTH_ERRORS_RESPONSE } from "@/modules/auth/schemas";
+import * as sessionService from "@/modules/auth/services";
+import { SessionProps } from "../schemas";
 import { MOCK_JWT_TOKEN } from "@/tests";
 import { mockSession } from "../__mocks__/session";
 
@@ -16,7 +16,7 @@ async function fakeApi(fastify: FastifyInstance) {
   fastify.route({
     method: "GET",
     url: "/",
-    preHandler: [fastify.authenticate],
+    preHandler: [fastify.authorization],
     handler: (request: FastifyRequest, reply: FastifyReply) => {
       try {
         mockRequestObject = request;

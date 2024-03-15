@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { createUser, findUserByEmail } from "../services/user.service";
-import { CreateUserInput, USER_ERRORS_RESPONSE } from "../schemas/user.schema";
-import { sendVerifyEmailHandler } from "../../email/services/account-verification-email.service";
+import { createUser, findUserByEmail } from "../services";
+import { CreateUserInput, USER_ERRORS_RESPONSE } from "../schemas";
+import { sendVerifyEmailHandler } from "../../email/services";
 import { ErrorHandler, HTTP_STATUS_CODE } from "@/helpers";
 import { prisma } from "@/infra";
 

@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
 import { Link } from "@prisma/client";
-import { EditLinkInput } from "../schemas/link.schema";
+import { EditLinkInput } from "../schemas";
 
 export const mockEditLinkResponse: Link = {
   id: faker.string.uuid(),

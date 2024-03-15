@@ -1,8 +1,5 @@
 import { faker } from "@faker-js/faker";
-import {
-  sendVerifyEmailHandler,
-  verifyEmail,
-} from "../services/account-verification-email.service";
+import { sendVerifyEmailHandler, verifyEmail } from "../services";
 import { cache } from "@/tests";
 import { randomUUID } from "node:crypto";
 import { RANDOM_UUID_MOCK } from "@/tests/__mocks__";

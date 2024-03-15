@@ -3,10 +3,10 @@ import {
   EditLinkInput,
   GetByLinkHashFromCacheResponse,
   LINK_ERRORS_RESPONSE,
-} from "../schemas/link.schema";
+} from "../schemas";
 import { expireCacheInSeconds } from "@/helpers";
 import { CACHE_PREFIX, cache } from "@/infra";
-import { SaveLinkInput } from "../schemas/shortener.schema";
+import { SaveLinkInput } from "../schemas";
 
 export async function getAllLinksByUser({
   input,

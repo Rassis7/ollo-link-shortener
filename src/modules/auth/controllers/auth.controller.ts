@@ -1,11 +1,11 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { findUserByEmail } from "@/modules/user/services/user.service";
+import { findUserByEmail } from "@/modules/user/services";
 import { HTTP_STATUS_CODE, verifyPassword } from "@/helpers";
 import { app } from "@/configurations/app";
-import { AUTH_ERRORS_RESPONSE, AuthInput } from "../schemas/auth.schema";
+import { AUTH_ERRORS_RESPONSE, AuthInput } from "../schemas";
 import { ErrorHandler } from "@/helpers";
 import { prisma } from "@/infra";
-import { generateSession } from "../services/session.service";
+import { generateSession } from "../services";
 
 type AuthHandlerRequestProps = FastifyRequest<{
   Body: AuthInput;

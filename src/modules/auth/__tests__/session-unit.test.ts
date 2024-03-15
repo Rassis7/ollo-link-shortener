@@ -1,6 +1,6 @@
 import { CACHE_PREFIX, cache } from "@/infra";
 import { faker } from "@faker-js/faker";
-import { generateSession, getSession } from "../services/session.service";
+import { generateSession, getSession } from "../services";
 import { mockGenerationSessionInput } from "../__mocks__/session";
 
 const hash = faker.string.sample(5);

@@ -1,7 +1,4 @@
-import {
-  SendEmailProps,
-  VERIFY_EMAIL_RESPONSE,
-} from "../schemas/account-verification-email.schema";
+import { SendEmailProps, VERIFY_EMAIL_RESPONSE } from "../schemas";
 import { join } from "node:path";
 import { readFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";

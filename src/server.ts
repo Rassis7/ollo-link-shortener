@@ -5,7 +5,7 @@ dotenv.config({ path: resolve(__dirname, `../.env.${process.env.NODE_ENV}`) });
 
 import { app, logger } from "@/configurations/app";
 import { heathCheckRoutes } from "./modules/health-check/health-check.routes";
-import { userRoutes } from "@/modules/user/routes/user.route";
+import { userRoutes } from "@/modules/user/user.route";
 import { authRoutes } from "@/modules/auth/auth.routes";
 import { emailRoutes } from "./modules/email/email.route";
 import { linkRoutes } from "./modules/link/link.route";

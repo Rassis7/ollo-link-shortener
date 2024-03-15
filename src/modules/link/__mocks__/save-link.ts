@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { SaveLinkInput } from "../schemas/shortener.schema";
+import { SaveLinkInput } from "../schemas";
 import { Link } from "@prisma/client";
 
 export const mockSaveLinkInput: SaveLinkInput = {

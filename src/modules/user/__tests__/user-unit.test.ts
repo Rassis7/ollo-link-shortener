@@ -3,7 +3,7 @@ import {
   mockCreateUserInput,
   mockCreatedUserResponse,
 } from "../__mocks__/create-user";
-import { createUser, findUserByEmail } from "../services/user.service";
+import { createUser, findUserByEmail } from "../services";
 import * as helpers from "@/helpers/hash";
 import { faker } from "@faker-js/faker";
 import { mockFindUserByEmailResponse } from "../__mocks__/find-user-by-email";

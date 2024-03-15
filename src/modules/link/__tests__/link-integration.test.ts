@@ -1,15 +1,15 @@
 import { cache } from "@/tests";
-import * as linkService from "../services/link.service";
+import * as linkService from "../services";
 import { mockGetAllLinksResponse } from "../__mocks__/get-all";
 import {
   mockEditLinkInput,
   mockEditLinkResponse,
 } from "../__mocks__/edit-link";
 import { faker } from "@faker-js/faker";
-import { LINK_ERRORS_RESPONSE } from "../schemas/link.schema";
+import { LINK_ERRORS_RESPONSE } from "../schemas";
 import { mockGetLinkByAliasOrHashResponse } from "../__mocks__/get-by-alias-or-hash";
 import { inject } from "@/tests/app";
-import { AUTH_ERRORS_RESPONSE } from "@/modules/auth/schemas/auth.schema";
+import { AUTH_ERRORS_RESPONSE } from "@/modules/auth/schemas";
 
 const BASE_URL = "/api/links";
 

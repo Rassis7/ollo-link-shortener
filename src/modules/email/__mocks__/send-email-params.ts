@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { SendEmailProps } from "../schemas/account-verification-email.schema";
+import { SendEmailProps } from "../schemas";
 
 export const sendEmailParamsMock: SendEmailProps = {
   fromEmail: faker.internet.email(),

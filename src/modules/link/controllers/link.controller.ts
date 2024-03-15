@@ -6,12 +6,8 @@ import {
   getLinkByHashOrAlias,
   saveOrUpdateLinkCache,
   updateLink,
-} from "../services/link.service";
-import {
-  EditLink,
-  EditLinkInput,
-  LINK_ERRORS_RESPONSE,
-} from "../schemas/link.schema";
+} from "../services";
+import { EditLink, EditLinkInput, LINK_ERRORS_RESPONSE } from "../schemas";
 
 export async function getAllLinksHandler(
   request: FastifyRequest,

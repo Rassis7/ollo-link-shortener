@@ -6,7 +6,7 @@ import {
   getLinkByHashOrAlias,
   saveOrUpdateLinkCache,
   updateLink,
-} from "../services/link.service";
+} from "../services";
 import { mockContext, context, cache } from "@/tests";
 import { expireCacheInSeconds } from "@/helpers";
 import {

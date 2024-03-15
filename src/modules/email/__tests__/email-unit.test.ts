@@ -1,5 +1,5 @@
 import { emailProviderInstance } from "@/configurations/email";
-import { sendEmail } from "../services/email.service";
+import { sendEmail } from "../services";
 
 import { sendEmailParamsMock } from "../__mocks__/send-email-params";
 

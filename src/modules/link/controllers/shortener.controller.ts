@@ -2,14 +2,11 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import {
   SHORTENER_ERRORS_RESPONSE,
   type CreateShortenerLink,
-} from "../schemas/shortener.schema";
+} from "../schemas";
 import { APPLICATION_ERRORS, ErrorHandler, HTTP_STATUS_CODE } from "@/helpers";
-import { generateUrlHash, shortenerLink } from "../services/shortener.service";
+import { generateUrlHash, shortenerLink } from "../services";
 import { prisma } from "@/infra";
-import {
-  getLinkByHashOrAlias,
-  saveOrUpdateLinkCache,
-} from "../services/link.service";
+import { getLinkByHashOrAlias, saveOrUpdateLinkCache } from "../services";
 
 type RegisterShortenerLinkHandlerProps = FastifyRequest<{
   Body: CreateShortenerLink;

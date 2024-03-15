@@ -1,7 +1,4 @@
-import {
-  CreateUserInput,
-  FindUserByEmailResponse,
-} from "../schemas/user.schema";
+import { CreateUserInput, FindUserByEmailResponse } from "../schemas";
 import { generateHash } from "@/helpers";
 import { Context } from "@/configurations/context";
 import { User } from "@prisma/client";

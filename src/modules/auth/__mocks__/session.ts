@@ -1,9 +1,5 @@
 import { faker } from "@faker-js/faker";
-import {
-  GenerateSessionProps,
-  SessionProps,
-  sessionSchema,
-} from "../schemas/session.schema";
+import { GenerateSessionProps, SessionProps, sessionSchema } from "../schemas";
 
 export const mockGenerationSessionInput: GenerateSessionProps = {
   id: faker.string.uuid(),

@@ -1,11 +1,11 @@
 import { FastifyRequestWithCookie } from "@/configurations/auth";
 import { FastifyReply } from "fastify";
-import { AUTH_ERRORS_RESPONSE, JwtProps } from "../schemas/auth.schema";
-import { generateSession, getSession } from "../services/session.service";
+import { AUTH_ERRORS_RESPONSE, JwtProps } from "../schemas";
+import { generateSession, getSession } from "../services";
 import { app } from "@/configurations/app";
 import { ErrorHandler, HTTP_STATUS_CODE } from "@/helpers";
 
-export async function sessionHandler(
+export async function authorizationMiddleware(
   request: FastifyRequestWithCookie,
   reply: FastifyReply
 ) {

@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
 import { Link } from "@prisma/client";
-import { GetRedirectLinkValuesInput } from "../schemas/shortener.schema";
+import { GetRedirectLinkValuesInput } from "../schemas";
 
 export const mockGetRedirectLinkValuesResponse: Link = {
   id: faker.string.uuid(),
