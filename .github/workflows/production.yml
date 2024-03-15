@@ -54,7 +54,7 @@ jobs:
           git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
       - name: Release
-        run: npm run release
+        run: npm run release:ci
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
