@@ -15,7 +15,7 @@ import { inject } from "@/tests/app";
 import { createHash } from "node:crypto";
 import { AUTH_ERRORS_RESPONSE } from "@/modules/auth/schemas/auth.schema";
 
-const BASE_URL = "/api/shortener";
+const BASE_URL = "/api/links/shortener";
 
 describe("modules/shortener.integration", () => {
   it("Should be able to return a error if not send url field", async () => {

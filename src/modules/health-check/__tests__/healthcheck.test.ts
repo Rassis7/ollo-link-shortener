@@ -1,4 +1,4 @@
-import { server as app } from "../server";
+import { server as app } from "../../../server";
 
 test("GET /healthcheck route", async () => {
   const response = await app.inject({

@@ -27,7 +27,7 @@ async function generateVerifyEmailUrl(email: string) {
 }
 
 export async function sendVerifyEmailHandler(email: string) {
-  const templatePath = join(__dirname, "templates", "email-verify.html");
+  const templatePath = join(__dirname, "..", "templates", "email-verify.html");
   const htmlTemplate = readFileSync(templatePath, "utf8");
   const verifyUrl = await generateVerifyEmailUrl(email);
 

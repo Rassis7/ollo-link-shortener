@@ -11,6 +11,19 @@ jest.mock("node:crypto", () => ({
   createHash: jest.fn(),
 }));
 
+jest.mock("mailersend", () => ({
+  ...jest.requireActual("mailersend"),
+  MailerSend: jest.fn().mockImplementation(() => ({
+    sms: jest.fn(),
+    token: jest.fn(),
+    emailVerification: jest.fn(),
+    others: jest.fn(),
+    email: {
+      send: jest.fn(),
+    },
+  })),
+}));
+
 require("./src/tests/server");
 require("./src/tests/prisma");
 require("./src/tests/redis");
