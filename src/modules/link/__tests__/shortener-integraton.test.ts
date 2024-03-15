@@ -4,13 +4,13 @@ import {
   mockSaveLinkResponse,
 } from "../__mocks__/save-link";
 import { cache } from "@/tests";
-import * as shortenerService from "../services";
+import * as shortenerService from "../services/shortener.service";
 import { mockGetLinkByAliasOrHashResponse } from "../__mocks__/get-by-alias-or-hash";
 import { faker } from "@faker-js/faker";
 import { mockGetLinkByHashFromCacheResponse } from "../__mocks__/get-by-hash";
 import { SHORTENER_ERRORS_RESPONSE } from "../schemas";
 import { APPLICATION_ERRORS } from "@/helpers";
-import * as linkService from "../services";
+import * as linkService from "../services/link.service";
 import { inject } from "@/tests/app";
 import { createHash } from "node:crypto";
 import { AUTH_ERRORS_RESPONSE } from "@/modules/auth/schemas";

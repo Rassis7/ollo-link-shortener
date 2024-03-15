@@ -1,5 +1,5 @@
 import { cache } from "@/tests";
-import * as linkService from "../services";
+import * as linkService from "../services/link.service";
 import { mockGetAllLinksResponse } from "../__mocks__/get-all";
 import {
   mockEditLinkInput,

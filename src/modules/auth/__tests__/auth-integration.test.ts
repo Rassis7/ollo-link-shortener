@@ -1,4 +1,4 @@
-import * as userService from "@/modules/user/services";
+import * as userService from "@/modules/user/services/user.service";
 import {
   mockAuthFindUserByEmailResponse,
   mockAuthInput,
