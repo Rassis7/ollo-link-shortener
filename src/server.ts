@@ -15,7 +15,7 @@ import {
   validatorCompiler,
 } from "fastify-type-provider-zod";
 
-import "./configurations/auth";
+import "./configurations/decorators";
 import "./configurations/rate-limit";
 import "./configurations/errors";
 
