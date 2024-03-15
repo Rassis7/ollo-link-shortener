@@ -2,8 +2,8 @@ import fastifyJwt, { FastifyJWT } from "@fastify/jwt";
 import { app as fastify } from "./app";
 import { FastifyReply, FastifyRequest } from "fastify";
 import fastifyCookie from "@fastify/cookie";
-import { sessionHandler } from "@/modules/session/session.controller";
-import { AUTH_ERRORS_RESPONSE } from "@/modules/auth/auth.schema";
+import { AUTH_ERRORS_RESPONSE } from "@/modules/auth/schemas";
+import { authorizationMiddleware } from "@/modules/auth/middleware";
 
 fastify.register(fastifyJwt, () => ({
   secret: String(process.env.FASTIFY_JWT_SECRET),
@@ -33,9 +33,9 @@ export interface FastifyRequestWithCookie extends FastifyRequest {
 
 fastify.after(() => {
   fastify.decorate(
-    "authenticate",
+    "authorization",
     async (request: FastifyRequestWithCookie, reply: FastifyReply) => {
-      await sessionHandler(request, reply);
+      await authorizationMiddleware(request, reply);
     }
   );
 });

@@ -4,14 +4,19 @@ import {
   editLinkSchema,
   getAllLinksResponseSchema,
   updateLinkResponseSchema,
-} from "./link.schema";
-import { editLinkHandler, getAllLinksHandler } from "./link.controller";
+} from "./schemas";
+import { editLinkHandler, getAllLinksHandler } from "./controllers";
+import {
+  createShortenerLinkResponseSchema,
+  createShortenerLinkSchema,
+} from "./schemas";
+import { registerShortenerLinkHandler } from "./controllers";
 
 export async function linkRoutes(fastify: FastifyInstance) {
   fastify.withTypeProvider<ZodTypeProvider>().route({
     method: "GET",
     url: "/",
-    preHandler: [fastify.authenticate],
+    preHandler: [fastify.authorization],
     schema: {
       response: {
         200: getAllLinksResponseSchema,
@@ -23,7 +28,7 @@ export async function linkRoutes(fastify: FastifyInstance) {
   fastify.withTypeProvider<ZodTypeProvider>().route({
     method: "PUT",
     url: "/:id",
-    preHandler: [fastify.authenticate],
+    preHandler: [fastify.authorization],
     schema: {
       body: editLinkSchema,
       response: {
@@ -31,5 +36,18 @@ export async function linkRoutes(fastify: FastifyInstance) {
       },
     },
     handler: editLinkHandler,
+  });
+
+  fastify.withTypeProvider<ZodTypeProvider>().route({
+    method: "POST",
+    url: "/shortener",
+    preHandler: [fastify.authorization],
+    schema: {
+      body: createShortenerLinkSchema,
+      response: {
+        201: createShortenerLinkResponseSchema,
+      },
+    },
+    handler: registerShortenerLinkHandler,
   });
 }

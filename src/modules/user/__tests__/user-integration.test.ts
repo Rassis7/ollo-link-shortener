@@ -1,18 +1,20 @@
 import { app } from "@/configurations/app";
-import * as emailService from "../../email/email.service";
+import * as accountVerificationEmailService from "../../email/services/account-verification-email.service";
 import {
   mockCreateUserInput,
   mockCreatedUserResponse,
   mockIntegrationCreateUserResponse,
 } from "../__mocks__/create-user";
-import * as userService from "../user.service";
+import * as userService from "../services/user.service";
 import { mockFindUserByEmailResponse } from "../__mocks__/find-user-by-email";
-import { USER_ERRORS_RESPONSE } from "../user.schema";
+import { USER_ERRORS_RESPONSE } from "../schemas";
 import { ErrorHandler } from "@/helpers";
 
 describe("module/user.integration", () => {
   it("Should call POST /api/users and create an user", async () => {
-    jest.spyOn(emailService, "sendVerifyEmailHandler").mockResolvedValue();
+    jest
+      .spyOn(accountVerificationEmailService, "sendVerifyEmailHandler")
+      .mockResolvedValue();
     jest
       .spyOn(userService, "createUser")
       .mockResolvedValue(mockCreatedUserResponse);

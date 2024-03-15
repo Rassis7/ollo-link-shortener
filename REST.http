@@ -59,7 +59,7 @@ Content-Type: {{content_type}}
 }
 
 ### POST - Shortener a link
-POST {{host_name}}/shortener HTTP/1.1
+POST {{host_name}}/links/shortener HTTP/1.1
 Content-Type: {{content_type}}
 Authorization: bearer {{jwt_token}}
 
@@ -74,8 +74,8 @@ Authorization: bearer {{jwt_token}}
    }
  }
 
-### PUT - Shortener a link
-PUT {{host_name}}/shortener/783d7c98-e32a-462e-b4f3-0e55621403a4 HTTP/1.1
+### PUT - Update a link
+PUT {{host_name}}/links/783d7c98-e32a-462e-b4f3-0e55621403a4 HTTP/1.1
 Content-Type: {{content_type}}
 Authorization: bearer {{jwt_token}}
 
