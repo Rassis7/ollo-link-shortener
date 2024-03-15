@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { jwtAuthValues } from "../auth/auth.schema";
 
-const sessionScheme = z.intersection(
+export const sessionSchema = z.intersection(
   jwtAuthValues,
   z.object({
     email: z.string(),
@@ -16,5 +16,5 @@ const generateSessionSchema = z.object({
   id: z.string(),
 });
 
-export type SessionProps = z.infer<typeof sessionScheme>;
+export type SessionProps = z.infer<typeof sessionSchema>;
 export type GenerateSessionProps = z.infer<typeof generateSessionSchema>;
