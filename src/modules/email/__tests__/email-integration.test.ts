@@ -1,13 +1,15 @@
 import { app } from "@/configurations/app";
-import * as emailService from "../email.service";
+import * as accountVerificationEmailService from "../services/account-verification-email.service";
 import { mockEmailInput } from "../__mocks__/verify-code";
-import { VERIFY_EMAIL_RESPONSE } from "../email.schema";
+import { VERIFY_EMAIL_RESPONSE } from "../schemas";
 
 const BASE_URL = "api/email";
 
 describe("modules/email.integration", () => {
   it("Should be able to check if verification code is correctly", async () => {
-    jest.spyOn(emailService, "verifyEmail").mockResolvedValue();
+    jest
+      .spyOn(accountVerificationEmailService, "verifyEmail")
+      .mockResolvedValue();
 
     const response = await app.inject({
       method: "POST",
@@ -20,7 +22,7 @@ describe("modules/email.integration", () => {
 
   it("Should reject if verification code is wrong or email not exists", async () => {
     jest
-      .spyOn(emailService, "verifyEmail")
+      .spyOn(accountVerificationEmailService, "verifyEmail")
       .mockRejectedValue(
         new Error(VERIFY_EMAIL_RESPONSE.CODE_EXPIRED_OR_NOT_EXISTS)
       );
@@ -38,7 +40,9 @@ describe("modules/email.integration", () => {
   });
 
   it("Should be able to resend verification email", async () => {
-    jest.spyOn(emailService, "sendVerifyEmailHandler").mockResolvedValue();
+    jest
+      .spyOn(accountVerificationEmailService, "sendVerifyEmailHandler")
+      .mockResolvedValue();
 
     const response = await app.inject({
       method: "POST",
@@ -51,7 +55,7 @@ describe("modules/email.integration", () => {
 
   it("Should reject if to fail resend email", async () => {
     jest
-      .spyOn(emailService, "sendVerifyEmailHandler")
+      .spyOn(accountVerificationEmailService, "sendVerifyEmailHandler")
       .mockRejectedValue(new Error("some_error"));
 
     const response = await app.inject({

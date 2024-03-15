@@ -1,6 +1,6 @@
 {
   "name": "ollo-link-api",
-  "version": "1.0.0",
+  "version": "1.1.1",
   "description": "OLLO.li api",
   "main": "index.js",
   "engines": {
@@ -24,7 +24,8 @@
     "lint": "npx eslint --fix --ext .ts,.ts ./src",
     "postinstall": "npm run prisma generate",
     "seed": "NODE_ENV=development node ./scripts/seed.js",
-    "release": "npx release-it"
+    "release": "npx release-it",
+    "release:ci": "npx release-it --only-version"
   },
   "config": {
     "commitizen": {

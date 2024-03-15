@@ -2,7 +2,7 @@ import { app } from "@/configurations/app";
 import { InjectOptions } from "fastify";
 import { createVerifier } from "fast-jwt";
 import { MOCK_JWT_TOKEN, SECRET_KEY } from "./jwt";
-import * as sessionService from "@/modules/session/session.service";
+import * as sessionService from "@/modules/auth/services/session.service";
 
 type InjectType = InjectOptions & {
   isAuthorized?: boolean;

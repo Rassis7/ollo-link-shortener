@@ -1,0 +1,12 @@
+{
+  "non-interactive": true,
+  "git": {
+    "commitMessage": "chore: update release version to ${version}"
+  },
+  "github": {
+    "release": true
+  },
+  "npm": {
+    "publish": false
+  }
+}

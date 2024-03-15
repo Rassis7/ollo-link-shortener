@@ -6,7 +6,7 @@ import {
   getLinkByHashOrAlias,
   saveOrUpdateLinkCache,
   updateLink,
-} from "../link.service";
+} from "../services";
 import { mockContext, context, cache } from "@/tests";
 import { expireCacheInSeconds } from "@/helpers";
 import {
@@ -21,7 +21,7 @@ import {
   mockEditLinkInput,
   mockEditLinkResponse,
 } from "../__mocks__/edit-link";
-import { mockSaveLinkInput } from "@/modules/shortener/__mocks__/save-link";
+import { mockSaveLinkInput } from "@/modules/link/__mocks__/save-link";
 import { CACHE_PREFIX } from "@/infra";
 
 describe("modules/link-unit", () => {

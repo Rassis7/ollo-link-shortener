@@ -34,7 +34,7 @@ export interface FastifyRequestWithCookie extends FastifyRequest {
 
 fastify.after(() => {
   fastify.decorate(
-    "authenticate",
+    "authorization",
     async (request: FastifyRequestWithCookie, reply: FastifyReply) => {
       // TODO: move this to auth (is necessary??)
       await sessionHandler(request, reply);
