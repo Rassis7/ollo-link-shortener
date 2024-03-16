@@ -40,6 +40,7 @@ declare module "@fastify/jwt" {
       id: string;
       email: string;
       name: string | null;
+      accountConfirmed: boolean;
     };
   }
 }

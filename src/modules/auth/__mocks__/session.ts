@@ -5,6 +5,7 @@ export const mockGenerationSessionInput: GenerateSessionProps = {
   id: faker.string.uuid(),
   name: faker.person.fullName(),
   email: faker.internet.email(),
+  accountConfirmed: false,
 };
 
 export const mockSession: SessionProps = {

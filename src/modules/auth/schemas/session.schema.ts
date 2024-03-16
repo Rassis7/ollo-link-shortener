@@ -7,6 +7,7 @@ export const sessionSchema = z.intersection(
     email: z.string(),
     name: z.string(),
     enabled: z.boolean(),
+    accountConfirmed: z.boolean(),
   })
 );
 
@@ -14,6 +15,7 @@ const generateSessionSchema = z.object({
   email: z.string(),
   name: z.string(),
   id: z.string(),
+  accountConfirmed: z.boolean(),
 });
 
 export type SessionProps = z.infer<typeof sessionSchema>;

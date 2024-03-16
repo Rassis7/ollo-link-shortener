@@ -38,7 +38,7 @@ function main() {
 
   // await addApplicationDocumentation(app);
 
-  app.log.level = "silent";
+  // app.log.level = "silent";
   app.listen({ port, host }, (error, address) => {
     if (error) {
       logger.error(error);
