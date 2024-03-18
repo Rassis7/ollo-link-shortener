@@ -1,8 +1,13 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { VerifyEmailInput, VerifyEmailParams } from "../schemas";
+import {
+  VERIFY_EMAIL_RESPONSE,
+  VerifyEmailInput,
+  VerifyEmailParams,
+} from "../schemas";
 import { sendVerifyEmailHandler, verifyEmail } from "../services";
 import { ErrorHandler, HTTP_STATUS_CODE } from "@/helpers";
 import { prisma } from "@/infra";
+import { findUserByEmail } from "@/modules/user/services";
 
 export async function verifyEmailHandler(
   request: FastifyRequest<{
@@ -14,13 +19,17 @@ export async function verifyEmailHandler(
   try {
     const { verificationCode } = request.params;
     const { email } = request.body;
-    const { accountConfirmed, id } = request.user;
+    const user = await findUserByEmail({ email, context: { prisma } });
 
-    if (!accountConfirmed) {
+    if (!user?.id) {
+      throw new Error(VERIFY_EMAIL_RESPONSE.CODE_EXPIRED_OR_NOT_EXISTS);
+    }
+
+    if (!user?.accountConfirmed && user?.id) {
       await verifyEmail({
         code: verificationCode,
         email,
-        sessionHash: id,
+        sessionHash: user.id,
         context: { prisma },
       });
     }
@@ -28,7 +37,7 @@ export async function verifyEmailHandler(
     return reply.code(HTTP_STATUS_CODE.NO_CONTENT).send();
   } catch (error) {
     const e = new ErrorHandler(error);
-    return reply.code(HTTP_STATUS_CODE.UNAUTHORIZED).send(e);
+    return reply.code(HTTP_STATUS_CODE.BAD_REQUEST).send(e);
   }
 }
 
