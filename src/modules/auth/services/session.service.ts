@@ -32,6 +32,6 @@ export async function updateSession(
 
   const newSession = { ...session, ...sessionParams };
 
-  await cache.set(CACHE_PREFIX.AUTH, hash, newSession);
+  await generateSession(newSession);
   return newSession;
 }

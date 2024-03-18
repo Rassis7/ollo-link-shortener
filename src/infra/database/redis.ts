@@ -66,7 +66,10 @@ export class Redis {
         return null;
       }
 
-      if (typeof value === "string" && !!value.match(/^(\{.*\}|\[.*\])$/)) {
+      if (
+        typeof value === "string" &&
+        !!value.match(/^(\{[\s\S]*\}|\[[\s\S]*\])$/)
+      ) {
         return JSON.parse(value) as T;
       }
 

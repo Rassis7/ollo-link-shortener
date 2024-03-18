@@ -25,7 +25,7 @@ export async function verifyEmailHandler(
       throw new Error(VERIFY_EMAIL_RESPONSE.CODE_EXPIRED_OR_NOT_EXISTS);
     }
 
-    if (!user?.accountConfirmed && user?.id) {
+    if (!user?.accountConfirmed) {
       await verifyEmail({
         code: verificationCode,
         email,
