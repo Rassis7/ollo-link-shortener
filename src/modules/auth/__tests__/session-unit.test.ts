@@ -1,11 +1,16 @@
 import { CACHE_PREFIX, cache } from "@/infra";
 import { faker } from "@faker-js/faker";
-import { generateSession, getSession } from "../services";
-import { mockGenerationSessionInput } from "../__mocks__/session";
+import { generateSession, getSession, updateSession } from "../services";
+import { mockGenerationSessionInput, mockSession } from "../__mocks__/session";
+import * as sessionService from "../services/session.service";
 
 const hash = faker.string.sample(5);
 
 describe("modules/session-unit", () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("Should be able to return correct session values", async () => {
     jest.spyOn(cache, "ttl").mockReturnValue(Promise.resolve(60));
     jest.spyOn(cache, "get");
@@ -35,5 +40,27 @@ describe("modules/session-unit", () => {
       { enabled: true, ...mockGenerationSessionInput },
       process.env.REDIS_TOKEN_EXPIRE_IN
     );
+  });
+
+  it("Should be able to update session", async () => {
+    jest.spyOn(cache, "get").mockResolvedValue(mockSession);
+    jest.spyOn(cache, "set");
+
+    await updateSession(hash, { accountConfirmed: true });
+
+    expect(cache.get).toHaveBeenCalledWith(CACHE_PREFIX.AUTH, hash);
+    expect(cache.set).toHaveBeenCalledWith(CACHE_PREFIX.AUTH, hash, {
+      ...mockSession,
+      accountConfirmed: true,
+    });
+  });
+
+  it.only("Should not be able to update session if not exists session", async () => {
+    jest.spyOn(sessionService, "getSession").mockResolvedValue(null);
+    jest.spyOn(cache, "set");
+
+    await updateSession(hash, { accountConfirmed: true });
+
+    expect(cache.set).not.toHaveBeenCalled();
   });
 });

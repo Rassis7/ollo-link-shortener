@@ -14,3 +14,11 @@ export const mockSession: SessionProps = {
   exp: faker.date.future().getTime(),
   iat: faker.date.future().getTime(),
 };
+
+export const mockSessionWithConfirmedAccount: SessionProps = {
+  ...sessionSchema._output,
+  enabled: true,
+  exp: faker.date.future().getTime(),
+  iat: faker.date.future().getTime(),
+  accountConfirmed: true,
+};

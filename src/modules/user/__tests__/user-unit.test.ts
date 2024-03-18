@@ -3,10 +3,11 @@ import {
   mockCreateUserInput,
   mockCreatedUserResponse,
 } from "../__mocks__/create-user";
-import { createUser, findUserByEmail } from "../services";
+import { confirmUserAccount, createUser, findUserByEmail } from "../services";
 import * as helpers from "@/helpers/hash";
 import { faker } from "@faker-js/faker";
 import { mockFindUserByEmailResponse } from "../__mocks__/find-user-by-email";
+import { mockUpdateUserResponse } from "../__mocks__/update-user";
 
 describe("module/user.unit", () => {
   it("Should create a new user", async () => {
@@ -44,5 +45,18 @@ describe("module/user.unit", () => {
       where: { email },
     });
     expect(typeof user).toEqual(typeof mockFindUserByEmailResponse);
+  });
+
+  it("Should be able to confirm user account", async () => {
+    const email = faker.internet.email();
+    mockContext.prisma.user.update.mockResolvedValue(mockUpdateUserResponse);
+
+    const user = await confirmUserAccount({ email, context });
+
+    expect(mockContext.prisma.user.update).toHaveBeenCalledWith({
+      where: { email },
+      data: { accountConfirmed: true },
+    });
+    expect(user?.accountConfirmed).toBeTruthy();
   });
 });

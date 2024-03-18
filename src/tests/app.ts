@@ -17,6 +17,7 @@ export async function inject({ isAuthorized = true, ...rest }: InjectType) {
       jest.spyOn(sessionService, "getSession").mockResolvedValue({
         ...payload,
         enabled: true,
+        accountConfirmed: false,
         name: "John Due",
         email: "john_due@email.com",
       });

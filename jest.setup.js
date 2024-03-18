@@ -30,6 +30,7 @@ require("./src/tests/redis");
 
 beforeEach(() => {
   jest.clearAllMocks();
+  jest.resetAllMocks();
 });
 
 afterAll(() => {
