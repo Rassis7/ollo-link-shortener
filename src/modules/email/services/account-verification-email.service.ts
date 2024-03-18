@@ -11,6 +11,9 @@ import { addHours } from "date-fns";
 
 import { expireCacheInSeconds } from "@/helpers";
 import { sendEmail } from "./email.service";
+import { confirmUserAccount } from "@/modules/user/services";
+import { Context } from "@/configurations/context";
+import { updateSession } from "@/modules/auth/services";
 
 const EXPIRE_IN = 48;
 
@@ -55,7 +58,17 @@ export async function sendVerifyEmailHandler(email: string) {
   await sendEmail(emailProps);
 }
 
-export async function verifyEmail(code: string, email: string) {
+export async function verifyEmail({
+  code,
+  email,
+  sessionHash,
+  context,
+}: {
+  code: string;
+  email: string;
+  sessionHash: string;
+  context: Context;
+}) {
   const restTime = await cache.ttl(CACHE_PREFIX.EMAIL_VERIFICATION, email);
 
   if (restTime <= -1) {
@@ -72,4 +85,9 @@ export async function verifyEmail(code: string, email: string) {
   }
 
   await cache.del(CACHE_PREFIX.EMAIL_VERIFICATION, email);
+
+  await Promise.all([
+    confirmUserAccount({ email, context }),
+    updateSession(sessionHash, { accountConfirmed: true }),
+  ]);
 }

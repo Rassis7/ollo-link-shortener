@@ -2,6 +2,7 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { VerifyEmailInput, VerifyEmailParams } from "../schemas";
 import { sendVerifyEmailHandler, verifyEmail } from "../services";
 import { ErrorHandler, HTTP_STATUS_CODE } from "@/helpers";
+import { prisma } from "@/infra";
 
 export async function verifyEmailHandler(
   request: FastifyRequest<{
@@ -13,8 +14,16 @@ export async function verifyEmailHandler(
   try {
     const { verificationCode } = request.params;
     const { email } = request.body;
+    const { accountConfirmed, id } = request.user;
 
-    await verifyEmail(verificationCode, email);
+    if (!accountConfirmed) {
+      await verifyEmail({
+        code: verificationCode,
+        email,
+        sessionHash: id,
+        context: { prisma },
+      });
+    }
 
     return reply.code(HTTP_STATUS_CODE.NO_CONTENT).send();
   } catch (error) {
