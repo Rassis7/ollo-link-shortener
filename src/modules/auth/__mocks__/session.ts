@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { GenerateSessionProps, SessionProps, sessionSchema } from "../schemas";
+import { GenerateSessionProps, SessionProps } from "../schemas";
 
 export const mockGenerationSessionInput: GenerateSessionProps = {
   id: faker.string.uuid(),
@@ -9,14 +9,14 @@ export const mockGenerationSessionInput: GenerateSessionProps = {
 };
 
 export const mockSession: SessionProps = {
-  ...sessionSchema._output,
+  ...mockGenerationSessionInput,
   enabled: true,
   exp: faker.date.future().getTime(),
   iat: faker.date.future().getTime(),
 };
 
 export const mockSessionWithConfirmedAccount: SessionProps = {
-  ...sessionSchema._output,
+  ...mockGenerationSessionInput,
   enabled: true,
   exp: faker.date.future().getTime(),
   iat: faker.date.future().getTime(),

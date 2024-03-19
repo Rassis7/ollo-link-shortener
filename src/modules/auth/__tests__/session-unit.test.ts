@@ -43,24 +43,33 @@ describe("modules/session-unit", () => {
   });
 
   it("Should be able to update session", async () => {
+    jest.spyOn(cache, "ttl").mockReturnValue(Promise.resolve(60));
     jest.spyOn(cache, "get").mockResolvedValue(mockSession);
     jest.spyOn(cache, "set");
 
-    await updateSession(hash, { accountConfirmed: true });
-
-    expect(cache.get).toHaveBeenCalledWith(CACHE_PREFIX.AUTH, hash);
-    expect(cache.set).toHaveBeenCalledWith(CACHE_PREFIX.AUTH, hash, {
-      ...mockSession,
+    const newSession = await updateSession(mockSession.id, {
       accountConfirmed: true,
     });
+
+    expect(cache.set).toHaveBeenCalledWith(
+      CACHE_PREFIX.AUTH,
+      mockSession.id,
+      {
+        ...mockSession,
+        accountConfirmed: true,
+      },
+      "43200"
+    );
+    expect(newSession).toEqual({ ...mockSession, accountConfirmed: true });
   });
 
-  it.only("Should not be able to update session if not exists session", async () => {
+  it("Should not be able to update session if not exists session", async () => {
     jest.spyOn(sessionService, "getSession").mockResolvedValue(null);
     jest.spyOn(cache, "set");
 
-    await updateSession(hash, { accountConfirmed: true });
+    const newSession = await updateSession(hash, { accountConfirmed: true });
 
     expect(cache.set).not.toHaveBeenCalled();
+    expect(newSession).toBeNull();
   });
 });

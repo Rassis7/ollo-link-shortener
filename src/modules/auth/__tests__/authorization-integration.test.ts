@@ -118,6 +118,7 @@ describe("modules/session-integration", () => {
       id: mockSession.id,
       name: mockSession.name,
       email: mockSession.email,
+      accountConfirmed: false,
     });
   });
 
@@ -145,6 +146,7 @@ describe("modules/session-integration", () => {
       id: mockSession.id,
       name: mockSession.name,
       email: mockSession.email,
+      accountConfirmed: false,
     });
 
     const token = app.jwt.sign({ id: mockSession.id });

@@ -27,7 +27,7 @@ import { FastifyInstance, preHandlerHookHandler } from "fastify";
 declare module "fastify" {
   export interface FastifyInstance {
     isAuthorized: any;
-    isEmailVerified: any;
+    isAccountVerified: any;
   }
 }
 
