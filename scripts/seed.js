@@ -21,6 +21,7 @@ async function main() {
       name: "Jhon Doe",
       password: "$2b$10$GstlEiiaFOAVhKCg.OhPR.wtovvLuE3au6votU5vV2zh8XTlkbS.e",
       createdAt: new Date(),
+      accountConfirmed: false,
     },
   });
 

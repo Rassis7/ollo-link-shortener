@@ -1,6 +1,7 @@
 import IoRedis, { RedisOptions as IoRedisOptions } from "ioredis";
 
 export enum CACHE_PREFIX {
+  EMAIL_VERIFICATION = "emailVerification",
   LINK = "link",
   AUTH = "auth",
 }
@@ -65,7 +66,10 @@ export class Redis {
         return null;
       }
 
-      if (typeof value === "string" && !!value.match(/^(\{.*\}|\[.*\])$/)) {
+      if (
+        typeof value === "string" &&
+        !!value.match(/^(\{[\s\S]*\}|\[[\s\S]*\])$/)
+      ) {
         return JSON.parse(value) as T;
       }
 

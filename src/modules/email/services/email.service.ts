@@ -41,6 +41,11 @@ function getEmailParams({
 }
 
 export async function sendEmail(props: SendEmailProps) {
+  /* istanbul ignore if */
+  if (process.env.NODE_ENV === "development") {
+    return;
+  }
+
   const emailParams = getEmailParams(props);
   await emailProviderInstance.email.send(emailParams);
 }

@@ -1,4 +1,4 @@
-import { FastifyRequestWithCookie } from "@/configurations/auth";
+import { FastifyRequestWithCookie } from "@/configurations/decorators";
 import { FastifyReply } from "fastify";
 import { AUTH_ERRORS_RESPONSE, JwtProps } from "../schemas";
 import { generateSession, getSession } from "../services";
@@ -23,7 +23,12 @@ export async function authorizationMiddleware(
       throw new Error(AUTH_ERRORS_RESPONSE.NOT_AUTHORIZED);
     }
 
-    request.user = { id: session.id, name: session.name, email: session.email };
+    request.user = {
+      id: session.id,
+      name: session.name,
+      email: session.email,
+      accountConfirmed: session.accountConfirmed,
+    };
   } catch (error) {
     if (
       error &&
@@ -43,6 +48,7 @@ export async function authorizationMiddleware(
           id: session.id,
           name: session.name,
           email: session.email,
+          accountConfirmed: session.accountConfirmed,
         };
 
         reply.setCookie("access_token", token, {

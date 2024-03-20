@@ -35,17 +35,23 @@ export async function authHandler(
       throw new Error(AUTH_ERRORS_RESPONSE.USER_OR_PASSWORD_INVALID);
     }
 
-    const { name, email } = user;
+    const { name, email, accountConfirmed } = user;
 
     await generateSession({
       id: user.id,
       name: String(name ?? ""),
       email,
+      accountConfirmed: !!accountConfirmed,
     });
 
     const token = app.jwt.sign({ id: user.id });
 
-    request.user = { id: user.id, name, email };
+    request.user = {
+      id: user.id,
+      name,
+      email,
+      accountConfirmed: !!accountConfirmed,
+    };
 
     return reply
       .setCookie("access_token", token, {

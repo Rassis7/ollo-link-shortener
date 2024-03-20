@@ -16,7 +16,7 @@ export async function linkRoutes(fastify: FastifyInstance) {
   fastify.withTypeProvider<ZodTypeProvider>().route({
     method: "GET",
     url: "/",
-    preHandler: [fastify.authorization],
+    preHandler: [fastify.isAuthorized],
     schema: {
       response: {
         200: getAllLinksResponseSchema,
@@ -28,7 +28,7 @@ export async function linkRoutes(fastify: FastifyInstance) {
   fastify.withTypeProvider<ZodTypeProvider>().route({
     method: "PUT",
     url: "/:id",
-    preHandler: [fastify.authorization],
+    preHandler: [fastify.isAuthorized],
     schema: {
       body: editLinkSchema,
       response: {
@@ -41,7 +41,7 @@ export async function linkRoutes(fastify: FastifyInstance) {
   fastify.withTypeProvider<ZodTypeProvider>().route({
     method: "POST",
     url: "/shortener",
-    preHandler: [fastify.authorization],
+    preHandler: [fastify.isAuthorized],
     schema: {
       body: createShortenerLinkSchema,
       response: {

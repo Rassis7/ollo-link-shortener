@@ -4,6 +4,7 @@ import { CreateUserInput, USER_ERRORS_RESPONSE } from "../schemas";
 import { sendVerifyEmailHandler } from "../../email/services";
 import { ErrorHandler, HTTP_STATUS_CODE } from "@/helpers";
 import { prisma } from "@/infra";
+import { logger } from "@/configurations/app";
 
 type RegisterUserHandlerRequestProps = FastifyRequest<{
   Body: CreateUserInput;
@@ -26,7 +27,11 @@ export async function registerUserHandler(
     }
 
     const user = await createUser({ input: body, context: { prisma } });
-    sendVerifyEmailHandler(user.email);
+    try {
+      await sendVerifyEmailHandler(user.email);
+    } catch (error) {
+      logger.error(error);
+    }
 
     return reply.code(HTTP_STATUS_CODE.CREATED).send(user);
   } catch (e) {

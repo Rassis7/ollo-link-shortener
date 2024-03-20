@@ -1,11 +1,11 @@
 import { faker } from "@faker-js/faker";
-import { FindUserByEmailResponse } from "../schemas";
+import { User } from "@prisma/client";
 
-export const mockFindUserByEmailResponse: FindUserByEmailResponse = {
+export const mockUpdateUserResponse: User = {
   id: faker.string.uuid(),
   createdAt: new Date(),
   email: faker.internet.email(),
   name: faker.person.fullName(),
   password: faker.internet.password(),
-  accountConfirmed: false,
+  accountConfirmed: true,
 };

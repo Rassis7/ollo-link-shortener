@@ -34,3 +34,18 @@ export async function findUserByEmail({
     },
   });
 }
+
+export async function confirmUserAccount({
+  email,
+  context,
+}: {
+  email: string;
+  context: Context;
+}): Promise<User> {
+  return await context.prisma.user.update({
+    where: { email },
+    data: {
+      accountConfirmed: true,
+    },
+  });
+}

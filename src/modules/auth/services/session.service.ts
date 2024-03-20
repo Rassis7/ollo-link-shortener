@@ -19,3 +19,19 @@ export async function getSession(hash: string): Promise<SessionProps | null> {
 
   return cache.get<SessionProps>(CACHE_PREFIX.AUTH, hash);
 }
+
+export async function updateSession(
+  hash: string,
+  sessionParams: Partial<SessionProps>
+): Promise<SessionProps | null> {
+  const session = await getSession(hash);
+
+  if (!session?.id) {
+    return null;
+  }
+
+  const newSession = { ...session, ...sessionParams };
+
+  await generateSession(newSession);
+  return newSession;
+}

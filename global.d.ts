@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 declare global {
   namespace NodeJS {
     export interface ProcessEnv {
       NODE_ENV: "production" | "test" | "development";
-      DEBUG_MODE: sring;
+      DEBUG_MODE: boolean;
       SERVER_PORT: string;
       FASTIFY_COOKIE_DOMAIN: string;
       DATABASE_URL: string;
@@ -17,18 +18,16 @@ declare global {
       OLLO_LI_BASE_URL: string;
       INTERNAL_OLLO_LI_BASE_URL: string;
       REDIS_URL: string;
-      VERIFY_EMAIL_SUBJECT: string;
-      VERIFY_EMAIL_FROM_EMAIL: string;
-      VERIFY_EMAIL_FROM_NAME: string;
     }
   }
 }
 
-import { FastifyInstance } from "fastify";
+import { FastifyInstance, preHandlerHookHandler } from "fastify";
 
 declare module "fastify" {
   export interface FastifyInstance {
-    authorization: any;
+    isAuthorized: any;
+    isAccountVerified: any;
   }
 }
 
@@ -41,6 +40,7 @@ declare module "@fastify/jwt" {
       id: string;
       email: string;
       name: string | null;
+      accountConfirmed: boolean;
     };
   }
 }

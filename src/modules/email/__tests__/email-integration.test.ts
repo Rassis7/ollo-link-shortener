@@ -1,17 +1,23 @@
-import { app } from "@/configurations/app";
 import * as accountVerificationEmailService from "../services/account-verification-email.service";
 import { mockEmailInput } from "../__mocks__/verify-code";
 import { VERIFY_EMAIL_RESPONSE } from "../schemas";
+import { inject } from "@/tests/app";
+import * as userService from "@/modules/user/services/user.service";
+import { mockFindUserByEmailResponse } from "@/modules/user/__mocks__/find-user-by-email";
 
 const BASE_URL = "api/email";
 
 describe("modules/email.integration", () => {
   it("Should be able to check if verification code is correctly", async () => {
     jest
+      .spyOn(userService, "findUserByEmail")
+      .mockResolvedValue(mockFindUserByEmailResponse);
+
+    jest
       .spyOn(accountVerificationEmailService, "verifyEmail")
       .mockResolvedValue();
 
-    const response = await app.inject({
+    const response = await inject({
       method: "POST",
       url: `${BASE_URL}/verify/anything`,
       body: mockEmailInput,
@@ -27,7 +33,7 @@ describe("modules/email.integration", () => {
         new Error(VERIFY_EMAIL_RESPONSE.CODE_EXPIRED_OR_NOT_EXISTS)
       );
 
-    const response = await app.inject({
+    const response = await inject({
       method: "POST",
       url: `${BASE_URL}/verify/anything`,
       body: mockEmailInput,
@@ -36,7 +42,7 @@ describe("modules/email.integration", () => {
     expect(response.json()).toEqual({
       error: "O código está expirado ou não existe",
     });
-    expect(response.statusCode).toEqual(401);
+    expect(response.statusCode).toEqual(400);
   });
 
   it("Should be able to resend verification email", async () => {
@@ -44,7 +50,7 @@ describe("modules/email.integration", () => {
       .spyOn(accountVerificationEmailService, "sendVerifyEmailHandler")
       .mockResolvedValue();
 
-    const response = await app.inject({
+    const response = await inject({
       method: "POST",
       url: `${BASE_URL}/resend`,
       body: mockEmailInput,
@@ -58,7 +64,7 @@ describe("modules/email.integration", () => {
       .spyOn(accountVerificationEmailService, "sendVerifyEmailHandler")
       .mockRejectedValue(new Error("some_error"));
 
-    const response = await app.inject({
+    const response = await inject({
       method: "POST",
       url: `${BASE_URL}/resend`,
       body: mockEmailInput,

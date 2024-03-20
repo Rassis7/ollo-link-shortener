@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
 import { sendVerifyEmailHandler, verifyEmail } from "../services";
-import { cache } from "@/tests";
+import { cache, mockContext } from "@/tests";
 import { randomUUID } from "node:crypto";
 import { RANDOM_UUID_MOCK } from "@/tests/__mocks__";
 import { emailProviderInstance } from "@/configurations/email";
@@ -8,6 +8,10 @@ import { join } from "node:path";
 import { readFileSync } from "node:fs";
 import { emailTemplateParamMock } from "../__mocks__/email-template-param";
 import { CACHE_PREFIX } from "@/infra";
+import * as userService from "@/modules/user/services/user.service";
+import * as sessionService from "@/modules/auth/services/session.service";
+import { mockUpdateUserResponse } from "@/modules/user/__mocks__/update-user";
+import { mockSessionWithConfirmedAccount } from "@/modules/auth/__mocks__/session";
 
 const templatePath = join(__dirname, "..", "templates", "email-verify.html");
 const htmlTemplate = readFileSync(templatePath, "utf8");
@@ -39,20 +43,22 @@ describe("modules/account-verification-email", () => {
     const email = faker.internet.email();
     await sendVerifyEmailHandler(email);
 
-    const key = `emailVerification/${email}`;
-
     // set
     expect(CacheSetSpy).toHaveBeenCalledTimes(1);
     const uuid = randomUUID();
-    expect(CacheSetSpy).toHaveBeenCalledWith(CACHE_PREFIX.LINK, key, uuid);
+    expect(CacheSetSpy).toHaveBeenCalledWith(
+      CACHE_PREFIX.EMAIL_VERIFICATION,
+      email,
+      uuid
+    );
 
     // expire
     expect(CacheExpireSet).toHaveBeenCalledTimes(1);
 
     const validAt = 48 * 3600; // 48 hours in seconds
     expect(CacheExpireSet).toHaveBeenCalledWith(
-      CACHE_PREFIX.LINK,
-      key,
+      CACHE_PREFIX.EMAIL_VERIFICATION,
+      email,
       validAt
     );
 
@@ -89,19 +95,42 @@ describe("modules/account-verification-email", () => {
     jest.spyOn(cache, "ttl").mockResolvedValue(1);
     jest.spyOn(cache, "get").mockResolvedValue(code);
     jest.spyOn(cache, "del").mockImplementation(jest.fn());
+    jest
+      .spyOn(userService, "confirmUserAccount")
+      .mockResolvedValue(mockUpdateUserResponse);
+    jest
+      .spyOn(sessionService, "updateSession")
+      .mockResolvedValue(mockSessionWithConfirmedAccount);
 
     const email = faker.internet.email();
+    const sessionHash = faker.string.uuid();
 
-    await verifyEmail(code, email);
+    await verifyEmail({ code, email, sessionHash, context: mockContext });
 
-    const key = `emailVerification/${email}`;
     expect(cache.ttl).toHaveBeenCalledTimes(1);
-    expect(cache.ttl).toHaveBeenCalledWith(CACHE_PREFIX.LINK, key);
+    expect(cache.ttl).toHaveBeenCalledWith(
+      CACHE_PREFIX.EMAIL_VERIFICATION,
+      email
+    );
 
     expect(cache.get).toHaveBeenCalledTimes(1);
 
     expect(cache.del).toHaveBeenCalledTimes(1);
-    expect(cache.del).toHaveBeenCalledWith(CACHE_PREFIX.LINK, key);
+    expect(cache.del).toHaveBeenCalledWith(
+      CACHE_PREFIX.EMAIL_VERIFICATION,
+      email
+    );
+
+    expect(userService.confirmUserAccount).toHaveBeenCalledTimes(1);
+    expect(userService.confirmUserAccount).toHaveBeenCalledWith({
+      email,
+      context: mockContext,
+    });
+
+    expect(sessionService.updateSession).toHaveBeenCalledTimes(1);
+    expect(sessionService.updateSession).toHaveBeenCalledWith(sessionHash, {
+      accountConfirmed: true,
+    });
   });
 
   it.each([
@@ -114,10 +143,11 @@ describe("modules/account-verification-email", () => {
 
       const email = faker.internet.email();
       const code = faker.number.int({ min: 100, max: 999 }).toString();
+      const sessionHash = faker.string.uuid();
 
-      expect(async () => verifyEmail(code, email)).rejects.toThrow(
-        /o código está expirado ou não existe/i
-      );
+      expect(async () =>
+        verifyEmail({ code, email, sessionHash, context: mockContext })
+      ).rejects.toThrow(/o código está expirado ou não existe/i);
     }
   );
 
@@ -128,9 +158,15 @@ describe("modules/account-verification-email", () => {
     jest.spyOn(cache, "get").mockResolvedValue(code);
 
     const email = faker.internet.email();
+    const sessionHash = faker.string.uuid();
 
-    expect(async () => verifyEmail("OTHER_CODE", email)).rejects.toThrow(
-      /o código está incorreto/i
-    );
+    expect(async () =>
+      verifyEmail({
+        code: "OTHER_CODE",
+        email,
+        sessionHash,
+        context: mockContext,
+      })
+    ).rejects.toThrow(/o código está incorreto/i);
   });
 });

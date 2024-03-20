@@ -1,4 +1,8 @@
-import { SendEmailProps, VERIFY_EMAIL_RESPONSE } from "../schemas";
+import {
+  SendEmailProps,
+  VERIFY_EMAIL_PROPS,
+  VERIFY_EMAIL_RESPONSE,
+} from "../schemas";
 import { join } from "node:path";
 import { readFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";
@@ -7,6 +11,9 @@ import { addHours } from "date-fns";
 
 import { expireCacheInSeconds } from "@/helpers";
 import { sendEmail } from "./email.service";
+import { confirmUserAccount } from "@/modules/user/services";
+import { Context } from "@/configurations/context";
+import { updateSession } from "@/modules/auth/services";
 
 const EXPIRE_IN = 48;
 
@@ -16,9 +23,8 @@ async function generateVerifyEmailUrl(email: string) {
 
   const validAt = addHours(new Date(), EXPIRE_IN);
   const validAtInSeconds = expireCacheInSeconds(validAt);
-  const key = `emailVerification/${email}`;
-  await cache.set(CACHE_PREFIX.LINK, key, urlSuffix);
-  await cache.expire(CACHE_PREFIX.LINK, key, validAtInSeconds);
+  await cache.set(CACHE_PREFIX.EMAIL_VERIFICATION, email, urlSuffix);
+  await cache.expire(CACHE_PREFIX.EMAIL_VERIFICATION, email, validAtInSeconds);
 
   return `${process.env.INTERNAL_OLLO_LI_BASE_URL}/verification/${urlSuffix}?${emailParsed}`;
 }
@@ -29,9 +35,9 @@ export async function sendVerifyEmailHandler(email: string) {
   const verifyUrl = await generateVerifyEmailUrl(email);
 
   const emailProps: SendEmailProps = {
-    subject: process.env.VERIFY_EMAIL_SUBJECT,
-    fromEmail: process.env.VERIFY_EMAIL_FROM_EMAIL,
-    fromName: process.env.VERIFY_EMAIL_FROM_NAME,
+    subject: VERIFY_EMAIL_PROPS.VERIFY_EMAIL_SUBJECT,
+    fromEmail: VERIFY_EMAIL_PROPS.VERIFY_EMAIL_FROM_EMAIL,
+    fromName: VERIFY_EMAIL_PROPS.VERIFY_EMAIL_FROM_NAME,
     templateId: null,
     htmlTemplate,
     recipients: [
@@ -52,20 +58,36 @@ export async function sendVerifyEmailHandler(email: string) {
   await sendEmail(emailProps);
 }
 
-export async function verifyEmail(code: string, email: string) {
-  const key = `emailVerification/${email}`;
-
-  const restTime = await cache.ttl(CACHE_PREFIX.LINK, key);
+export async function verifyEmail({
+  code,
+  email,
+  sessionHash,
+  context,
+}: {
+  code: string;
+  email: string;
+  sessionHash: string;
+  context: Context;
+}) {
+  const restTime = await cache.ttl(CACHE_PREFIX.EMAIL_VERIFICATION, email);
 
   if (restTime <= -1) {
     throw new Error(VERIFY_EMAIL_RESPONSE.CODE_EXPIRED_OR_NOT_EXISTS);
   }
 
-  const verificationCode = await cache.get(CACHE_PREFIX.LINK, key);
+  const verificationCode = await cache.get(
+    CACHE_PREFIX.EMAIL_VERIFICATION,
+    email
+  );
 
   if (verificationCode !== code) {
     throw new Error(VERIFY_EMAIL_RESPONSE.CODE_IS_WRONG);
   }
 
-  await cache.del(CACHE_PREFIX.LINK, key);
+  await cache.del(CACHE_PREFIX.EMAIL_VERIFICATION, email);
+
+  await Promise.all([
+    confirmUserAccount({ email, context }),
+    updateSession(sessionHash, { accountConfirmed: true }),
+  ]);
 }

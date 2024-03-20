@@ -3,7 +3,10 @@ import { app as fastify } from "./app";
 import { FastifyReply, FastifyRequest } from "fastify";
 import fastifyCookie from "@fastify/cookie";
 import { AUTH_ERRORS_RESPONSE } from "@/modules/auth/schemas";
-import { authorizationMiddleware } from "@/modules/auth/middleware";
+import {
+  accountVerifyHandler,
+  authorizationMiddleware,
+} from "@/modules/auth/middleware";
 
 fastify.register(fastifyJwt, () => ({
   secret: String(process.env.FASTIFY_JWT_SECRET),
@@ -33,9 +36,15 @@ export interface FastifyRequestWithCookie extends FastifyRequest {
 
 fastify.after(() => {
   fastify.decorate(
-    "authorization",
+    "isAuthorized",
     async (request: FastifyRequestWithCookie, reply: FastifyReply) => {
       await authorizationMiddleware(request, reply);
+    }
+  );
+  fastify.decorate(
+    "isAccountVerified",
+    async (request: FastifyRequestWithCookie, reply: FastifyReply) => {
+      await accountVerifyHandler(request, reply);
     }
   );
 });
