@@ -4,7 +4,7 @@ declare global {
   namespace NodeJS {
     export interface ProcessEnv {
       NODE_ENV: "production" | "test" | "development";
-      DEBUG_MODE: boolean;
+      DEBUG_MODE: string;
       SERVER_PORT: string;
       FASTIFY_COOKIE_DOMAIN: string;
       DATABASE_URL: string;

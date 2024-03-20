@@ -38,14 +38,17 @@ function main() {
 
   // await addApplicationDocumentation(app);
 
-  app.listen({ port, host }, (error) => {
+  app.listen({ port, host }, (error, address) => {
     if (error) {
       logger.error(error);
     }
 
-    if (process.env.DEBUG_MODE) {
+    if (process.env.DEBUG_MODE === "true") {
       logger.info("🪲 DEBUG MODE ACTIVATED");
+      return;
     }
+
+    logger.info(`🚀 RUN IN: ${address}`);
   });
 }
 
