@@ -19,6 +19,8 @@ Antes de começar, verifique se você atendeu aos seguintes requisitos:
 
 ## 🏛️ Estrutural
 
+Essa sessão é responsável por mostrar a estrutura base da aplicação, dando uma ideia inicial de arquitetura, sobre os módulos e referente ao CI/CD.
+
 ### 🏗️ Arquitetura
 
 <details open>
@@ -37,12 +39,12 @@ Podemos ter vários controllers, schemas, services e o que mais for necessário,
 
 Devemos ficar atentos a não misturar as coisas, lembre-se cada parte tem sua responsabilidade:
 
-- Controller -> Deve fazer a comunicação externa, ou seja, só pode ser chamado pode ser com routes ou um decorator do fastify, mas pode usar service (do mesmo ou de outro módulos) e schemas
-- Router -> Pode somente chamar um controller
-- Schema -> Devemos concentrar os tipos e validações de tipos aqui, de sempre preferencia ao uso do `zod`. Pode transitar entre as outras
-- Service -> Responsável por comunicação externas e regras de negócio, também é aqui onde um módulo pode se comunicar com outro.
-- Extras -> Podemos ter outras coisas dentro de um módulo, como um middleware, template, ou qualquer outra coisa, desde que faça sentido dentro do módulo
-- **tests** -> concentramos os testes aqui, sempre com um sufixo `[TESTE].unit.test.ts` e/ou `[TESTE].unit.integration.ts`
+- **Controller**: Atua como o ponto de entrada para comunicação externa. Deve ser acessado exclusivamente via rotas, decoradores e etc. É permitido utilizar serviços (do mesmo módulo ou de outros) e schemas para suporte.
+- **Router**: Responsável por direcionar as chamadas externas para o controller apropriado, garantindo que apenas controllers sejam acionados.
+- **Schema**: Centraliza definições de tipos e validações. Prefira o uso da biblioteca `zod` para essas definições, permitindo que os schemas sejam utilizados por diferentes partes do módulo.
+- **Service**: Encarregado das comunicações externas e lógicas de negócio. Também facilita a interação entre diferentes módulos.
+- **Extras**: Um módulo pode incluir elementos adicionais, como middleware, templates, entre outros, contanto que sua inclusão seja relevante para o contexto do módulo.
+- **Testes**: Os testes são fundamentais para garantir a qualidade do código. Devem ser organizados em arquivos com os sufixos `[TESTE].unit.test.ts` para testes unitários e `[TESTE].integration.test.ts` para testes de integração.
 
   - unit: onde fazer a menor unidade dos testes, de preferencia testar o que está dentro da pasta `services`
   - integration: onde fazemos o teste da integração, de modo geral pode ser o teste da rota, ou seja, é testado o que está no arquivo `MODULE.route.ts`
@@ -52,7 +54,7 @@ Devemos ficar atentos a não misturar as coisas, lembre-se cada parte tem sua re
     </div>
   </details>
 
-### 👷 CI/CD
+### 👷 CI/CD - `EM CONSTRUÇÃO`
 
 <details>
 <summary>Ver mais</summary>
@@ -68,6 +70,12 @@ Para instalar o **OLLO.li API**, siga estas etapas:
 
 ```bash
 npm run install
+```
+
+Se for a primeira vez que roda o projeto, é necessário rodar:
+
+```bash
+npm run docker
 ```
 
 ## ☕ Usando OLLO.li API
@@ -90,7 +98,7 @@ npm run dev
 
 ## 🪲 Ativando o modo de debug
 
-Vá até o `.env-{production | test | development}` e habilite a flag `DEBUG_OPTION`
+Vá até o `.env-development` e habilite a flag `DEBUG_OPTION`
 
 ```
 DEBUG_MODE=true
@@ -202,12 +210,12 @@ npm run prod
 
 ## 🌳 Env files
 
-Existe o `.env.example` que é a base para as variáveis de ambiente, pra rodar local crie um `env.development` com as variáveis abaixo
+Existe o `.env.example` que é a base para as variáveis de ambiente, pra rodar local crie um `env.development` com as variáveis abaixo, substitua o que for necessário
 
 ```
 # env.development
-DEBUG_MODE=false
-FASTIFY_JWT_SECRET="EeFX62*-D4xsz[@SE?G;df/3Q44XHC&04ut3[,Ub[8m#£+DKf"
+DEBUG_MODE=false|true
+FASTIFY_JWT_SECRET="SOME_RANDOM_SECRET_HERE"
 FASTIFY_JWT_SECRET_EXPIRES_IN="7d"
 FASTIFY_RATE_LIMIT_MAX=100
 FASTIFY_RATE_LIMIT_TIME_WINDOW="1 minute"
@@ -219,22 +227,4 @@ MAILERSEND_API_KEY=
 REDIS_URL="redis://ollo-li-redis:6379"
 ```
 
-### Test
-
-```
-# env.test
-DEBUG_MODE=false
-SERVER_PORT=4200
-[...]
-```
-
-### Production
-
-```
-# env.production
-DEBUG_MODE=false
-SERVER_PORT=4000
-[...]
-```
-
----
+## Para os testes é necessário criar um arquivo `.env-test`, pode ser igual ao `.env.-development`
