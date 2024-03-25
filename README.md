@@ -227,4 +227,4 @@ MAILERSEND_API_KEY=
 REDIS_URL="redis://ollo-li-redis:6379"
 ```
 
-## Para os testes é necessário criar um arquivo `.env-test`, pode ser igual ao `.env.-development`
+> Para os testes é necessário criar um arquivo `.env-test`, pode ser igual ao `.env.-development`
