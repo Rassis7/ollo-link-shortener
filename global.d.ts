@@ -8,9 +8,11 @@ declare global {
       SERVER_PORT: string;
       FASTIFY_COOKIE_DOMAIN: string;
       DATABASE_URL: string;
-      FASTIFY_JWT_SECRET: string;
+      FASTIFY_JWT_SECRET_ACCESS_TOKEN: string;
+      FASTIFY_JWT_ACCESS_TOKEN_EXPIRES_IN: string;
+      FASTIFY_JWT_SECRET_REFRESH_TOKEN: string;
+      FASTIFY_JWT_REFRESH_TOKEN_EXPIRES_IN: string;
       FASTIFY_PASS_PHRASE: string;
-      FASTIFY_JWT_SECRET_EXPIRES_IN: string;
       REDIS_TOKEN_EXPIRE_IN: number;
       FASTIFY_RATE_LIMIT_MAX: string;
       FASTIFY_RATE_LIMIT_TIME_WINDOW: string;
@@ -23,15 +25,23 @@ declare global {
 }
 
 import { FastifyInstance, preHandlerHookHandler } from "fastify";
-
+import fastifyJwt, { FastifyJwtNamespace, JWT } from "@fastify/jwt";
 declare module "fastify" {
-  export interface FastifyInstance {
+  interface FastifyInstance
+    extends FastifyJwtNamespace<{
+      namespace: "accessToken" | "refreshToken";
+    }> {
     isAuthorized: any;
     isAccountVerified: any;
   }
 }
 
-import { FastifyJWT } from "@fastify/jwt";
+declare module "@fastify/jwt" {
+  interface JWT extends Pick<JWT, "accessToken" | "refreshToken"> {
+    accessToken: Omit<FastifyInstance["jwt"], "accessToken" | "refreshToken">;
+    refreshToken: Omit<FastifyInstance["jwt"], "accessToken" | "refreshToken">;
+  }
+}
 
 declare module "@fastify/jwt" {
   interface FastifyJWT {

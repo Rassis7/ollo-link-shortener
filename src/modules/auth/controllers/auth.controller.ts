@@ -5,7 +5,6 @@ import { app } from "@/configurations/app";
 import { AUTH_ERRORS_RESPONSE, AuthInput } from "../schemas";
 import { ErrorHandler } from "@/helpers";
 import { prisma } from "@/infra";
-import { generateSession } from "../services";
 
 type AuthHandlerRequestProps = FastifyRequest<{
   Body: AuthInput;
@@ -35,39 +34,38 @@ export async function authHandler(
       throw new Error(AUTH_ERRORS_RESPONSE.USER_OR_PASSWORD_INVALID);
     }
 
-    const { name, email, accountConfirmed } = user;
-
-    await generateSession({
-      id: user.id,
-      name: String(name ?? ""),
-      email,
-      accountConfirmed: !!accountConfirmed,
-    });
-
-    const token = app.jwt.sign({ id: user.id });
+    const { name, email, accountConfirmed, id: userId } = user;
 
     request.user = {
-      id: user.id,
+      id: userId,
       name,
       email,
       accountConfirmed: !!accountConfirmed,
     };
 
+    const accessToken = app.jwt.accessToken.sign({ id: userId });
+    const refreshToken = app.jwt.refreshToken.sign({ id: userId });
+
+    const cookiesProps = {
+      secure: true,
+      path: "/",
+      sameSite: true,
+      domain:
+        process.env.NODE_ENV === "production"
+          ? process.env.FASTIFY_COOKIE_DOMAIN
+          : "",
+    };
+
     return reply
-      .setCookie("access_token", token, {
-        secure: true,
-        path: "/",
-        sameSite: true,
-        domain:
-          process.env.NODE_ENV === "production"
-            ? process.env.FASTIFY_COOKIE_DOMAIN
-            : "",
+      .setCookie("access_token", accessToken, cookiesProps)
+      .setCookie("refresh_token", refreshToken, {
+        ...cookiesProps,
         httpOnly: true,
       })
       .code(HTTP_STATUS_CODE.OK)
-      .send({ accessToken: token });
+      .send({ accessToken });
   } catch (error) {
     const e = new ErrorHandler(error);
-    return reply.code(HTTP_STATUS_CODE.BAD_REQUEST).send(e);
+    return reply.code(HTTP_STATUS_CODE.UNAUTHORIZED).send(e);
   }
 }

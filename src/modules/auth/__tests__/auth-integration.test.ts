@@ -54,7 +54,7 @@ describe("module/auth.integration", () => {
     expect(response.json()).toEqual({
       error: "Usuário não encontrado",
     });
-    expect(response.statusCode).toEqual(HTTP_STATUS_CODE.BAD_REQUEST);
+    expect(response.statusCode).toEqual(HTTP_STATUS_CODE.UNAUTHORIZED);
   });
 
   it("Should be able to return error when password is wrong", async () => {
@@ -72,7 +72,7 @@ describe("module/auth.integration", () => {
     expect(response.json()).toEqual({
       error: "O usuário ou a senha estão inválidos",
     });
-    expect(response.statusCode).toEqual(HTTP_STATUS_CODE.BAD_REQUEST);
+    expect(response.statusCode).toEqual(HTTP_STATUS_CODE.UNAUTHORIZED);
   });
 
   it("Should be able to return error when jwt token is wrong and route needs to authentication", async () => {
