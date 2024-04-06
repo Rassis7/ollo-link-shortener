@@ -29,15 +29,17 @@ describe("module/auth.integration", () => {
 
     expect(response.cookies).toEqual([
       {
-        domain: "ollo.li",
         name: "access_token",
+        httpOnly: true,
         path: "/",
+        sameSite: "Strict",
         secure: true,
         value: token,
       },
     ]);
 
-    expect(response.statusCode).toEqual(HTTP_STATUS_CODE.NO_CONTENT);
+    expect(response.statusCode).toEqual(HTTP_STATUS_CODE.OK);
+    expect(response.json()).toEqual({ accessToken: token });
   });
 
   it("Should be able to return error when user not found", async () => {
@@ -52,7 +54,7 @@ describe("module/auth.integration", () => {
     expect(response.json()).toEqual({
       error: "Usuário não encontrado",
     });
-    expect(response.statusCode).toEqual(401);
+    expect(response.statusCode).toEqual(HTTP_STATUS_CODE.BAD_REQUEST);
   });
 
   it("Should be able to return error when password is wrong", async () => {
@@ -70,7 +72,7 @@ describe("module/auth.integration", () => {
     expect(response.json()).toEqual({
       error: "O usuário ou a senha estão inválidos",
     });
-    expect(response.statusCode).toEqual(401);
+    expect(response.statusCode).toEqual(HTTP_STATUS_CODE.BAD_REQUEST);
   });
 
   it("Should be able to return error when jwt token is wrong and route needs to authentication", async () => {
@@ -82,6 +84,6 @@ describe("module/auth.integration", () => {
     expect(response.json()).toEqual({
       error: AUTH_ERRORS_RESPONSE.TOKEN_NOT_PROVIDED,
     });
-    expect(response.statusCode).toEqual(401);
+    expect(response.statusCode).toEqual(HTTP_STATUS_CODE.UNAUTHORIZED);
   });
 });

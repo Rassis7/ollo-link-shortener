@@ -9,7 +9,7 @@ import { mockGetLinkByAliasOrHashResponse } from "../__mocks__/get-by-alias-or-h
 import { faker } from "@faker-js/faker";
 import { mockGetLinkByHashFromCacheResponse } from "../__mocks__/get-by-hash";
 import { SHORTENER_ERRORS_RESPONSE } from "../schemas";
-import { APPLICATION_ERRORS } from "@/helpers";
+import { APPLICATION_ERRORS, HTTP_STATUS_CODE } from "@/helpers";
 import * as linkService from "../services/link.service";
 import { inject } from "@/tests/app";
 import { createHash } from "node:crypto";
@@ -62,7 +62,7 @@ describe("modules/shortener.integration", () => {
     expect(response.json()).toEqual({
       error: AUTH_ERRORS_RESPONSE.TOKEN_NOT_PROVIDED,
     });
-    expect(response.statusCode).toEqual(401);
+    expect(response.statusCode).toEqual(HTTP_STATUS_CODE.UNAUTHORIZED);
   });
 
   it("Should be able to return a error if exists other link with same hash", async () => {

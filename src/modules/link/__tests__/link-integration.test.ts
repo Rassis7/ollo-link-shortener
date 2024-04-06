@@ -10,6 +10,7 @@ import { LINK_ERRORS_RESPONSE } from "../schemas";
 import { mockGetLinkByAliasOrHashResponse } from "../__mocks__/get-by-alias-or-hash";
 import { inject } from "@/tests/app";
 import { AUTH_ERRORS_RESPONSE } from "@/modules/auth/schemas";
+import { HTTP_STATUS_CODE } from "@/helpers";
 
 const BASE_URL = "/api/links";
 
@@ -25,7 +26,7 @@ describe("modules/Link/link-integration", () => {
       expect(response.json()).toEqual({
         error: AUTH_ERRORS_RESPONSE.NOT_AUTHORIZED,
       });
-      expect(response.statusCode).toEqual(401);
+      expect(response.statusCode).toEqual(HTTP_STATUS_CODE.UNAUTHORIZED);
     });
 
     it("Should be able to return all user links", async () => {
@@ -96,7 +97,7 @@ describe("modules/Link/link-integration", () => {
       expect(response.json()).toEqual({
         error: AUTH_ERRORS_RESPONSE.NOT_AUTHORIZED,
       });
-      expect(response.statusCode).toEqual(401);
+      expect(response.statusCode).toEqual(HTTP_STATUS_CODE.UNAUTHORIZED);
     });
 
     it("Should be able to return a error if link not exists", async () => {

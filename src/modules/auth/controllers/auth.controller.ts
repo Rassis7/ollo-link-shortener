@@ -55,14 +55,19 @@ export async function authHandler(
 
     return reply
       .setCookie("access_token", token, {
-        secure: process.env.NODE_ENV !== "production",
+        secure: true,
         path: "/",
-        domain: process.env.FASTIFY_COOKIE_DOMAIN,
+        sameSite: true,
+        domain:
+          process.env.NODE_ENV === "production"
+            ? process.env.FASTIFY_COOKIE_DOMAIN
+            : "",
+        httpOnly: true,
       })
-      .code(HTTP_STATUS_CODE.NO_CONTENT)
-      .send();
+      .code(HTTP_STATUS_CODE.OK)
+      .send({ accessToken: token });
   } catch (error) {
     const e = new ErrorHandler(error);
-    return reply.code(HTTP_STATUS_CODE.UNAUTHORIZED).send(e);
+    return reply.code(HTTP_STATUS_CODE.BAD_REQUEST).send(e);
   }
 }
