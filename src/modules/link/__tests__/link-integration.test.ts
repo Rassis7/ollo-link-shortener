@@ -24,7 +24,7 @@ describe("modules/Link/link-integration", () => {
       });
 
       expect(response.json()).toEqual({
-        error: AUTH_ERRORS_RESPONSE.NOT_AUTHORIZED,
+        error: AUTH_ERRORS_RESPONSE.TOKEN_NOT_PROVIDED,
       });
       expect(response.statusCode).toEqual(HTTP_STATUS_CODE.UNAUTHORIZED);
     });
@@ -95,7 +95,7 @@ describe("modules/Link/link-integration", () => {
       });
 
       expect(response.json()).toEqual({
-        error: AUTH_ERRORS_RESPONSE.NOT_AUTHORIZED,
+        error: AUTH_ERRORS_RESPONSE.TOKEN_NOT_PROVIDED,
       });
       expect(response.statusCode).toEqual(HTTP_STATUS_CODE.UNAUTHORIZED);
     });

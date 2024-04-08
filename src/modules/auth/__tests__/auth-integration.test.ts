@@ -6,12 +6,12 @@ import {
 import { app } from "@/configurations/app";
 import * as hashFunctions from "@/helpers/hash";
 import { HTTP_STATUS_CODE } from "@/helpers";
-import { AUTH_ERRORS_RESPONSE } from "../schemas";
+import { AUTH_ERRORS_RESPONSE, JwtProps, cookiesProps } from "../schemas";
 
 const BASE_URL = "api/auth";
 
 describe("module/auth.integration", () => {
-  it("Should be able to do login and create auth cookie", async () => {
+  it("Should be able to do login and create the auth and refresh token like cookie", async () => {
     jest
       .spyOn(userService, "findUserByEmail")
       .mockResolvedValue(mockAuthFindUserByEmailResponse);
@@ -23,23 +23,36 @@ describe("module/auth.integration", () => {
       body: mockAuthInput,
     });
 
-    const token = app.jwt.sign({
+    const accessToken = app.jwt.accessToken.sign({
+      id: mockAuthFindUserByEmailResponse.id,
+      name: mockAuthFindUserByEmailResponse.name,
+    });
+
+    const refreshToken = app.jwt.refreshToken.sign({
       id: mockAuthFindUserByEmailResponse.id,
     });
 
+    const { domain: _, ...cookiesWithoutDomain } = cookiesProps;
+
     expect(response.cookies).toEqual([
       {
-        name: "access_token",
-        httpOnly: true,
-        path: "/",
+        ...cookiesWithoutDomain,
         sameSite: "Strict",
-        secure: true,
-        value: token,
+        name: "access_token",
+        value: accessToken,
+      },
+      {
+        ...cookiesWithoutDomain,
+        sameSite: "Strict",
+        name: "refresh_token",
+        value: refreshToken,
       },
     ]);
 
+    const { exp } = app.jwt.refreshToken.verify<JwtProps>(refreshToken);
+
     expect(response.statusCode).toEqual(HTTP_STATUS_CODE.OK);
-    expect(response.json()).toEqual({ accessToken: token });
+    expect(response.json()).toEqual({ accessToken, validAtRefreshToken: exp });
   });
 
   it("Should be able to return error when user not found", async () => {
