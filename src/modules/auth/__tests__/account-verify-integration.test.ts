@@ -18,7 +18,6 @@ const FAKE_API_URL = "api/fake";
 app.register(fakeApi, { prefix: FAKE_API_URL });
 
 async function handleRequest({
-  accountConfirmed,
   isAuthorized = true,
 }: {
   accountConfirmed: boolean;
@@ -28,7 +27,6 @@ async function handleRequest({
     method: "GET",
     url: FAKE_API_URL,
     isAuthorized,
-    sessionProps: { accountConfirmed },
   });
 }
 
@@ -41,7 +39,7 @@ describe("modules/account-verify-integration", () => {
 
     expect(response.statusCode).toBe(HTTP_STATUS_CODE.UNAUTHORIZED);
     expect(response.json()).toEqual({
-      error: AUTH_ERRORS_RESPONSE.NOT_AUTHORIZED,
+      error: AUTH_ERRORS_RESPONSE.TOKEN_NOT_PROVIDED,
     });
   });
   it("Should be able to return 403 if account is not confirmed", async () => {

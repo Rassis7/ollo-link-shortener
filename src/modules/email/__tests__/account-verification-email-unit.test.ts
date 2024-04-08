@@ -9,9 +9,7 @@ import { readFileSync } from "node:fs";
 import { emailTemplateParamMock } from "../__mocks__/email-template-param";
 import { CACHE_PREFIX } from "@/infra";
 import * as userService from "@/modules/user/services/user.service";
-import * as sessionService from "@/modules/auth/services/session.service";
 import { mockUpdateUserResponse } from "@/modules/user/__mocks__/update-user";
-import { mockSessionWithConfirmedAccount } from "@/modules/auth/__mocks__/session";
 
 const templatePath = join(__dirname, "..", "templates", "email-verify.html");
 const htmlTemplate = readFileSync(templatePath, "utf8");
@@ -98,14 +96,10 @@ describe("modules/account-verification-email", () => {
     jest
       .spyOn(userService, "confirmUserAccount")
       .mockResolvedValue(mockUpdateUserResponse);
-    jest
-      .spyOn(sessionService, "updateSession")
-      .mockResolvedValue(mockSessionWithConfirmedAccount);
 
     const email = faker.internet.email();
-    const sessionHash = faker.string.uuid();
 
-    await verifyEmail({ code, email, sessionHash, context: mockContext });
+    await verifyEmail({ code, email, context: mockContext });
 
     expect(cache.ttl).toHaveBeenCalledTimes(1);
     expect(cache.ttl).toHaveBeenCalledWith(
@@ -126,11 +120,6 @@ describe("modules/account-verification-email", () => {
       email,
       context: mockContext,
     });
-
-    expect(sessionService.updateSession).toHaveBeenCalledTimes(1);
-    expect(sessionService.updateSession).toHaveBeenCalledWith(sessionHash, {
-      accountConfirmed: true,
-    });
   });
 
   it.each([
@@ -143,10 +132,9 @@ describe("modules/account-verification-email", () => {
 
       const email = faker.internet.email();
       const code = faker.number.int({ min: 100, max: 999 }).toString();
-      const sessionHash = faker.string.uuid();
 
       expect(async () =>
-        verifyEmail({ code, email, sessionHash, context: mockContext })
+        verifyEmail({ code, email, context: mockContext })
       ).rejects.toThrow(/o código está expirado ou não existe/i);
     }
   );
@@ -158,13 +146,11 @@ describe("modules/account-verification-email", () => {
     jest.spyOn(cache, "get").mockResolvedValue(code);
 
     const email = faker.internet.email();
-    const sessionHash = faker.string.uuid();
 
     expect(async () =>
       verifyEmail({
         code: "OTHER_CODE",
         email,
-        sessionHash,
         context: mockContext,
       })
     ).rejects.toThrow(/o código está incorreto/i);
