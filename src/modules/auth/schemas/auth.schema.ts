@@ -27,9 +27,21 @@ export const authSchema = z.object({
 
 export const jwtAuthValues = z.object({
   id: z.string().uuid(),
+  name: z.string(),
   iat: z.number(),
   exp: z.number(),
 });
 
 export type AuthInput = z.infer<typeof authSchema>;
 export type JwtProps = z.infer<typeof jwtAuthValues>;
+
+export const cookiesProps = {
+  httpOnly: true,
+  secure: true,
+  path: "/",
+  sameSite: true,
+  domain:
+    process.env.NODE_ENV === "production"
+      ? process.env.FASTIFY_COOKIE_DOMAIN
+      : "",
+};

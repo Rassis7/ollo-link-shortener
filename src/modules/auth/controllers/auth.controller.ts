@@ -2,7 +2,12 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { findUserByEmail } from "@/modules/user/services";
 import { HTTP_STATUS_CODE, verifyPassword } from "@/helpers";
 import { app } from "@/configurations/app";
-import { AUTH_ERRORS_RESPONSE, AuthInput } from "../schemas";
+import {
+  AUTH_ERRORS_RESPONSE,
+  AuthInput,
+  JwtProps,
+  cookiesProps,
+} from "../schemas";
 import { ErrorHandler } from "@/helpers";
 import { prisma } from "@/infra";
 
@@ -34,36 +39,24 @@ export async function authHandler(
       throw new Error(AUTH_ERRORS_RESPONSE.USER_OR_PASSWORD_INVALID);
     }
 
-    const { name, email, accountConfirmed, id: userId } = user;
+    const { id: userId, name } = user;
 
     request.user = {
       id: userId,
       name,
-      email,
-      accountConfirmed: !!accountConfirmed,
+      accountConfirmed: null,
     };
 
-    const accessToken = app.jwt.accessToken.sign({ id: userId });
+    const accessToken = app.jwt.accessToken.sign({ id: userId, name });
     const refreshToken = app.jwt.refreshToken.sign({ id: userId });
 
-    const cookiesProps = {
-      secure: true,
-      path: "/",
-      sameSite: true,
-      domain:
-        process.env.NODE_ENV === "production"
-          ? process.env.FASTIFY_COOKIE_DOMAIN
-          : "",
-    };
+    const { exp } = app.jwt.refreshToken.verify<JwtProps>(refreshToken);
 
     return reply
       .setCookie("access_token", accessToken, cookiesProps)
-      .setCookie("refresh_token", refreshToken, {
-        ...cookiesProps,
-        httpOnly: true,
-      })
+      .setCookie("refresh_token", refreshToken, cookiesProps)
       .code(HTTP_STATUS_CODE.OK)
-      .send({ accessToken });
+      .send({ accessToken, validAtRefreshToken: exp });
   } catch (error) {
     const e = new ErrorHandler(error);
     return reply.code(HTTP_STATUS_CODE.UNAUTHORIZED).send(e);
