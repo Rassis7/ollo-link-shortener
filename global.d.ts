@@ -34,6 +34,14 @@ declare module "fastify" {
     isAuthorized: any;
     isAccountVerified: any;
   }
+
+  interface FastifyRequest {
+    jwt: FastifyJWT;
+    cookies: {
+      access_token: string;
+      refresh_token: string;
+    };
+  }
 }
 
 declare module "@fastify/jwt" {
@@ -45,12 +53,14 @@ declare module "@fastify/jwt" {
 
 declare module "@fastify/jwt" {
   interface FastifyJWT {
-    payload: { id: string };
+    payload?: {
+      id?: string;
+      name?: string | null;
+    };
     user: {
       id: string;
-      email: string;
-      name: string | null;
-      accountConfirmed: boolean;
+      name?: string | null;
+      accountConfirmed?: boolean | null;
     };
   }
 }

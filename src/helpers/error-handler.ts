@@ -10,6 +10,7 @@ type MessageWithObjet = Record<string, unknown>;
 
 type ErrorInstanceType = {
   error: string | MessageWithObjet;
+  code?: string;
 };
 
 type ErrorUnion = unknown | ZodError | FastifyError;
@@ -46,6 +47,7 @@ function mappedZodErrors(zodErrors: ZodError) {
 }
 export class ErrorHandler {
   error: string | MessageWithObjet;
+  code?: string;
 
   constructor(error: ErrorUnion, message?: string) {
     const errorUpdated = {} as ErrorInstanceType;
@@ -62,6 +64,7 @@ export class ErrorHandler {
       const err = new Error(error.message);
       Object.assign(errorUpdated, {
         error: err.message.replace("Error:", "").trim(),
+        code: error.code,
       });
     }
 
@@ -73,6 +76,7 @@ export class ErrorHandler {
     }
 
     this.error = errorUpdated.error;
+    this.code = errorUpdated?.code;
   }
 
   getError() {

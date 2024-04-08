@@ -1,4 +1,4 @@
-import fastifyJwt, { FastifyJWT } from "@fastify/jwt";
+import fastifyJwt from "@fastify/jwt";
 import { app as fastify } from "./app";
 import { FastifyReply, FastifyRequest } from "fastify";
 import fastifyCookie from "@fastify/cookie";
@@ -26,6 +26,7 @@ fastify.register(fastifyJwt, () => ({
     expiresIn: String(process.env.FASTIFY_JWT_ACCESS_TOKEN_EXPIRES_IN),
   },
   messages: jwtResponseMessages,
+  jwtVerify: "accessTokenVerify",
 }));
 
 fastify.register(fastifyJwt, () => ({
@@ -35,28 +36,21 @@ fastify.register(fastifyJwt, () => ({
     expiresIn: String(process.env.FASTIFY_JWT_REFRESH_TOKEN_EXPIRES_IN),
   },
   messages: jwtResponseMessages,
+  jwtVerify: "refreshTokenVerify",
 }));
 
 fastify.register(fastifyCookie);
 
-export interface FastifyRequestWithCookie extends FastifyRequest {
-  jwt: FastifyJWT;
-  cookies: {
-    access_token: string;
-    refresh_token: string;
-  };
-}
-
 fastify.after(() => {
   fastify.decorate(
     "isAuthorized",
-    async (request: FastifyRequestWithCookie, reply: FastifyReply) => {
+    async (request: FastifyRequest, reply: FastifyReply) => {
       await authorizationMiddleware(request, reply);
     }
   );
   fastify.decorate(
     "isAccountVerified",
-    async (request: FastifyRequestWithCookie, reply: FastifyReply) => {
+    async (request: FastifyRequest, reply: FastifyReply) => {
       await accountVerifyHandler(request, reply);
     }
   );
