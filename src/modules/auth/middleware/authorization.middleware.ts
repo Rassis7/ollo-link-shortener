@@ -48,9 +48,10 @@ async function refreshAccessToken({
     });
 
     reply.setCookie("access_token", newAccessToken, cookiesProps);
-  } catch (e) {
-    const error = new ErrorHandler(e);
-    return reply.code(HTTP_STATUS_CODE.UNAUTHORIZED).send(error);
+  } catch {
+    return reply
+      .code(HTTP_STATUS_CODE.UNAUTHORIZED)
+      .send({ error: AUTH_ERRORS_RESPONSE.NOT_AUTHORIZED });
   }
 }
 
