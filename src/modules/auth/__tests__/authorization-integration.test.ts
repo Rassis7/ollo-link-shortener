@@ -12,6 +12,7 @@ import { AUTH_ERRORS_RESPONSE, cookiesProps } from "../schemas";
 import * as userServices from "@/modules/user/services/user.service";
 import { mockFindUserByIdResponse } from "@/modules/user/__mocks__/find-user-by-email";
 import { inject } from "@/tests/app";
+import { createSigner } from "fast-jwt";
 
 let mockRequestUser = {};
 
@@ -74,9 +75,36 @@ describe("modules/authorization-integration.token", () => {
       error: AUTH_ERRORS_RESPONSE.NOT_AUTHORIZED,
     });
   });
+
+  it("Should be able to show error if access token has not id", async () => {
+    const secret = process.env.FASTIFY_JWT_SECRET_ACCESS_TOKEN;
+    const expiresIn = process.env.FASTIFY_JWT_ACCESS_TOKEN_EXPIRES_IN;
+
+    const signSync = createSigner({ key: secret, expiresIn: expiresIn });
+
+    const accessToken = signSync({});
+
+    const response = await handleRequest({ accessToken });
+
+    expect(response.statusCode).toBe(HTTP_STATUS_CODE.UNAUTHORIZED);
+    expect(response.json()).toEqual({
+      error: AUTH_ERRORS_RESPONSE.NOT_AUTHORIZED,
+    });
+  });
 });
 
 describe("modules/authorization-integration.refresh", () => {
+  it("Should be able to show error if not exists refresh token and access token is invalid", async () => {
+    const response = await handleRequest({
+      accessToken: "any_token",
+    });
+
+    expect(response.statusCode).toBe(HTTP_STATUS_CODE.UNAUTHORIZED);
+    expect(response.json()).toEqual({
+      error: AUTH_ERRORS_RESPONSE.NOT_AUTHORIZED,
+    });
+  });
+
   it("If access token is invalid and refresh token is valid, should be to new access token", async () => {
     jest
       .spyOn(userServices, "findUserById")
@@ -125,5 +153,19 @@ describe("modules/authorization-integration.refresh", () => {
       },
     ]);
     expect(response.statusCode).toEqual(HTTP_STATUS_CODE.NO_CONTENT);
+  });
+
+  it("Should be able to show error when valid refresh token and user not found", async () => {
+    jest.spyOn(userServices, "findUserByEmail").mockResolvedValue(null);
+
+    const response = await handleRequest({
+      accessToken: "banana",
+      refreshToken: MOCK_REFRESH_TOKEN,
+    });
+
+    expect(response.statusCode).toBe(HTTP_STATUS_CODE.UNAUTHORIZED);
+    expect(response.json()).toEqual({
+      error: AUTH_ERRORS_RESPONSE.NOT_AUTHORIZED,
+    });
   });
 });

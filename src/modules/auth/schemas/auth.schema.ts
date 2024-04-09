@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import { z } from "zod";
 
 export enum AUTH_ERRORS_RESPONSE {
