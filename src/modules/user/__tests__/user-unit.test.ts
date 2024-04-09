@@ -79,7 +79,7 @@ describe("module/user.unit", () => {
       data: { accountConfirmed: true },
     });
     expect(cache.del).toHaveBeenCalledWith(
-      CACHE_PREFIX.ACCOUNT_CONFIRMED,
+      CACHE_PREFIX.ACCOUNT_NOT_CONFIRMED,
       mockUpdateUserResponse.id
     );
   });

@@ -75,14 +75,14 @@ export async function authorizationMiddleware(
 
     if (!request?.user?.id) {
       const { id, name } = decodedAccessToken;
-      const accountConfirmed = await cache.get<string>(
-        CACHE_PREFIX.ACCOUNT_CONFIRMED,
+      const accountNotConfirmed = await cache.get<string>(
+        CACHE_PREFIX.ACCOUNT_NOT_CONFIRMED,
         id
       );
       request.user = {
         id,
         name,
-        accountConfirmed: Boolean(accountConfirmed ?? false),
+        accountNotConfirmed: Boolean(accountNotConfirmed),
       };
     }
   } catch (e) {

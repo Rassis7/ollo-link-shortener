@@ -60,7 +60,7 @@ declare module "@fastify/jwt" {
     user: {
       id: string;
       name?: string | null;
-      accountConfirmed?: boolean | null;
+      accountNotConfirmed?: boolean | null;
     };
   }
 }

@@ -29,7 +29,7 @@ export async function registerUserHandler(
     const user = await createUser({ input: body, context: { prisma } });
     try {
       await sendVerifyEmailHandler(user.email);
-      await cache.set(CACHE_PREFIX.ACCOUNT_CONFIRMED, user.id, "false");
+      await cache.set(CACHE_PREFIX.ACCOUNT_NOT_CONFIRMED, user.id, "true");
     } catch (error) {
       logger.error(error);
     }

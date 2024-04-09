@@ -29,9 +29,9 @@ describe("module/user.integration", () => {
     });
 
     expect(cache.set).toHaveBeenCalledWith(
-      CACHE_PREFIX.ACCOUNT_CONFIRMED,
+      CACHE_PREFIX.ACCOUNT_NOT_CONFIRMED,
       mockCreatedUserResponse.id,
-      "false"
+      "true"
     );
     expect(response.headers["content-type"]).toMatch(
       "application/json; charset=utf-8"

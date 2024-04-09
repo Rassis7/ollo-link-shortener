@@ -64,5 +64,5 @@ export async function confirmUserAccount({
     },
   });
 
-  await cache.del(CACHE_PREFIX.ACCOUNT_CONFIRMED, user.id);
+  await cache.del(CACHE_PREFIX.ACCOUNT_NOT_CONFIRMED, user.id);
 }

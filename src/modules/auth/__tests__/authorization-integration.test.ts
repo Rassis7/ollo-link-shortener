@@ -58,7 +58,7 @@ describe("modules/authorization-integration", () => {
     expect(mockRequestUser).toEqual({
       id: MOCK_USER_ID,
       name: MOCK_USER_NAME,
-      accountConfirmed: false,
+      accountNotConfirmed: false,
     });
   });
 

@@ -3,7 +3,7 @@ import IoRedis, { RedisOptions as IoRedisOptions } from "ioredis";
 export enum CACHE_PREFIX {
   EMAIL_VERIFICATION = "emailVerification",
   LINK = "link",
-  ACCOUNT_CONFIRMED = "accountConfirmed",
+  ACCOUNT_NOT_CONFIRMED = "accountNotConfirmed",
 }
 
 export interface RedisOptions {
