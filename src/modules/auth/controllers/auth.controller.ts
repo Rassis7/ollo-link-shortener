@@ -58,3 +58,28 @@ export async function authHandler(
     return reply.code(HTTP_STATUS_CODE.UNAUTHORIZED).send(e);
   }
 }
+
+export async function refreshTokenHandler(
+  request: AuthHandlerRequestProps,
+  reply: FastifyReply
+) {
+  try {
+    const refreshToken = app.jwt.refreshToken.sign({
+      id: request.user.id,
+    });
+
+    const newAccessToken = app.jwt.accessToken.sign({
+      id: request.user.id,
+      name: request.user.name,
+    });
+
+    return reply
+      .setCookie("access_token", newAccessToken, cookiesProps)
+      .setCookie("refresh_token", refreshToken, cookiesProps)
+      .code(HTTP_STATUS_CODE.NO_CONTENT)
+      .send();
+  } catch (e) {
+    const error = new ErrorHandler(e);
+    return reply.code(HTTP_STATUS_CODE.BAD_REQUEST).send(error);
+  }
+}

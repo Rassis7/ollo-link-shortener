@@ -11,6 +11,7 @@ import {
 import { AUTH_ERRORS_RESPONSE, cookiesProps } from "../schemas";
 import * as userServices from "@/modules/user/services/user.service";
 import { mockFindUserByIdResponse } from "@/modules/user/__mocks__/find-user-by-email";
+import { inject } from "@/tests/app";
 
 let mockRequestUser = {};
 
@@ -49,7 +50,7 @@ async function handleRequest({
   });
 }
 
-describe("modules/authorization-integration", () => {
+describe("modules/authorization-integration.token", () => {
   it("Should be able to validate routes with access token", async () => {
     const response = await handleRequest({ accessToken: MOCK_ACCESS_TOKEN });
 
@@ -73,7 +74,9 @@ describe("modules/authorization-integration", () => {
       error: AUTH_ERRORS_RESPONSE.NOT_AUTHORIZED,
     });
   });
+});
 
+describe("modules/authorization-integration.refresh", () => {
   it("If access token is invalid and refresh token is valid, should be to new access token", async () => {
     jest
       .spyOn(userServices, "findUserById")
@@ -96,5 +99,31 @@ describe("modules/authorization-integration", () => {
         value: expect.anything(),
       },
     ]);
+  });
+
+  it("Should be able to generate new refresh token", async () => {
+    const response = await inject({
+      method: "POST",
+      url: "api/auth/refreshToken",
+      isAuthorized: true,
+    });
+
+    const { domain: _, ...cookiesWithoutDomain } = cookiesProps;
+
+    expect(response.cookies).toEqual([
+      {
+        ...cookiesWithoutDomain,
+        sameSite: "Strict",
+        name: "access_token",
+        value: MOCK_ACCESS_TOKEN,
+      },
+      {
+        ...cookiesWithoutDomain,
+        sameSite: "Strict",
+        name: "refresh_token",
+        value: MOCK_REFRESH_TOKEN,
+      },
+    ]);
+    expect(response.statusCode).toEqual(HTTP_STATUS_CODE.NO_CONTENT);
   });
 });
