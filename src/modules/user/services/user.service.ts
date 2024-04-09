@@ -6,6 +6,7 @@ import {
 import { generateHash } from "@/helpers";
 import { Context } from "@/configurations/context";
 import { User } from "@prisma/client";
+import { CACHE_PREFIX, cache } from "@/infra";
 
 export async function createUser({
   input,
@@ -55,11 +56,13 @@ export async function confirmUserAccount({
 }: {
   email: string;
   context: Context;
-}): Promise<User> {
-  return await context.prisma.user.update({
+}): Promise<void> {
+  const user = await context.prisma.user.update({
     where: { email },
     data: {
       accountConfirmed: true,
     },
   });
+
+  await cache.del(CACHE_PREFIX.ACCOUNT_CONFIRMED, user.id);
 }

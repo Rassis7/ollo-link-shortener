@@ -1,4 +1,4 @@
-import { mockContext, context } from "@/tests";
+import { mockContext, context, cache } from "@/tests";
 import {
   mockCreateUserInput,
   mockCreatedUserResponse,
@@ -13,6 +13,7 @@ import * as helpers from "@/helpers/hash";
 import { faker } from "@faker-js/faker";
 import { mockFindUserByEmailResponse } from "../__mocks__/find-user-by-email";
 import { mockUpdateUserResponse } from "../__mocks__/update-user";
+import { CACHE_PREFIX } from "@/infra";
 
 describe("module/user.unit", () => {
   it("Should create a new user", async () => {
@@ -69,13 +70,17 @@ describe("module/user.unit", () => {
   it("Should be able to confirm user account", async () => {
     const email = faker.internet.email();
     mockContext.prisma.user.update.mockResolvedValue(mockUpdateUserResponse);
+    jest.spyOn(cache, "del");
 
-    const user = await confirmUserAccount({ email, context });
+    await confirmUserAccount({ email, context });
 
     expect(mockContext.prisma.user.update).toHaveBeenCalledWith({
       where: { email },
       data: { accountConfirmed: true },
     });
-    expect(user?.accountConfirmed).toBeTruthy();
+    expect(cache.del).toHaveBeenCalledWith(
+      CACHE_PREFIX.ACCOUNT_CONFIRMED,
+      mockUpdateUserResponse.id
+    );
   });
 });
