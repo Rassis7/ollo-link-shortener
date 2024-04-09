@@ -83,5 +83,5 @@ export async function verifyEmail({
 
   await cache.del(CACHE_PREFIX.EMAIL_VERIFICATION, email);
 
-  await Promise.all([confirmUserAccount({ email, context })]);
+  await confirmUserAccount({ email, context });
 }
