@@ -3,7 +3,7 @@ import { createUser, findUserByEmail } from "../services";
 import { CreateUserInput, USER_ERRORS_RESPONSE } from "../schemas";
 import { sendVerifyEmailHandler } from "../../email/services";
 import { ErrorHandler, HTTP_STATUS_CODE } from "@/helpers";
-import { prisma } from "@/infra";
+import { CACHE_PREFIX, cache, prisma } from "@/infra";
 import { logger } from "@/configurations/app";
 
 type RegisterUserHandlerRequestProps = FastifyRequest<{
@@ -29,6 +29,7 @@ export async function registerUserHandler(
     const user = await createUser({ input: body, context: { prisma } });
     try {
       await sendVerifyEmailHandler(user.email);
+      await cache.set(CACHE_PREFIX.ACCOUNT_CONFIRMED, user.id, "false");
     } catch (error) {
       logger.error(error);
     }

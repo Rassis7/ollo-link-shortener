@@ -9,7 +9,6 @@ import { readFileSync } from "node:fs";
 import { emailTemplateParamMock } from "../__mocks__/email-template-param";
 import { CACHE_PREFIX } from "@/infra";
 import * as userService from "@/modules/user/services/user.service";
-import { mockUpdateUserResponse } from "@/modules/user/__mocks__/update-user";
 
 const templatePath = join(__dirname, "..", "templates", "email-verify.html");
 const htmlTemplate = readFileSync(templatePath, "utf8");
@@ -93,9 +92,7 @@ describe("modules/account-verification-email", () => {
     jest.spyOn(cache, "ttl").mockResolvedValue(1);
     jest.spyOn(cache, "get").mockResolvedValue(code);
     jest.spyOn(cache, "del").mockImplementation(jest.fn());
-    jest
-      .spyOn(userService, "confirmUserAccount")
-      .mockResolvedValue(mockUpdateUserResponse);
+    jest.spyOn(userService, "confirmUserAccount").mockResolvedValue();
 
     const email = faker.internet.email();
 
