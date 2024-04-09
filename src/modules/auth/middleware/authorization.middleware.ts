@@ -3,7 +3,7 @@ import { AUTH_ERRORS_RESPONSE, JwtProps, cookiesProps } from "../schemas";
 import { app } from "@/configurations/app";
 import { ErrorHandler, HTTP_STATUS_CODE } from "@/helpers";
 import { findUserById } from "@/modules/user/services";
-import { prisma } from "@/infra";
+import { CACHE_PREFIX, cache, prisma } from "@/infra";
 
 async function userRequestFactory(userId: string) {
   const user = await findUserById({ userId, context: { prisma } });
@@ -55,7 +55,7 @@ async function refreshAccessToken({
   }
 }
 
-export function authorizationMiddleware(
+export async function authorizationMiddleware(
   request: FastifyRequest,
   reply: FastifyReply
 ) {
@@ -75,7 +75,15 @@ export function authorizationMiddleware(
 
     if (!request?.user?.id) {
       const { id, name } = decodedAccessToken;
-      request.user = { id, name };
+      const accountConfirmed = await cache.get<string>(
+        CACHE_PREFIX.ACCOUNT_CONFIRMED,
+        id
+      );
+      request.user = {
+        id,
+        name,
+        accountConfirmed: Boolean(accountConfirmed ?? false),
+      };
     }
   } catch (e) {
     const errorResponse = new ErrorHandler(e);

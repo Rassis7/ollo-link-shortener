@@ -2,18 +2,26 @@ import { app } from "@/configurations/app";
 import { ErrorHandler, HTTP_STATUS_CODE } from "@/helpers";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 
-import { MOCK_ACCESS_TOKEN, MOCK_REFRESH_TOKEN } from "@/tests";
+import {
+  MOCK_ACCESS_TOKEN,
+  MOCK_REFRESH_TOKEN,
+  MOCK_USER_ID,
+  MOCK_USER_NAME,
+} from "@/tests";
 import { AUTH_ERRORS_RESPONSE, cookiesProps } from "../schemas";
 import * as userServices from "@/modules/user/services/user.service";
 import { mockFindUserByIdResponse } from "@/modules/user/__mocks__/find-user-by-email";
+
+let mockRequestUser = {};
 
 async function fakeApi(fastify: FastifyInstance) {
   fastify.route({
     method: "GET",
     url: "/",
     preHandler: [fastify.isAuthorized],
-    handler: (_: FastifyRequest, reply: FastifyReply) => {
+    handler: (request: FastifyRequest, reply: FastifyReply) => {
       try {
+        mockRequestUser = request.user;
         return reply.code(HTTP_STATUS_CODE.OK).send({ ok: "ok" });
       } catch (e) {
         const error = new ErrorHandler(e);
@@ -47,6 +55,11 @@ describe("modules/authorization-integration", () => {
 
     expect(response.statusCode).toBe(HTTP_STATUS_CODE.OK);
     expect(response.json()).toEqual({ ok: "ok" });
+    expect(mockRequestUser).toEqual({
+      id: MOCK_USER_ID,
+      name: MOCK_USER_NAME,
+      accountConfirmed: false,
+    });
   });
 
   it("If access token is invalid and refresh token is invalid, should be to return 401", async () => {

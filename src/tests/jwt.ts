@@ -2,6 +2,7 @@ import { faker } from "@faker-js/faker";
 import { createSigner } from "fast-jwt";
 
 export const MOCK_USER_ID = faker.string.uuid();
+export const MOCK_USER_NAME = faker.person.fullName();
 
 function tokenFactory({
   isAccessToken,
@@ -23,7 +24,7 @@ function tokenFactory({
 
   return signSync(
     isAccessToken
-      ? { ...MOCK_JWT_PAYLOAD, name: faker.person.fullName() }
+      ? { ...MOCK_JWT_PAYLOAD, name: MOCK_USER_NAME }
       : MOCK_JWT_PAYLOAD
   );
 }
