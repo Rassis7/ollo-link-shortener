@@ -2,15 +2,19 @@ import { app } from "@/configurations/app";
 import { ErrorHandler, HTTP_STATUS_CODE } from "@/helpers";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 
-import { faker } from "@faker-js/faker";
+import {
+  MOCK_ACCESS_TOKEN,
+  MOCK_REFRESH_TOKEN,
+  MOCK_USER_ID,
+  MOCK_USER_NAME,
+} from "@/tests";
+import { AUTH_ERRORS_RESPONSE, cookiesProps } from "../schemas";
+import * as userServices from "@/modules/user/services/user.service";
+import { mockFindUserByIdResponse } from "@/modules/user/__mocks__/find-user-by-email";
+import { inject } from "@/tests/app";
 import { createSigner } from "fast-jwt";
-import { AUTH_ERRORS_RESPONSE } from "@/modules/auth/schemas";
-import * as sessionService from "@/modules/auth/services/session.service";
-import { SessionProps } from "../schemas";
-import { MOCK_JWT_TOKEN } from "@/tests";
-import { mockSession } from "../__mocks__/session";
 
-let mockRequestObject = {} as FastifyRequest;
+let mockRequestUser = {};
 
 async function fakeApi(fastify: FastifyInstance) {
   fastify.route({
@@ -19,7 +23,7 @@ async function fakeApi(fastify: FastifyInstance) {
     preHandler: [fastify.isAuthorized],
     handler: (request: FastifyRequest, reply: FastifyReply) => {
       try {
-        mockRequestObject = request;
+        mockRequestUser = request.user;
         return reply.code(HTTP_STATUS_CODE.OK).send({ ok: "ok" });
       } catch (e) {
         const error = new ErrorHandler(e);
@@ -31,134 +35,137 @@ async function fakeApi(fastify: FastifyInstance) {
 const FAKE_API_URL = "api/fake";
 app.register(fakeApi, { prefix: FAKE_API_URL });
 
-async function handleRequest(token?: string) {
-  const cookies = { access_token: token ?? "" };
-  const headers = token ? { authorization: `Bearer ${token}` } : {};
-
-  return await app.inject({
+async function handleRequest({
+  accessToken,
+  refreshToken,
+}: {
+  accessToken: string;
+  refreshToken?: string;
+}) {
+  return app.inject({
     method: "GET",
     url: FAKE_API_URL,
-    cookies,
-    headers,
+    cookies: refreshToken
+      ? { access_token: accessToken, refresh_token: refreshToken }
+      : { access_token: accessToken },
   });
 }
 
-const signJWTSync = ({ key }: { key: string }) =>
-  createSigner({
-    key,
-    expiresIn: process.env.FASTIFY_JWT_SECRET_EXPIRES_IN,
-  });
-
-describe("modules/session-integration", () => {
-  beforeEach(() => {
-    jest.resetAllMocks();
-  });
-
-  it("Should be able to return an error if not exists access_token cookie", async () => {
-    const response = await handleRequest();
-
-    expect(response.statusCode).toBe(HTTP_STATUS_CODE.UNAUTHORIZED);
-    expect(response.json()).toEqual({
-      error: AUTH_ERRORS_RESPONSE.TOKEN_NOT_PROVIDED,
-    });
-  });
-
-  it("Should be able to return an error if is not possible decoded the token", async () => {
-    const generateTokenFn = signJWTSync({ key: faker.string.alphanumeric() });
-    const wrongToken = generateTokenFn({
-      id: faker.string.uuid(),
-    });
-
-    const response = await handleRequest(wrongToken);
-
-    expect(response.statusCode).toBe(HTTP_STATUS_CODE.UNAUTHORIZED);
-    expect(response.json()).toEqual({
-      error: AUTH_ERRORS_RESPONSE.TOKEN_INVALID,
-    });
-  });
-
-  it("Should be able to return an erro if session not exists", async () => {
-    jest
-      .spyOn(sessionService, "getSession")
-      .mockResolvedValue(Promise.resolve({} as SessionProps));
-
-    const response = await handleRequest(MOCK_JWT_TOKEN);
-
-    expect(response.statusCode).toBe(HTTP_STATUS_CODE.UNAUTHORIZED);
-    expect(response.json()).toEqual({
-      error: AUTH_ERRORS_RESPONSE.NOT_AUTHORIZED,
-    });
-  });
-
-  it("Should be able to return an erro if session is disabled", async () => {
-    jest.spyOn(sessionService, "getSession").mockResolvedValue(
-      Promise.resolve({
-        ...mockSession,
-        enabled: false,
-      } as SessionProps)
-    );
-
-    const response = await handleRequest(MOCK_JWT_TOKEN);
-
-    expect(response.statusCode).toBe(HTTP_STATUS_CODE.UNAUTHORIZED);
-    expect(response.json()).toEqual({
-      error: AUTH_ERRORS_RESPONSE.NOT_AUTHORIZED,
-    });
-  });
-
-  it("Should be able to create an user into request object", async () => {
-    jest
-      .spyOn(sessionService, "getSession")
-      .mockResolvedValue(Promise.resolve(mockSession as SessionProps));
-
-    const response = await handleRequest(MOCK_JWT_TOKEN);
+describe("modules/authorization-integration.token", () => {
+  it("Should be able to validate routes with access token", async () => {
+    const response = await handleRequest({ accessToken: MOCK_ACCESS_TOKEN });
 
     expect(response.statusCode).toBe(HTTP_STATUS_CODE.OK);
-    expect(mockRequestObject.user).toEqual({
-      id: mockSession.id,
-      name: mockSession.name,
-      email: mockSession.email,
-      accountConfirmed: false,
+    expect(response.json()).toEqual({ ok: "ok" });
+    expect(mockRequestUser).toEqual({
+      id: MOCK_USER_ID,
+      name: MOCK_USER_NAME,
+      accountNotConfirmed: false,
     });
   });
 
-  it("If token is expired, should generate a new session, to add into request and save the cookie", async () => {
+  it("If access token is invalid and refresh token is invalid, should be to return 401", async () => {
+    const response = await handleRequest({
+      accessToken: "any_token",
+      refreshToken: "any_token",
+    });
+
+    expect(response.statusCode).toBe(HTTP_STATUS_CODE.UNAUTHORIZED);
+    expect(response.json()).toEqual({
+      error: AUTH_ERRORS_RESPONSE.NOT_AUTHORIZED,
+    });
+  });
+
+  it("Should be able to show error if access token has not id", async () => {
+    const secret = process.env.FASTIFY_JWT_SECRET_ACCESS_TOKEN;
+    const expiresIn = process.env.FASTIFY_JWT_ACCESS_TOKEN_EXPIRES_IN;
+
+    const signSync = createSigner({ key: secret, expiresIn: expiresIn });
+
+    const accessToken = signSync({});
+
+    const response = await handleRequest({ accessToken });
+
+    expect(response.statusCode).toBe(HTTP_STATUS_CODE.UNAUTHORIZED);
+    expect(response.json()).toEqual({
+      error: AUTH_ERRORS_RESPONSE.NOT_AUTHORIZED,
+    });
+  });
+});
+
+describe("modules/authorization-integration.refresh", () => {
+  it("Should be able to show error if not exists refresh token and access token is invalid", async () => {
+    const response = await handleRequest({
+      accessToken: "any_token",
+    });
+
+    expect(response.statusCode).toBe(HTTP_STATUS_CODE.UNAUTHORIZED);
+    expect(response.json()).toEqual({
+      error: AUTH_ERRORS_RESPONSE.NOT_AUTHORIZED,
+    });
+  });
+
+  it("If access token is invalid and refresh token is valid, should be to new access token", async () => {
     jest
-      .spyOn(sessionService, "getSession")
-      .mockResolvedValue(Promise.resolve(mockSession as SessionProps));
-    jest.spyOn(sessionService, "generateSession");
+      .spyOn(userServices, "findUserById")
+      .mockResolvedValue(mockFindUserByIdResponse);
 
-    const generateTokenFn = signJWTSync({
-      key: process.env.FASTIFY_JWT_SECRET,
-    });
-    const tokenInPass = generateTokenFn({
-      id: mockSession.id,
-      iat: Math.floor(Date.now() / 1000) - 3600, // Emitido há 1 hora
-      exp: Math.floor(Date.now() / 1000) - 1800, // Expirou há 30 minutos
+    const response = await handleRequest({
+      accessToken: "any_token",
+      refreshToken: MOCK_REFRESH_TOKEN,
     });
 
-    const response = await handleRequest(tokenInPass);
+    expect(response.statusCode).toBe(HTTP_STATUS_CODE.OK);
 
-    expect(sessionService.generateSession).toHaveBeenCalledTimes(1);
-    expect(sessionService.generateSession).toHaveBeenCalledWith(mockSession);
-
-    expect(mockRequestObject.user).toEqual({
-      id: mockSession.id,
-      name: mockSession.name,
-      email: mockSession.email,
-      accountConfirmed: false,
-    });
-
-    const token = app.jwt.sign({ id: mockSession.id });
+    const { domain: _, ...cookiesWithoutDomain } = cookiesProps;
 
     expect(response.cookies).toEqual([
       {
-        domain: "ollo.li",
+        ...cookiesWithoutDomain,
+        sameSite: "Strict",
         name: "access_token",
-        path: "/",
-        secure: true,
-        value: token,
+        value: expect.anything(),
       },
     ]);
+  });
+
+  it("Should be able to generate new refresh token", async () => {
+    const response = await inject({
+      method: "POST",
+      url: "api/auth/refreshToken",
+      isAuthorized: true,
+    });
+
+    const { domain: _, ...cookiesWithoutDomain } = cookiesProps;
+
+    expect(response.cookies).toEqual([
+      {
+        ...cookiesWithoutDomain,
+        sameSite: "Strict",
+        name: "access_token",
+        value: MOCK_ACCESS_TOKEN,
+      },
+      {
+        ...cookiesWithoutDomain,
+        sameSite: "Strict",
+        name: "refresh_token",
+        value: MOCK_REFRESH_TOKEN,
+      },
+    ]);
+    expect(response.statusCode).toEqual(HTTP_STATUS_CODE.NO_CONTENT);
+  });
+
+  it("Should be able to show error when valid refresh token and user not found", async () => {
+    jest.spyOn(userServices, "findUserByEmail").mockResolvedValue(null);
+
+    const response = await handleRequest({
+      accessToken: "banana",
+      refreshToken: MOCK_REFRESH_TOKEN,
+    });
+
+    expect(response.statusCode).toBe(HTTP_STATUS_CODE.UNAUTHORIZED);
+    expect(response.json()).toEqual({
+      error: AUTH_ERRORS_RESPONSE.NOT_AUTHORIZED,
+    });
   });
 });

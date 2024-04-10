@@ -18,11 +18,11 @@ describe("database/cache", () => {
     jest.spyOn(cache.getClient(), "set");
 
     const value = { company: faker.company.name() };
-    await cache.set(CACHE_PREFIX.AUTH, "any_key", value);
+    await cache.set(CACHE_PREFIX.LINK, "any_key", value);
 
     expect(cache.getClient().set).toHaveBeenCalledTimes(1);
     expect(cache.getClient().set).toHaveBeenCalledWith(
-      `${CACHE_PREFIX.AUTH}:any_key`,
+      `${CACHE_PREFIX.LINK}:any_key`,
       JSON.stringify(value)
     );
   });
@@ -44,7 +44,7 @@ describe("database/cache", () => {
     const payload = JSON.stringify({ company: faker.company.name() });
     jest.spyOn(cache.getClient(), "get").mockResolvedValue(payload);
 
-    const response = await cache.get(CACHE_PREFIX.AUTH, "any_key");
+    const response = await cache.get(CACHE_PREFIX.LINK, "any_key");
 
     expect(response).toEqual(JSON.parse(payload));
   });
@@ -53,7 +53,7 @@ describe("database/cache", () => {
     const payload = faker.number.int();
     jest.spyOn(cache.getClient(), "get").mockResolvedValue(payload.toString());
 
-    const response = await cache.get(CACHE_PREFIX.AUTH, "any_key");
+    const response = await cache.get(CACHE_PREFIX.LINK, "any_key");
 
     expect(response).toEqual(payload.toString());
   });
@@ -61,7 +61,7 @@ describe("database/cache", () => {
   it("Should be able to return cache value like a nullable value", async () => {
     jest.spyOn(cache.getClient(), "get").mockResolvedValue(null);
 
-    const response = await cache.get(CACHE_PREFIX.AUTH, "any_key");
+    const response = await cache.get(CACHE_PREFIX.LINK, "any_key");
 
     expect(response).toEqual(null);
   });
@@ -69,7 +69,7 @@ describe("database/cache", () => {
   it("Should be able to return cache value like a nullable value if happen a exception", async () => {
     jest.spyOn(cache.getClient(), "get").mockRejectedValue(new Error());
 
-    const response = await cache.get(CACHE_PREFIX.AUTH, "any_key");
+    const response = await cache.get(CACHE_PREFIX.LINK, "any_key");
 
     expect(response).toEqual(null);
   });
@@ -77,11 +77,11 @@ describe("database/cache", () => {
   it("Should be able to delete a cache", async () => {
     jest.spyOn(cache.getClient(), "del");
 
-    await cache.del(CACHE_PREFIX.AUTH, "any_key");
+    await cache.del(CACHE_PREFIX.LINK, "any_key");
 
     expect(cache.getClient().del).toHaveBeenCalledTimes(1);
     expect(cache.getClient().del).toHaveBeenCalledWith(
-      `${CACHE_PREFIX.AUTH}:any_key`
+      `${CACHE_PREFIX.LINK}:any_key`
     );
   });
 

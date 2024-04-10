@@ -6,12 +6,12 @@ import {
 import { app } from "@/configurations/app";
 import * as hashFunctions from "@/helpers/hash";
 import { HTTP_STATUS_CODE } from "@/helpers";
-import { AUTH_ERRORS_RESPONSE } from "../schemas";
+import { AUTH_ERRORS_RESPONSE, JwtProps, cookiesProps } from "../schemas";
 
 const BASE_URL = "api/auth";
 
 describe("module/auth.integration", () => {
-  it("Should be able to do login and create auth cookie", async () => {
+  it("Should be able to do login and create the auth and refresh token like cookie", async () => {
     jest
       .spyOn(userService, "findUserByEmail")
       .mockResolvedValue(mockAuthFindUserByEmailResponse);
@@ -23,21 +23,36 @@ describe("module/auth.integration", () => {
       body: mockAuthInput,
     });
 
-    const token = app.jwt.sign({
+    const accessToken = app.jwt.accessToken.sign({
+      id: mockAuthFindUserByEmailResponse.id,
+      name: mockAuthFindUserByEmailResponse.name,
+    });
+
+    const refreshToken = app.jwt.refreshToken.sign({
       id: mockAuthFindUserByEmailResponse.id,
     });
 
+    const { domain: _, ...cookiesWithoutDomain } = cookiesProps;
+
     expect(response.cookies).toEqual([
       {
-        domain: "ollo.li",
+        ...cookiesWithoutDomain,
+        sameSite: "Strict",
         name: "access_token",
-        path: "/",
-        secure: true,
-        value: token,
+        value: accessToken,
+      },
+      {
+        ...cookiesWithoutDomain,
+        sameSite: "Strict",
+        name: "refresh_token",
+        value: refreshToken,
       },
     ]);
 
-    expect(response.statusCode).toEqual(HTTP_STATUS_CODE.NO_CONTENT);
+    const { exp } = app.jwt.refreshToken.verify<JwtProps>(refreshToken);
+
+    expect(response.statusCode).toEqual(HTTP_STATUS_CODE.OK);
+    expect(response.json()).toEqual({ accessToken, validAtRefreshToken: exp });
   });
 
   it("Should be able to return error when user not found", async () => {
@@ -52,7 +67,7 @@ describe("module/auth.integration", () => {
     expect(response.json()).toEqual({
       error: "Usuário não encontrado",
     });
-    expect(response.statusCode).toEqual(401);
+    expect(response.statusCode).toEqual(HTTP_STATUS_CODE.UNAUTHORIZED);
   });
 
   it("Should be able to return error when password is wrong", async () => {
@@ -70,7 +85,7 @@ describe("module/auth.integration", () => {
     expect(response.json()).toEqual({
       error: "O usuário ou a senha estão inválidos",
     });
-    expect(response.statusCode).toEqual(401);
+    expect(response.statusCode).toEqual(HTTP_STATUS_CODE.UNAUTHORIZED);
   });
 
   it("Should be able to return error when jwt token is wrong and route needs to authentication", async () => {
@@ -82,6 +97,6 @@ describe("module/auth.integration", () => {
     expect(response.json()).toEqual({
       error: AUTH_ERRORS_RESPONSE.TOKEN_NOT_PROVIDED,
     });
-    expect(response.statusCode).toEqual(401);
+    expect(response.statusCode).toEqual(HTTP_STATUS_CODE.UNAUTHORIZED);
   });
 });

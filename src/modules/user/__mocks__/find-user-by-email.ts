@@ -9,3 +9,12 @@ export const mockFindUserByEmailResponse: FindUserByEmailResponse = {
   password: faker.internet.password(),
   accountConfirmed: false,
 };
+
+export const mockFindUserByIdResponse: FindUserByEmailResponse = {
+  id: faker.string.uuid(),
+  createdAt: new Date(),
+  email: faker.internet.email(),
+  name: faker.person.fullName(),
+  password: faker.internet.password(),
+  accountConfirmed: false,
+};

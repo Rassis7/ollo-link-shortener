@@ -9,6 +9,7 @@ import * as userService from "../services/user.service";
 import { mockFindUserByEmailResponse } from "../__mocks__/find-user-by-email";
 import { USER_ERRORS_RESPONSE } from "../schemas";
 import { ErrorHandler, HTTP_STATUS_CODE } from "@/helpers";
+import { CACHE_PREFIX, cache } from "@/infra";
 
 describe("module/user.integration", () => {
   it("Should call POST /api/users and create an user", async () => {
@@ -19,6 +20,7 @@ describe("module/user.integration", () => {
       .spyOn(userService, "createUser")
       .mockResolvedValue(mockCreatedUserResponse);
     jest.spyOn(userService, "findUserByEmail").mockResolvedValue(null);
+    jest.spyOn(cache, "set");
 
     const response = await app.inject({
       method: "POST",
@@ -26,6 +28,11 @@ describe("module/user.integration", () => {
       body: mockCreateUserInput,
     });
 
+    expect(cache.set).toHaveBeenCalledWith(
+      CACHE_PREFIX.ACCOUNT_NOT_CONFIRMED,
+      mockCreatedUserResponse.id,
+      "true"
+    );
     expect(response.headers["content-type"]).toMatch(
       "application/json; charset=utf-8"
     );

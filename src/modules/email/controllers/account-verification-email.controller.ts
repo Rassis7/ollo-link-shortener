@@ -29,7 +29,6 @@ export async function verifyEmailHandler(
       await verifyEmail({
         code: verificationCode,
         email,
-        sessionHash: user.id,
         context: { prisma },
       });
     }

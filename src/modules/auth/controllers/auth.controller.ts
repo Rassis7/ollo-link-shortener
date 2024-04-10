@@ -2,10 +2,14 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { findUserByEmail } from "@/modules/user/services";
 import { HTTP_STATUS_CODE, verifyPassword } from "@/helpers";
 import { app } from "@/configurations/app";
-import { AUTH_ERRORS_RESPONSE, AuthInput } from "../schemas";
+import {
+  AUTH_ERRORS_RESPONSE,
+  AuthInput,
+  JwtProps,
+  cookiesProps,
+} from "../schemas";
 import { ErrorHandler } from "@/helpers";
 import { prisma } from "@/infra";
-import { generateSession } from "../services";
 
 type AuthHandlerRequestProps = FastifyRequest<{
   Body: AuthInput;
@@ -35,34 +39,47 @@ export async function authHandler(
       throw new Error(AUTH_ERRORS_RESPONSE.USER_OR_PASSWORD_INVALID);
     }
 
-    const { name, email, accountConfirmed } = user;
+    const { id, name, accountConfirmed } = user;
 
-    await generateSession({
-      id: user.id,
-      name: String(name ?? ""),
-      email,
-      accountConfirmed: !!accountConfirmed,
-    });
+    request.user = { id, name, accountNotConfirmed: !accountConfirmed };
 
-    const token = app.jwt.sign({ id: user.id });
+    const accessToken = app.jwt.accessToken.sign({ id, name });
+    const refreshToken = app.jwt.refreshToken.sign({ id });
 
-    request.user = {
-      id: user.id,
-      name,
-      email,
-      accountConfirmed: !!accountConfirmed,
-    };
+    const { exp } = app.jwt.refreshToken.verify<JwtProps>(refreshToken);
 
     return reply
-      .setCookie("access_token", token, {
-        secure: process.env.NODE_ENV !== "production",
-        path: "/",
-        domain: process.env.FASTIFY_COOKIE_DOMAIN,
-      })
-      .code(HTTP_STATUS_CODE.NO_CONTENT)
-      .send();
+      .setCookie("access_token", accessToken, cookiesProps)
+      .setCookie("refresh_token", refreshToken, cookiesProps)
+      .code(HTTP_STATUS_CODE.OK)
+      .send({ accessToken, validAtRefreshToken: exp });
   } catch (error) {
     const e = new ErrorHandler(error);
     return reply.code(HTTP_STATUS_CODE.UNAUTHORIZED).send(e);
+  }
+}
+
+export async function refreshTokenHandler(
+  request: AuthHandlerRequestProps,
+  reply: FastifyReply
+) {
+  try {
+    const refreshToken = app.jwt.refreshToken.sign({
+      id: request.user.id,
+    });
+
+    const newAccessToken = app.jwt.accessToken.sign({
+      id: request.user.id,
+      name: request.user.name,
+    });
+
+    return reply
+      .setCookie("access_token", newAccessToken, cookiesProps)
+      .setCookie("refresh_token", refreshToken, cookiesProps)
+      .code(HTTP_STATUS_CODE.NO_CONTENT)
+      .send();
+  } catch (e) {
+    const error = new ErrorHandler(e);
+    return reply.code(HTTP_STATUS_CODE.BAD_REQUEST).send(error);
   }
 }

@@ -1,21 +1,18 @@
 import { faker } from "@faker-js/faker";
-import { GenerateSessionProps, SessionProps } from "../schemas";
 
-export const mockGenerationSessionInput: GenerateSessionProps = {
+export const mockGenerationSessionInput = {
   id: faker.string.uuid(),
   name: faker.person.fullName(),
-  email: faker.internet.email(),
-  accountConfirmed: false,
 };
 
-export const mockSession: SessionProps = {
+export const mockSession = {
   ...mockGenerationSessionInput,
   enabled: true,
   exp: faker.date.future().getTime(),
   iat: faker.date.future().getTime(),
 };
 
-export const mockSessionWithConfirmedAccount: SessionProps = {
+export const mockSessionWithConfirmedAccount = {
   ...mockGenerationSessionInput,
   enabled: true,
   exp: faker.date.future().getTime(),
