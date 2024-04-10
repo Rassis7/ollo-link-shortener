@@ -46,6 +46,7 @@ describe("module/auth.integration", () => {
         sameSite: "Strict",
         name: "refresh_token",
         value: refreshToken,
+        httpOnly: true,
       },
     ]);
 

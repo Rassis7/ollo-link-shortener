@@ -50,7 +50,10 @@ export async function authHandler(
 
     return reply
       .setCookie("access_token", accessToken, cookiesProps)
-      .setCookie("refresh_token", refreshToken, cookiesProps)
+      .setCookie("refresh_token", refreshToken, {
+        ...cookiesProps,
+        httpOnly: true,
+      })
       .code(HTTP_STATUS_CODE.OK)
       .send({ accessToken, validAtRefreshToken: exp });
   } catch (error) {
@@ -75,7 +78,10 @@ export async function refreshTokenHandler(
 
     return reply
       .setCookie("access_token", newAccessToken, cookiesProps)
-      .setCookie("refresh_token", refreshToken, cookiesProps)
+      .setCookie("refresh_token", refreshToken, {
+        ...cookiesProps,
+        httpOnly: true,
+      })
       .code(HTTP_STATUS_CODE.NO_CONTENT)
       .send();
   } catch (e) {

@@ -37,7 +37,6 @@ export type AuthInput = z.infer<typeof authSchema>;
 export type JwtProps = z.infer<typeof jwtAuthValues>;
 
 export const cookiesProps = {
-  httpOnly: true,
   secure: true,
   path: "/",
   sameSite: true,

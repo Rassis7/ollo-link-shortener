@@ -150,6 +150,7 @@ describe("modules/authorization-integration.refresh", () => {
         sameSite: "Strict",
         name: "refresh_token",
         value: MOCK_REFRESH_TOKEN,
+        httpOnly: true,
       },
     ]);
     expect(response.statusCode).toEqual(HTTP_STATUS_CODE.NO_CONTENT);
