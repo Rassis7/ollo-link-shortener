@@ -1,6 +1,6 @@
 {
   "name": "ollo-link-api",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "OLLO.li api",
   "main": "index.js",
   "engines": {
