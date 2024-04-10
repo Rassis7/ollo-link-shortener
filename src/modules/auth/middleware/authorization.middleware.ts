@@ -50,6 +50,8 @@ async function refreshAccessToken({
     reply.setCookie("access_token", newAccessToken, cookiesProps);
   } catch {
     return reply
+      .clearCookie("refresh_token")
+      .clearCookie("access_token")
       .code(HTTP_STATUS_CODE.UNAUTHORIZED)
       .send({ error: AUTH_ERRORS_RESPONSE.NOT_AUTHORIZED });
   }
