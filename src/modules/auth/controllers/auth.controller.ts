@@ -83,3 +83,16 @@ export async function refreshTokenHandler(
     return reply.code(HTTP_STATUS_CODE.BAD_REQUEST).send(error);
   }
 }
+
+export async function logoutHandler(_, reply: FastifyReply) {
+  try {
+    return reply
+      .clearCookie("access_token")
+      .clearCookie("refresh_token")
+      .code(HTTP_STATUS_CODE.NO_CONTENT)
+      .send();
+  } catch (e) {
+    const error = new ErrorHandler(e);
+    return reply.code(HTTP_STATUS_CODE.BAD_REQUEST).send(error);
+  }
+}

@@ -95,6 +95,10 @@ export async function authorizationMiddleware(
       return refreshAccessToken({ request, reply });
     }
 
-    return reply.code(HTTP_STATUS_CODE.UNAUTHORIZED).send(errorResponse);
+    return reply
+      .clearCookie("refresh_token")
+      .clearCookie("access_token")
+      .code(HTTP_STATUS_CODE.UNAUTHORIZED)
+      .send(errorResponse);
   }
 }
