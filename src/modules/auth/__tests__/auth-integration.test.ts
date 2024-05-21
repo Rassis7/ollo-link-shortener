@@ -7,6 +7,7 @@ import { app } from "@/configurations/app";
 import * as hashFunctions from "@/helpers/hash";
 import { HTTP_STATUS_CODE } from "@/helpers";
 import { AUTH_ERRORS_RESPONSE, JwtProps, cookiesProps } from "../schemas";
+import { MOCK_ACCESS_TOKEN, MOCK_REFRESH_TOKEN } from "@/tests";
 
 const BASE_URL = "api/auth";
 
@@ -98,5 +99,21 @@ describe("module/auth.integration", () => {
       error: AUTH_ERRORS_RESPONSE.TOKEN_NOT_PROVIDED,
     });
     expect(response.statusCode).toEqual(HTTP_STATUS_CODE.UNAUTHORIZED);
+  });
+
+  it("Should be able to logout user", async () => {
+    const response = await app.inject({
+      method: "POST",
+      url: "api/auth/logout",
+      cookies: {
+        access_token: MOCK_ACCESS_TOKEN,
+        refresh_token: MOCK_REFRESH_TOKEN,
+      },
+    });
+
+    const [accessToken, refreshToken] = response.cookies;
+
+    expect(accessToken.value).toEqual("");
+    expect(refreshToken.value).toEqual("");
   });
 });
