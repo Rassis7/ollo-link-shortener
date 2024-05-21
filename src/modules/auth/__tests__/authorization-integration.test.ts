@@ -11,7 +11,6 @@ import {
 import { AUTH_ERRORS_RESPONSE, cookiesProps } from "../schemas";
 import * as userServices from "@/modules/user/services/user.service";
 import { mockFindUserByIdResponse } from "@/modules/user/__mocks__/find-user-by-email";
-import { inject } from "@/tests/app";
 import { createSigner } from "fast-jwt";
 
 let mockRequestUser = {};
@@ -130,10 +129,13 @@ describe("modules/authorization-integration.refresh", () => {
   });
 
   it("Should be able to generate new refresh token", async () => {
-    const response = await inject({
+    const response = await app.inject({
       method: "POST",
       url: "api/auth/refreshToken",
-      isAuthorized: true,
+      cookies: {
+        access_token: MOCK_ACCESS_TOKEN,
+        refresh_token: MOCK_REFRESH_TOKEN,
+      },
     });
 
     const { domain: _, ...cookiesWithoutDomain } = cookiesProps;
