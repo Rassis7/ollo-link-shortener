@@ -12,6 +12,12 @@ export enum VERIFY_EMAIL_PROPS {
   VERIFY_EMAIL_FROM_NAME = "Vera da OLLO.li",
 }
 
+export enum RECOVERY_PASSWORD_EMAIL_PROPS {
+  RECOVERY_PASSWORD_EMAIL_SUBJECT = "Redefina sua senha",
+  RECOVERY_PASSWORD_EMAIL_FROM_EMAIL = "no-reply@ollo.li",
+  RECOVERY_PASSWORD_EMAIL_FROM_NAME = "Vera da OLLO.li",
+}
+
 const emailCore = z.object({
   fromEmail: z.string().email(),
   fromName: z.string(),
@@ -50,3 +56,9 @@ const verifyEmailParamsSchema = z.object({
 });
 
 export type VerifyEmailParams = z.infer<typeof verifyEmailParamsSchema>;
+
+export const recoveryPasswordEmail = z.object({
+  email: z.string().email(),
+});
+
+export type RecoveryPasswordEmailInput = z.infer<typeof recoveryPasswordEmail>;
