@@ -21,7 +21,7 @@ export async function generateRecoveryPasswordLink({
   await cache.set(CACHE_PREFIX.RECOVERY_PASSWORD, email, urlSuffix);
   await cache.expire(CACHE_PREFIX.RECOVERY_PASSWORD, email, validAtInSeconds);
 
-  return `${process.env.INTERNAL_OLLO_LI_BASE_URL}/recovery-password/${urlSuffix}`;
+  return `${process.env.INTERNAL_OLLO_LI_BASE_URL}/new-password/${urlSuffix}`;
 }
 
 export async function sendRecoveryPasswordEmail({ email }: { email: string }) {

@@ -48,7 +48,7 @@ describe("modules/recovery-password-email.unit", () => {
     const link = await generateRecoveryPasswordLink({ email });
 
     expect(link).toEqual(
-      `${process.env.INTERNAL_OLLO_LI_BASE_URL}/recovery-password/${RANDOM_UUID_MOCK}`
+      `${process.env.INTERNAL_OLLO_LI_BASE_URL}/new-password/${RANDOM_UUID_MOCK}`
     );
 
     const validAt = 15 * 60; // 15 minutes in seconds
@@ -79,7 +79,7 @@ describe("modules/recovery-password-email.unit", () => {
     expect(mailSendSpy).toHaveBeenCalledTimes(1);
     expect(mailSendSpy).toHaveBeenCalledWith({
       ...emailTemplateParamMock,
-      from: { email: "no-reply@ollo.li", name: "Vera da OLLO.li" },
+      from: { email: "no-reply@ollo.li", name: "OLLO.li" },
       to: [{ email, name: undefined }],
       subject: "Redefina sua senha",
       html: htmlTemplate,
@@ -92,7 +92,7 @@ describe("modules/recovery-password-email.unit", () => {
               var: "expire_in",
             },
             {
-              value: `${process.env.INTERNAL_OLLO_LI_BASE_URL}/recovery-password/${uuid}`,
+              value: `${process.env.INTERNAL_OLLO_LI_BASE_URL}/new-password/${uuid}`,
               var: "recoveryPassword_url",
             },
           ],
