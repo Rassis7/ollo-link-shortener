@@ -54,14 +54,14 @@ describe("modules/recovery-password-email.unit", () => {
     const validAt = 15 * 60; // 15 minutes in seconds
     expect(cacheExpireSpy).toHaveBeenCalledWith(
       CACHE_PREFIX.RECOVERY_PASSWORD,
-      email,
+      RANDOM_UUID_MOCK,
       validAt
     );
 
     expect(cacheSetSpy).toHaveBeenCalledWith(
       CACHE_PREFIX.RECOVERY_PASSWORD,
-      email,
-      RANDOM_UUID_MOCK
+      RANDOM_UUID_MOCK,
+      email
     );
   });
 

@@ -18,8 +18,12 @@ export async function generateRecoveryPasswordLink({
 
   const validAt = addMinutes(new Date(), EXPIRE_IN);
   const validAtInSeconds = expireCacheInSeconds(validAt);
-  await cache.set(CACHE_PREFIX.RECOVERY_PASSWORD, email, urlSuffix);
-  await cache.expire(CACHE_PREFIX.RECOVERY_PASSWORD, email, validAtInSeconds);
+  await cache.set(CACHE_PREFIX.RECOVERY_PASSWORD, urlSuffix, email);
+  await cache.expire(
+    CACHE_PREFIX.RECOVERY_PASSWORD,
+    urlSuffix,
+    validAtInSeconds
+  );
 
   return `${process.env.INTERNAL_OLLO_LI_BASE_URL}/new-password/${urlSuffix}`;
 }
