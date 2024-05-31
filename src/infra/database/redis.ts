@@ -4,6 +4,7 @@ export enum CACHE_PREFIX {
   EMAIL_VERIFICATION = "emailVerification",
   LINK = "link",
   ACCOUNT_NOT_CONFIRMED = "accountNotConfirmed",
+  RECOVERY_PASSWORD = "recoveryPassword",
 }
 
 export interface RedisOptions {

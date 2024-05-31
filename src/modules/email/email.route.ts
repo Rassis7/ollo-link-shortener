@@ -1,5 +1,6 @@
 import { FastifyInstance } from "fastify";
 import {
+  recoveryPasswordEmailHandler,
   resendVerificationEmailHandler,
   verifyEmailHandler,
 } from "./controllers";
@@ -23,5 +24,14 @@ export async function emailRoutes(fastify: FastifyInstance) {
       body: verifyEmailSchema,
     },
     handler: resendVerificationEmailHandler,
+  });
+
+  fastify.withTypeProvider<ZodTypeProvider>().route({
+    method: "POST",
+    url: "/recoveryPassword",
+    schema: {
+      body: verifyEmailSchema,
+    },
+    handler: recoveryPasswordEmailHandler,
   });
 }

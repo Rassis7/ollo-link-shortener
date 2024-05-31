@@ -33,7 +33,7 @@ describe("module/auth.integration", () => {
       id: mockAuthFindUserByEmailResponse.id,
     });
 
-    const { domain: _, ...cookiesWithoutDomain } = cookiesProps;
+    const { domain: _, httpOnly, ...cookiesWithoutDomain } = cookiesProps;
 
     expect(response.cookies).toEqual([
       {
@@ -47,6 +47,7 @@ describe("module/auth.integration", () => {
         sameSite: "Strict",
         name: "refresh_token",
         value: refreshToken,
+        httpOnly,
       },
     ]);
 

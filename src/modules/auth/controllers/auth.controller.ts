@@ -49,7 +49,10 @@ export async function authHandler(
     const { exp } = app.jwt.refreshToken.verify<JwtProps>(refreshToken);
 
     return reply
-      .setCookie("access_token", accessToken, cookiesProps)
+      .setCookie("access_token", accessToken, {
+        ...cookiesProps,
+        httpOnly: false,
+      })
       .setCookie("refresh_token", refreshToken, cookiesProps)
       .code(HTTP_STATUS_CODE.OK)
       .send({ accessToken, validAtRefreshToken: exp });
