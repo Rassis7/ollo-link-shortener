@@ -2,7 +2,7 @@ import { CACHE_PREFIX, cache } from "@/infra";
 import { faker } from "@faker-js/faker";
 import {
   getChangePasswordRequestEmail,
-  invalidChangePasswordLink,
+  handleInvalidChangePasswordLink,
 } from "../services/change-password.service";
 
 const LINK_ID = faker.string.uuid();
@@ -39,7 +39,7 @@ describe("modules/user/ChangePassword.unit", () => {
     it("Should be able to invalid change password cache", async () => {
       jest.spyOn(cache, "del").mockResolvedValue();
 
-      await invalidChangePasswordLink(LINK_ID);
+      await handleInvalidChangePasswordLink(LINK_ID);
 
       expect(cache.del).toHaveBeenCalledWith(
         CACHE_PREFIX.RECOVERY_PASSWORD,

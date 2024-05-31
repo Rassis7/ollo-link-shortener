@@ -1,2 +1,2 @@
 export * from "./user.schema";
-export * from "./changePassword.schema";
+export * from "./change-password.schema";

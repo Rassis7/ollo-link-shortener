@@ -16,6 +16,6 @@ export async function getChangePasswordRequestEmail(linkId: string) {
   return email;
 }
 
-export async function invalidChangePasswordLink(linkId: string) {
+export async function handleInvalidChangePasswordLink(linkId: string) {
   await cache.del(CACHE_PREFIX.RECOVERY_PASSWORD, linkId);
 }
