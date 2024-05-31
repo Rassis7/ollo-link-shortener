@@ -4,6 +4,7 @@ import {
   mockCreatedUserResponse,
 } from "../__mocks__/create-user";
 import {
+  changePassword,
   confirmUserAccount,
   createUser,
   findUserByEmail,
@@ -82,5 +83,22 @@ describe("module/user.unit", () => {
       CACHE_PREFIX.ACCOUNT_NOT_CONFIRMED,
       mockUpdateUserResponse.id
     );
+  });
+
+  it("Should be able to change user password", async () => {
+    const email = faker.internet.email();
+    const newPassword = faker.internet.password({ length: 10 });
+
+    jest.spyOn(helpers, "generateHash").mockResolvedValue("hashedPassword");
+    mockContext.prisma.user.update.mockResolvedValue(mockUpdateUserResponse);
+
+    const user = await changePassword({ email, newPassword, context });
+
+    expect(mockContext.prisma.user.update).toHaveBeenCalledWith({
+      where: { email },
+      data: { password: "hashedPassword" },
+    });
+
+    expect(user.password !== newPassword).toBeTruthy();
   });
 });

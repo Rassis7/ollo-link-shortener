@@ -66,3 +66,20 @@ export async function confirmUserAccount({
 
   await cache.del(CACHE_PREFIX.ACCOUNT_NOT_CONFIRMED, user.id);
 }
+
+export async function changePassword({
+  email,
+  newPassword,
+  context,
+}: {
+  newPassword: string;
+  email: string;
+  context: Context;
+}) {
+  const hash = await generateHash(newPassword);
+
+  return await context.prisma.user.update({
+    where: { email },
+    data: { password: hash },
+  });
+}
