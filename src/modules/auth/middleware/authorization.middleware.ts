@@ -47,7 +47,10 @@ async function refreshAccessToken({
       name: request.user.name,
     });
 
-    reply.setCookie("access_token", newAccessToken, cookiesProps);
+    reply.setCookie("access_token", newAccessToken, {
+      ...cookiesProps,
+      httpOnly: false,
+    });
   } catch {
     return reply
       .code(HTTP_STATUS_CODE.UNAUTHORIZED)

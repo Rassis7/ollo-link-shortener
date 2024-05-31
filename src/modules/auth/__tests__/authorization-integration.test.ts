@@ -116,7 +116,11 @@ describe("modules/authorization-integration.refresh", () => {
 
     expect(response.statusCode).toBe(HTTP_STATUS_CODE.OK);
 
-    const { domain: _, ...cookiesWithoutDomain } = cookiesProps;
+    const {
+      domain: _domain,
+      httpOnly: _httpOnly,
+      ...cookiesWithoutDomain
+    } = cookiesProps;
 
     expect(response.cookies).toEqual([
       {
