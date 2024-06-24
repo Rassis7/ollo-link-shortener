@@ -105,6 +105,7 @@ export async function verifyTokenHandler(_, reply: FastifyReply) {
   try {
     return reply.code(HTTP_STATUS_CODE.NO_CONTENT).send();
   } catch (error) {
+    console.log({}, "FILE: auth.controller.ts", "LINE NUMBER: 108");
     return reply
       .clearCookie("access_token")
       .clearCookie("refresh_token")
