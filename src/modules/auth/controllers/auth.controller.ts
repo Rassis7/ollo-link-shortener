@@ -105,5 +105,5 @@ export async function logoutHandler(_, reply: FastifyReply) {
 }
 
 export async function verifyTokenHandler(_, reply: FastifyReply) {
-  return reply.code(HTTP_STATUS_CODE.OK).send();
+  return reply.code(HTTP_STATUS_CODE.NO_CONTENT).send();
 }
