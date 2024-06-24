@@ -53,7 +53,10 @@ export async function authHandler(
         ...cookiesProps,
         httpOnly: false,
       })
-      .setCookie("refresh_token", refreshToken, cookiesProps)
+      .setCookie("refresh_token", refreshToken, {
+        ...cookiesProps,
+        maxAge: 7 * 24 * 60 * 60, // 7 days
+      })
       .code(HTTP_STATUS_CODE.OK)
       .send({ accessToken, validAtRefreshToken: exp });
   } catch (error) {
@@ -78,7 +81,10 @@ export async function refreshTokenHandler(
 
     return reply
       .setCookie("access_token", newAccessToken, cookiesProps)
-      .setCookie("refresh_token", refreshToken, cookiesProps)
+      .setCookie("refresh_token", refreshToken, {
+        ...cookiesProps,
+        maxAge: 7 * 24 * 60 * 60, // 7 days
+      })
       .code(HTTP_STATUS_CODE.NO_CONTENT)
       .send();
   } catch (e) {
@@ -93,4 +99,16 @@ export async function logoutHandler(_, reply: FastifyReply) {
     .clearCookie("refresh_token")
     .code(HTTP_STATUS_CODE.NO_CONTENT)
     .send();
+}
+
+export async function verifyTokenHandler(_, reply: FastifyReply) {
+  try {
+    return reply.code(HTTP_STATUS_CODE.NO_CONTENT).send();
+  } catch (error) {
+    return reply
+      .clearCookie("access_token")
+      .clearCookie("refresh_token")
+      .code(HTTP_STATUS_CODE.UNAUTHORIZED)
+      .send();
+  }
 }

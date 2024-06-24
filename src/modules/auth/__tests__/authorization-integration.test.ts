@@ -155,6 +155,7 @@ describe("modules/authorization-integration.refresh", () => {
         ...cookiesWithoutDomain,
         sameSite: "Strict",
         name: "refresh_token",
+        maxAge: 604800,
         value: MOCK_REFRESH_TOKEN,
       },
     ]);
