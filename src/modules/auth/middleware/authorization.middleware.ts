@@ -90,11 +90,6 @@ export async function authorizationMiddleware(
     }
   } catch (e) {
     const errorResponse = new ErrorHandler(e);
-    console.log(
-      { errorResponse },
-      "FILE: authorization.middleware.ts",
-      "LINE NUMBER: 75"
-    );
     if (
       errorResponse?.code?.includes("FAST_JWT") ||
       errorResponse.getError() === AUTH_ERRORS_RESPONSE.NOT_AUTHORIZED

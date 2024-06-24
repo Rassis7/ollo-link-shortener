@@ -4,9 +4,9 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 
 import {
   MOCK_ACCESS_TOKEN,
-  MOCK_REFRESH_TOKEN,
   MOCK_USER_ID,
   MOCK_USER_NAME,
+  MOCK_REFRESH_TOKEN,
 } from "@/tests";
 import { AUTH_ERRORS_RESPONSE, cookiesProps } from "../schemas";
 import * as userServices from "@/modules/user/services/user.service";
@@ -14,6 +14,9 @@ import { mockFindUserByIdResponse } from "@/modules/user/__mocks__/find-user-by-
 import { createSigner } from "fast-jwt";
 
 let mockRequestUser = {};
+
+const mockAccessToken = MOCK_ACCESS_TOKEN.toString();
+const mockRefreshToken = MOCK_REFRESH_TOKEN.toString();
 
 async function fakeApi(fastify: FastifyInstance) {
   fastify.route({
@@ -52,7 +55,7 @@ async function handleRequest({
 
 describe("modules/authorization-integration.token", () => {
   it("Should be able to validate routes with access token", async () => {
-    const response = await handleRequest({ accessToken: MOCK_ACCESS_TOKEN });
+    const response = await handleRequest({ accessToken: mockAccessToken });
 
     expect(response.statusCode).toBe(HTTP_STATUS_CODE.OK);
     expect(response.json()).toEqual({ ok: "ok" });
@@ -92,7 +95,7 @@ describe("modules/authorization-integration.token", () => {
   });
 });
 
-describe("modules/authorization-integration.refresh", () => {
+describe("modules/authorization-integration.refreshToken", () => {
   it("Should be able to show error if not exists refresh token and access token is invalid", async () => {
     const response = await handleRequest({
       accessToken: "any_token",
@@ -111,7 +114,7 @@ describe("modules/authorization-integration.refresh", () => {
 
     const response = await handleRequest({
       accessToken: "any_token",
-      refreshToken: MOCK_REFRESH_TOKEN,
+      refreshToken: mockRefreshToken,
     });
 
     expect(response.statusCode).toBe(HTTP_STATUS_CODE.OK);
@@ -137,26 +140,27 @@ describe("modules/authorization-integration.refresh", () => {
       method: "POST",
       url: "api/auth/refreshToken",
       cookies: {
-        access_token: MOCK_ACCESS_TOKEN,
-        refresh_token: MOCK_REFRESH_TOKEN,
+        access_token: mockAccessToken,
+        refresh_token: mockRefreshToken,
       },
     });
 
-    const { domain: _, ...cookiesWithoutDomain } = cookiesProps;
-
     expect(response.cookies).toEqual([
       {
-        ...cookiesWithoutDomain,
+        path: "/",
+        secure: true,
         sameSite: "Strict",
         name: "access_token",
-        value: MOCK_ACCESS_TOKEN,
+        value: mockAccessToken,
       },
       {
-        ...cookiesWithoutDomain,
+        path: "/",
+        secure: true,
         sameSite: "Strict",
         name: "refresh_token",
         maxAge: 604800,
-        value: MOCK_REFRESH_TOKEN,
+        value: mockRefreshToken,
+        httpOnly: true,
       },
     ]);
     expect(response.statusCode).toEqual(HTTP_STATUS_CODE.NO_CONTENT);
@@ -167,7 +171,7 @@ describe("modules/authorization-integration.refresh", () => {
 
     const response = await handleRequest({
       accessToken: "banana",
-      refreshToken: MOCK_REFRESH_TOKEN,
+      refreshToken: mockRefreshToken,
     });
 
     expect(response.statusCode).toBe(HTTP_STATUS_CODE.UNAUTHORIZED);

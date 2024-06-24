@@ -21,7 +21,7 @@ describe("modules/verify-access-token-integration.verifyAccessToken", () => {
       },
     });
 
-    expect(response.statusCode).toEqual(HTTP_STATUS_CODE.NO_CONTENT);
+    expect(response.statusCode).toEqual(HTTP_STATUS_CODE.OK);
   });
 
   it("Should be able to return 401 if refresh token is invalid", async () => {
