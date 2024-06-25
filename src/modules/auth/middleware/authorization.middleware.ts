@@ -90,7 +90,6 @@ export async function authorizationMiddleware(
     }
   } catch (e) {
     const errorResponse = new ErrorHandler(e);
-
     if (
       errorResponse?.code?.includes("FAST_JWT") ||
       errorResponse.getError() === AUTH_ERRORS_RESPONSE.NOT_AUTHORIZED
@@ -103,5 +102,17 @@ export async function authorizationMiddleware(
       .clearCookie("access_token")
       .code(HTTP_STATUS_CODE.UNAUTHORIZED)
       .send(errorResponse);
+  }
+}
+
+export async function verifyAccessTokenMiddleware(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  try {
+    await refreshAccessToken({ reply, request });
+  } catch (e) {
+    const error = new ErrorHandler(e);
+    return reply.code(HTTP_STATUS_CODE.UNAUTHORIZED).send(error);
   }
 }

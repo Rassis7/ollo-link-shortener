@@ -33,6 +33,7 @@ declare module "fastify" {
     }> {
     isAuthorized: any;
     isAccountVerified: any;
+    verifyAccessToken: any;
   }
 
   interface FastifyRequest {

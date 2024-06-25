@@ -6,6 +6,7 @@ import { AUTH_ERRORS_RESPONSE } from "@/modules/auth/schemas";
 import {
   accountVerifyHandler,
   authorizationMiddleware,
+  verifyAccessTokenMiddleware,
 } from "@/modules/auth/middleware";
 
 const jwtResponseMessages = {
@@ -52,6 +53,12 @@ fastify.after(() => {
     "isAccountVerified",
     async (request: FastifyRequest, reply: FastifyReply) => {
       await accountVerifyHandler(request, reply);
+    }
+  );
+  fastify.decorate(
+    "verifyAccessToken",
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      await verifyAccessTokenMiddleware(request, reply);
     }
   );
 });
