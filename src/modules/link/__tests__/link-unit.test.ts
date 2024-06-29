@@ -29,8 +29,9 @@ describe("modules/link-unit", () => {
     mockContext.prisma.link.findMany.mockResolvedValue(mockGetAllLinksResponse);
 
     const userId = faker.string.uuid();
+    const cursorId = faker.string.uuid();
     const links = await getAllLinksByUser({
-      input: { userId },
+      input: { userId, skip: 0, take: 10, cursor: { id: cursorId } },
       context: mockContext,
     });
 
@@ -47,6 +48,9 @@ describe("modules/link-unit", () => {
         redirectTo: true,
         validAt: true,
       },
+      take: 10,
+      skip: 0,
+      cursor: { id: cursorId },
     });
     expect(links).toEqual(mockGetAllLinksResponse);
   });

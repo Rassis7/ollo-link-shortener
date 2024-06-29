@@ -7,16 +7,31 @@ import {
   saveOrUpdateLinkCache,
   updateLink,
 } from "../services";
-import { EditLink, EditLinkInput, LINK_ERRORS_RESPONSE } from "../schemas";
+import {
+  EditLink,
+  EditLinkInput,
+  GetAllRequestParams,
+  LINK_ERRORS_RESPONSE,
+} from "../schemas";
 
 export async function getAllLinksHandler(
-  request: FastifyRequest,
+  request: FastifyRequest<{
+    Querystring: GetAllRequestParams;
+  }>,
   reply: FastifyReply
 ) {
   try {
+    const { cursor: cursorQuery, take } = request.query;
+    const skip = cursorQuery ? 1 : 0;
     const userId = request.user.id;
+    const cursor = !cursorQuery
+      ? undefined
+      : {
+          id: String(cursorQuery),
+        };
+
     const links = await getAllLinksByUser({
-      input: { userId },
+      input: { userId, cursor, take: Number(take), skip },
       context: { prisma },
     });
 

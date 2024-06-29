@@ -53,6 +53,22 @@ const getByLinkHashFromCacheSchema = z.object({
   active: z.boolean(),
 });
 
+const getAllRequestParamsSchema = z.object({
+  cursor: z.string().optional(),
+  take: z.number(),
+});
+
+const getAllLinksByUserSchema = z.object({
+  userId: z.string(),
+  cursor: z
+    .object({
+      id: z.string(),
+    })
+    .optional(),
+  take: z.number(),
+  skip: z.number(),
+});
+
 export const updateLinkResponseSchema = baseLinkSchema;
 
 export type EditLinkInput = z.infer<typeof editLinkInputSchema>;
@@ -61,3 +77,5 @@ export type EditLink = z.infer<typeof editLinkSchema>;
 export type GetByLinkHashFromCacheResponse = z.infer<
   typeof getByLinkHashFromCacheSchema
 >;
+export type GetAllRequestParams = z.infer<typeof getAllRequestParamsSchema>;
+export type GetAllLinksByUserInput = z.infer<typeof getAllLinksByUserSchema>;

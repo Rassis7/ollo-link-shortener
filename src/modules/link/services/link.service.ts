@@ -1,24 +1,24 @@
 import { Context } from "@/configurations/context";
 import {
   EditLinkInput,
+  GetAllLinksByUserInput,
   GetByLinkHashFromCacheResponse,
   LINK_ERRORS_RESPONSE,
+  SaveLinkInput,
 } from "../schemas";
 import { expireCacheInSeconds } from "@/helpers";
 import { CACHE_PREFIX, cache } from "@/infra";
-import { SaveLinkInput } from "../schemas";
 
 export async function getAllLinksByUser({
   input,
   context,
 }: {
-  input: { userId: string };
+  input: GetAllLinksByUserInput;
   context: Context;
 }) {
+  const { userId, ...restInput } = input;
   return context.prisma.link.findMany({
-    where: {
-      userId: input.userId,
-    },
+    where: { userId },
     select: {
       active: true,
       alias: true,
@@ -27,6 +27,7 @@ export async function getAllLinksByUser({
       redirectTo: true,
       validAt: true,
     },
+    ...restInput,
   });
 }
 
