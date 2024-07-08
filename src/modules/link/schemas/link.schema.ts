@@ -62,7 +62,7 @@ const getAllLinksByUserSchema = z.object({
   userId: z.string(),
   cursor: z
     .object({
-      id: z.string(),
+      hash: z.string(),
     })
     .optional(),
   take: z.number(),

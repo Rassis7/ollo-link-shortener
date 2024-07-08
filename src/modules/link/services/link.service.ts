@@ -26,6 +26,7 @@ export async function getAllLinksByUser({
       metadata: true,
       redirectTo: true,
       validAt: true,
+      id: true,
     },
     ...restInput,
   });

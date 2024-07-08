@@ -27,7 +27,7 @@ export async function getAllLinksHandler(
     const cursor = !cursorQuery
       ? undefined
       : {
-          id: String(cursorQuery),
+          hash: String(cursorQuery),
         };
 
     const links = await getAllLinksByUser({

@@ -31,7 +31,7 @@ describe("modules/link-unit", () => {
     const userId = faker.string.uuid();
     const cursorId = faker.string.uuid();
     const links = await getAllLinksByUser({
-      input: { userId, skip: 0, take: 10, cursor: { id: cursorId } },
+      input: { userId, skip: 0, take: 10, cursor: { hash: cursorId } },
       context: mockContext,
     });
 
@@ -47,10 +47,11 @@ describe("modules/link-unit", () => {
         metadata: true,
         redirectTo: true,
         validAt: true,
+        id: true,
       },
       take: 10,
       skip: 0,
-      cursor: { id: cursorId },
+      cursor: { hash: cursorId },
     });
     expect(links).toEqual(mockGetAllLinksResponse);
   });
