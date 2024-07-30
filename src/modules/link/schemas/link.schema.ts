@@ -12,8 +12,8 @@ const baseLinkSchema = z.object({
   redirectTo: z.string().url(),
   active: z.boolean(),
   hash: z.string(),
-  validAt: z.date(),
-  alias: z.string().optional(),
+  validAt: z.date().nullable(),
+  alias: z.string().nullable(),
   metadata: z
     .object({
       title: z.string().optional(),
