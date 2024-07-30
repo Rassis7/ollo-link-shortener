@@ -29,6 +29,7 @@ export async function getAllLinksByUser({
       id: true,
     },
     ...restInput,
+    orderBy: { createdAt: "desc" },
   });
 }
 
