@@ -1,2 +1,3 @@
-export * from "./database/prisma";
-export * from "./database/cache";
+export * from "./clients/prisma";
+export * from "./storages/cache";
+export * from "./storages/file-storage";

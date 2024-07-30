@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
 import { CACHE_PREFIX } from "./cache";
-import { Redis as Cache } from "./redis";
+import { Redis as Cache } from "../clients/redis";
 
 describe("database/cache", () => {
   let cache: Cache;

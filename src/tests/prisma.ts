@@ -4,7 +4,7 @@ import { Context } from "@/configurations/context";
 
 const prismaMock = mockDeep<PrismaClient>();
 
-jest.mock("@/infra/database/prisma", () => ({
+jest.mock("@/infra/clients/prisma", () => ({
   __esModule: true,
   default: prismaMock,
 }));
