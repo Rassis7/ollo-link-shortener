@@ -20,6 +20,9 @@ declare global {
       OLLO_LI_BASE_URL: string;
       INTERNAL_OLLO_LI_BASE_URL: string;
       REDIS_URL: string;
+      SUPABASE_URL: string;
+      SUPABASE_KEY: string;
+      SUPABASE_DEFAULT_LINK_BUCKET: string;
     }
   }
 }

@@ -225,6 +225,9 @@ OLLO_LI_BASE_URL="https://ollo.li"
 DATABASE_URL="postgresql://ollo:ollo_password@localhost:5432/ollo_li?schema=public"
 MAILERSEND_API_KEY=
 REDIS_URL="redis://ollo-li-redis:6379"
+SUPABASE_URL=
+SUPABASE_KEY=
+SUPABASE_DEFAULT_BUCKET=
 ```
 
 ## Para os testes é necessário criar um arquivo `.env-test`, pode ser igual ao `.env.-development`
