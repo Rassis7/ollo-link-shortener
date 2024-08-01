@@ -9,6 +9,7 @@ export enum LINK_ERRORS_RESPONSE {
 }
 
 const baseLinkSchema = z.object({
+  id: z.string(),
   redirectTo: z.string().url(),
   active: z.boolean(),
   hash: z.string(),
