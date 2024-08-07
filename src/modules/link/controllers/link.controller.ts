@@ -56,6 +56,7 @@ export async function editLinkHandler(
       input: { hash: body.hash, alias: body?.alias },
       context: { prisma },
     });
+    console.log({ links }, "FILE: link.controller.ts", "LINE NUMBER: 59");
 
     const hasOtherLinkWithSameAlias = links.some(
       (link) => link.id !== params.id && link.alias === body.alias
@@ -89,6 +90,7 @@ export async function editLinkHandler(
     await saveOrUpdateLinkCache(linkUpdatedToCache);
 
     return reply.code(HTTP_STATUS_CODE.OK).send({
+      id: params.id,
       redirectTo,
       active,
       validAt,
