@@ -70,15 +70,20 @@ export async function getLinkByHashFromCache(
   return cache.get(CACHE_PREFIX.LINK, hash);
 }
 
+type SaveOrUpdateLinkCache = SaveLinkInput & {
+  id?: string;
+};
+
 export async function saveOrUpdateLinkCache({
   hash,
   alias,
-  userId: _userId,
+  userId: _,
+  id,
   ...rest
-}: SaveLinkInput) {
+}: SaveOrUpdateLinkCache) {
   const hasExistsLink = await getLinkByHashFromCache(hash);
 
-  if (hasExistsLink) {
+  if (hasExistsLink && !id) {
     throw new Error(LINK_ERRORS_RESPONSE.URL_HAS_EXISTS);
   }
 

@@ -82,7 +82,7 @@ export async function editLinkHandler(
       active: body?.active ?? linkShorted.active,
       redirectTo: body?.redirectTo ?? linkShorted.redirectTo,
       alias: String(body?.alias ?? linkShorted.alias),
-      validAt: String(body?.validAt ?? linkShorted.validAt),
+      validAt: String(body?.validAt ?? linkShorted.validAt ?? ""),
       metadata: linkShorted.metadata as unknown as EditLinkInput["metadata"],
     };
 
