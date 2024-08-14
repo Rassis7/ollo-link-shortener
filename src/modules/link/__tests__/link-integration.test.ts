@@ -42,7 +42,6 @@ describe("modules/Link/link-integration", () => {
       const mockGetAllLinksResponseToResponse = mockGetAllLinksResponse.map(
         (response) => {
           const {
-            id: _id,
             userId: _userId,
             createdAt: _createdAt,
             ...restResponse
@@ -159,6 +158,7 @@ describe("modules/Link/link-integration", () => {
 
       expect(response.statusCode).toEqual(200);
       expect(response.json()).toEqual({
+        id: firstResponseLinkByAliasOrHash.id,
         redirectTo: mockEditLinkResponse.redirectTo,
         active: mockEditLinkResponse.active,
         validAt: mockEditLinkResponse.validAt?.toISOString(),

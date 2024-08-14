@@ -52,6 +52,9 @@ describe("modules/link-unit", () => {
       take: 10,
       skip: 0,
       cursor: { hash: cursorId },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
     expect(links).toEqual(mockGetAllLinksResponse);
   });
