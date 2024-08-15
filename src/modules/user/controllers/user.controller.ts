@@ -4,7 +4,6 @@ import { CreateUserInput, USER_ERRORS_RESPONSE } from "../schemas";
 import { sendVerifyEmailHandler } from "../../email/services";
 import { ErrorHandler, HTTP_STATUS_CODE } from "@/helpers";
 import { CACHE_PREFIX, cache, prisma } from "@/infra";
-import { logger } from "@/configurations/app";
 
 type RegisterUserHandlerRequestProps = FastifyRequest<{
   Body: CreateUserInput;
@@ -31,7 +30,8 @@ export async function registerUserHandler(
       await sendVerifyEmailHandler(user.email);
       await cache.set(CACHE_PREFIX.ACCOUNT_NOT_CONFIRMED, user.id, "true");
     } catch (error) {
-      logger.error(error);
+      // TODO: handle error and set resend email
+      // logger.error(error);
     }
 
     return reply.code(HTTP_STATUS_CODE.CREATED).send(user);
