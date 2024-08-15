@@ -7,4 +7,5 @@ export const mockUser = {
   accountConfirmed: false,
   email: faker.internet.email(),
   password: faker.internet.password(),
+  active: true,
 };

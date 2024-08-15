@@ -10,5 +10,6 @@ export const mockAuthFindUserByEmailResponse = {
   createdAt: new Date(),
   name: faker.person.fullName(),
   accountConfirmed: false,
+  active: true,
   ...mockAuthInput,
 };

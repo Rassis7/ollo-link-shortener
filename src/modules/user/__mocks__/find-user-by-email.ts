@@ -8,6 +8,7 @@ export const mockFindUserByEmailResponse: FindUserByEmailResponse = {
   name: faker.person.fullName(),
   password: faker.internet.password(),
   accountConfirmed: false,
+  active: true,
 };
 
 export const mockFindUserByIdResponse: FindUserByEmailResponse = {
@@ -17,4 +18,5 @@ export const mockFindUserByIdResponse: FindUserByEmailResponse = {
   name: faker.person.fullName(),
   password: faker.internet.password(),
   accountConfirmed: false,
+  active: true,
 };
