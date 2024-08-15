@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { createUser, findUserByEmail } from "../services";
+import { createUser, findUserByEmail, findUserById } from "../services";
 import { CreateUserInput, USER_ERRORS_RESPONSE } from "../schemas";
 import { sendVerifyEmailHandler } from "../../email/services";
 import { ErrorHandler, HTTP_STATUS_CODE } from "@/helpers";
@@ -35,6 +35,32 @@ export async function registerUserHandler(
     }
 
     return reply.code(HTTP_STATUS_CODE.CREATED).send(user);
+  } catch (e) {
+    const error = new ErrorHandler(e);
+    return reply.code(HTTP_STATUS_CODE.BAD_REQUEST).send(error);
+  }
+}
+
+export async function findUserByIdHandler(
+  request: FastifyRequest<{
+    Params: {
+      userId: string;
+    };
+  }>,
+  reply: FastifyReply
+) {
+  try {
+    const { userId } = request.params;
+
+    const user = await findUserById({ userId, context: { prisma } });
+
+    if (!user) {
+      throw new Error(USER_ERRORS_RESPONSE.USER_NOT_FOUND);
+    }
+
+    const { password: _, ...userResponse } = user;
+
+    return reply.send(userResponse);
   } catch (e) {
     const error = new ErrorHandler(e);
     return reply.code(HTTP_STATUS_CODE.BAD_REQUEST).send(error);

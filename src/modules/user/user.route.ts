@@ -1,9 +1,14 @@
 import { FastifyInstance } from "fastify";
-import { changePasswordHandler, registerUserHandler } from "./controllers";
+import {
+  changePasswordHandler,
+  findUserByIdHandler,
+  registerUserHandler,
+} from "./controllers";
 import {
   changePasswordSchema,
   createUserResponseSchema,
   createUserSchema,
+  findUserByIdResponseSchema,
 } from "./schemas";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 
@@ -26,5 +31,16 @@ export async function userRoutes(fastify: FastifyInstance) {
       body: changePasswordSchema,
     },
     handler: changePasswordHandler,
+  });
+  fastify.withTypeProvider<ZodTypeProvider>().route({
+    method: "GET",
+    url: "/:userId",
+    preHandler: [fastify.isAuthorized],
+    schema: {
+      response: {
+        200: findUserByIdResponseSchema,
+      },
+    },
+    handler: findUserByIdHandler,
   });
 }
