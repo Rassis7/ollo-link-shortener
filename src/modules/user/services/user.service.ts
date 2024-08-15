@@ -83,3 +83,23 @@ export async function changePassword({
     data: { password: hash },
   });
 }
+
+export async function updateUser({
+  user,
+  context,
+}: {
+  user: {
+    id: string;
+    name?: string;
+    email?: string;
+    active?: boolean;
+  };
+  context: Context;
+}): Promise<void> {
+  const { id, ...data } = user;
+
+  await context.prisma.user.update({
+    where: { id },
+    data,
+  });
+}
