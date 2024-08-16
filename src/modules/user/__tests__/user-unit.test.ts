@@ -113,6 +113,13 @@ describe("module/user.unit", () => {
     expect(mockContext.prisma.user.update).toHaveBeenCalledWith({
       where: { id: id },
       data: restMockUpdateUser,
+      select: {
+        accountConfirmed: true,
+        active: true,
+        email: true,
+        id: true,
+        name: true,
+      },
     });
   });
 });
