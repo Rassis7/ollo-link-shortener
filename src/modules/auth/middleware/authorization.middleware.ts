@@ -16,7 +16,6 @@ async function userRequestFactory(userId: string) {
     id: user.id,
     name: user.name,
     accountConfirmed: user?.accountConfirmed ?? false,
-    active: user.active,
   };
 }
 
@@ -46,6 +45,7 @@ async function refreshAccessToken({
     const newAccessToken = app.jwt.accessToken.sign({
       id: request.user.id,
       name: request.user.name,
+      accountConfirmed: request.user.accountConfirmed,
     });
 
     reply.setCookie("access_token", newAccessToken, {
@@ -83,10 +83,11 @@ export async function authorizationMiddleware(
         CACHE_PREFIX.ACCOUNT_NOT_CONFIRMED,
         id
       );
+
       request.user = {
         id,
         name,
-        accountNotConfirmed: Boolean(accountNotConfirmed),
+        accountConfirmed: !accountNotConfirmed,
       };
     }
   } catch (e) {

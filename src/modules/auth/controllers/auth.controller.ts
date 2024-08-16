@@ -46,11 +46,15 @@ export async function authHandler(
       throw new Error(AUTH_ERRORS_RESPONSE.USER_OR_PASSWORD_INVALID);
     }
 
-    const { id, name, accountConfirmed } = user;
+    const { id, name, accountConfirmed, active } = user;
 
-    request.user = { id, name, accountNotConfirmed: !accountConfirmed };
+    request.user = { id, name, accountConfirmed, active };
 
-    const accessToken = app.jwt.accessToken.sign({ id, name });
+    const accessToken = app.jwt.accessToken.sign({
+      id,
+      name,
+      accountConfirmed,
+    });
     const refreshToken = app.jwt.refreshToken.sign({ id });
 
     const { exp } = app.jwt.refreshToken.verify<JwtProps>(refreshToken);
@@ -84,6 +88,7 @@ export async function refreshTokenHandler(
     const newAccessToken = app.jwt.accessToken.sign({
       id: request.user.id,
       name: request.user.name,
+      accountConfirmed: request.user.accountConfirmed,
     });
 
     return reply

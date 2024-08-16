@@ -62,7 +62,7 @@ describe("modules/authorization-integration.token", () => {
     expect(mockRequestUser).toEqual({
       id: MOCK_USER_ID,
       name: MOCK_USER_NAME,
-      accountNotConfirmed: false,
+      accountConfirmed: true,
     });
   });
 

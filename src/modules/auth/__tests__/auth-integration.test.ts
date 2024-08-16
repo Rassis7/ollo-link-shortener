@@ -32,6 +32,7 @@ describe("module/auth.integration", () => {
       const accessToken = app.jwt.accessToken.sign({
         id: mockAuthFindUserByEmailResponse.id,
         name: mockAuthFindUserByEmailResponse.name,
+        accountConfirmed: mockAuthFindUserByEmailResponse.accountConfirmed,
       });
 
       const refreshToken = app.jwt.refreshToken.sign({

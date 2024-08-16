@@ -24,7 +24,7 @@ function tokenFactory({
 
   return signSync(
     isAccessToken
-      ? { ...MOCK_JWT_PAYLOAD, name: MOCK_USER_NAME }
+      ? { ...MOCK_JWT_PAYLOAD, name: MOCK_USER_NAME, accountConfirmed: true }
       : MOCK_JWT_PAYLOAD
   );
 }

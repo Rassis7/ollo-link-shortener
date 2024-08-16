@@ -7,9 +7,9 @@ export async function accountVerifyHandler(
   reply: FastifyReply
 ) {
   try {
-    const { accountNotConfirmed } = request.user;
+    const { accountConfirmed } = request.user;
 
-    if (accountNotConfirmed) {
+    if (!accountConfirmed) {
       throw new Error(ACCOUNT_VERIFY_ERRORS.NOT_CONFIRMED);
     }
   } catch (e) {

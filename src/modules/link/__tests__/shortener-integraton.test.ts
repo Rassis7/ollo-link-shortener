@@ -14,10 +14,14 @@ import * as linkService from "../services/link.service";
 import { inject } from "@/tests/app";
 import { createHash } from "node:crypto";
 import { AUTH_ERRORS_RESPONSE } from "@/modules/auth/schemas";
+import { CACHE_PREFIX } from "@/infra";
 
 const BASE_URL = "/api/links/shortener";
 
 describe("modules/shortener.integration", () => {
+  beforeAll(() => {
+    jest.resetAllMocks();
+  });
   it("Should be able to return a error if not send url field", async () => {
     const dateInPast = faker.date.past();
 
@@ -114,10 +118,19 @@ describe("modules/shortener.integration", () => {
   });
 
   it("Should be able to return error if save in cache and already exists that hash", async () => {
+    (createHash as jest.Mock).mockReturnValue({
+      update: jest.fn().mockReturnThis(),
+      digest: jest.fn().mockReturnValue(Buffer.from("0123456789", "hex")),
+    });
+
     jest.spyOn(linkService, "getLinkByHashOrAlias").mockResolvedValue([]);
-    jest
-      .spyOn(cache, "get")
-      .mockResolvedValue(JSON.stringify(mockGetLinkByHashFromCacheResponse));
+
+    jest.spyOn(cache, "get").mockImplementation((prefix) => {
+      if (prefix === CACHE_PREFIX.ACCOUNT_NOT_CONFIRMED) {
+        return Promise.resolve(false);
+      }
+      return Promise.resolve(mockGetLinkByHashFromCacheResponse);
+    });
 
     const response = await inject({
       method: "POST",
