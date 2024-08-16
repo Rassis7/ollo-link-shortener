@@ -8,7 +8,7 @@ import { CACHE_PREFIX, cache, prisma } from "@/infra";
 async function userRequestFactory(userId: string) {
   const user = await findUserById({ userId, context: { prisma } });
 
-  if (!user) {
+  if (!user || !user.active) {
     throw new Error(AUTH_ERRORS_RESPONSE.NOT_AUTHORIZED);
   }
 
@@ -16,6 +16,7 @@ async function userRequestFactory(userId: string) {
     id: user.id,
     name: user.name,
     accountConfirmed: user?.accountConfirmed ?? false,
+    active: user.active,
   };
 }
 

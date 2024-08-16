@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { findUserByEmail } from "@/modules/user/services";
+import { findUserByEmail, updateUser } from "@/modules/user/services";
 import { HTTP_STATUS_CODE, verifyPassword } from "@/helpers";
 import { app } from "@/configurations/app";
 import {
@@ -28,6 +28,13 @@ export async function authHandler(
 
     if (!user) {
       throw new Error(AUTH_ERRORS_RESPONSE.USER_NOT_FOUND);
+    }
+
+    if (!user.active) {
+      await updateUser({
+        user: { id: user.id, active: true },
+        context: { prisma },
+      });
     }
 
     const correctPassword = await verifyPassword({
