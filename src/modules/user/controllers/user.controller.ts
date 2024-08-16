@@ -1,6 +1,15 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { createUser, findUserByEmail, findUserById } from "../services";
-import { CreateUserInput, USER_ERRORS_RESPONSE } from "../schemas";
+import {
+  createUser,
+  findUserByEmail,
+  findUserById,
+  updateUser,
+} from "../services";
+import {
+  CreateUserInput,
+  UpdateUserInput,
+  USER_ERRORS_RESPONSE,
+} from "../schemas";
 import { sendVerifyEmailHandler } from "../../email/services";
 import { ErrorHandler, HTTP_STATUS_CODE } from "@/helpers";
 import { CACHE_PREFIX, cache, prisma } from "@/infra";
@@ -61,6 +70,36 @@ export async function findUserByIdHandler(
     const { password: _, ...userResponse } = user;
 
     return reply.send(userResponse);
+  } catch (e) {
+    const error = new ErrorHandler(e);
+    return reply.code(HTTP_STATUS_CODE.BAD_REQUEST).send(error);
+  }
+}
+
+type UpdateUserHandlerRequestProps = FastifyRequest<{
+  Body: UpdateUserInput;
+  Params: {
+    userId: string;
+  };
+}>;
+
+export async function updateUserHandler(
+  request: UpdateUserHandlerRequestProps,
+  reply: FastifyReply
+) {
+  try {
+    const { params, body } = request;
+
+    const user = await updateUser({
+      user: { id: params.userId, ...body },
+      context: { prisma },
+    });
+
+    if (!user?.id) {
+      throw new Error(USER_ERRORS_RESPONSE.USER_NOT_FOUND);
+    }
+
+    return reply.code(HTTP_STATUS_CODE.OK).send({ id: user.id });
   } catch (e) {
     const error = new ErrorHandler(e);
     return reply.code(HTTP_STATUS_CODE.BAD_REQUEST).send(error);

@@ -4,6 +4,7 @@ import { z } from "zod";
 export enum USER_ERRORS_RESPONSE {
   EMAIL_ALREADY_EXISTS = "O email já existe",
   USER_NOT_FOUND = "Usuário não encontrado",
+  NO_FIELDS_TO_UPDATE = "Nenhum campo para atualizar",
 }
 
 const userCore = z.object({
@@ -49,6 +50,23 @@ export const findUserByIdResponseSchema = z.intersection(
   })
 );
 
+export const updateUserResponseSchema = z.object({
+  id: z.string().uuid(),
+});
+
+export const updateUserInputSchema = z.object({
+  email: z
+    .string({
+      required_error: "O email é obrigatório",
+      invalid_type_error: "O email deve ser um texto",
+    })
+    .email()
+    .optional(),
+  name: z.string().optional(),
+  active: z.boolean().optional(),
+});
+
+export type UpdateUserInput = z.infer<typeof updateUserInputSchema>;
 export type CreateUserInput = z.infer<typeof createUserSchema>;
 export type CreateUserResponse = z.infer<typeof createUserResponseSchema>;
 

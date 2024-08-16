@@ -15,6 +15,10 @@ import { ErrorHandler, HTTP_STATUS_CODE } from "@/helpers";
 import { CACHE_PREFIX, cache } from "@/infra";
 import { inject } from "@/tests/app";
 import { faker } from "@faker-js/faker";
+import {
+  mockUpdateUserInput,
+  mockUpdateUserResponse,
+} from "../__mocks__/update-user";
 
 describe("module/user.integration", () => {
   describe('when call POST "/api/users"', () => {
@@ -117,6 +121,45 @@ describe("module/user.integration", () => {
         expect(response.statusCode).toEqual(HTTP_STATUS_CODE.BAD_REQUEST);
         expect(response.json()).toEqual({
           error: USER_ERRORS_RESPONSE.USER_NOT_FOUND,
+        });
+      });
+    });
+  });
+
+  describe('when call PUT "/api/users/:userId"', () => {
+    describe("if user not found", () => {
+      it("should return an error", async () => {
+        jest.spyOn(userService, "findUserById").mockResolvedValue(null);
+
+        const response = await inject({
+          method: "PUT",
+          url: `/api/users/${faker.string.uuid()}`,
+          body: {
+            name: faker.person.fullName(),
+          },
+        });
+
+        expect(response.statusCode).toEqual(HTTP_STATUS_CODE.BAD_REQUEST);
+        expect(response.json()).toEqual({
+          error: USER_ERRORS_RESPONSE.USER_NOT_FOUND,
+        });
+      });
+    });
+    describe("if user exists", () => {
+      it("should update the user", async () => {
+        jest
+          .spyOn(userService, "updateUser")
+          .mockResolvedValue(mockUpdateUserResponse);
+
+        const response = await inject({
+          method: "PUT",
+          url: `/api/users/${faker.string.uuid()}`,
+          body: mockUpdateUserInput,
+        });
+
+        expect(response.statusCode).toEqual(HTTP_STATUS_CODE.OK);
+        expect(response.json()).toEqual({
+          id: mockUpdateUserResponse.id,
         });
       });
     });

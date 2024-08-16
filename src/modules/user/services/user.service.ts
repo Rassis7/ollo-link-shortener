@@ -95,11 +95,22 @@ export async function updateUser({
     active?: boolean;
   };
   context: Context;
-}): Promise<void> {
-  const { id, ...data } = user;
+}): Promise<Partial<User> | null> {
+  try {
+    const { id, ...data } = user;
 
-  await context.prisma.user.update({
-    where: { id },
-    data,
-  });
+    return await context.prisma.user.update({
+      where: { id },
+      data,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        active: true,
+        accountConfirmed: true,
+      },
+    });
+  } catch (error) {
+    return null;
+  }
 }
