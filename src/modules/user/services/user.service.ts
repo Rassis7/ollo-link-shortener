@@ -83,3 +83,34 @@ export async function changePassword({
     data: { password: hash },
   });
 }
+
+export async function updateUser({
+  user,
+  context,
+}: {
+  user: {
+    id: string;
+    name?: string;
+    email?: string;
+    active?: boolean;
+  };
+  context: Context;
+}): Promise<Partial<User> | null> {
+  try {
+    const { id, ...data } = user;
+
+    return await context.prisma.user.update({
+      where: { id },
+      data,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        active: true,
+        accountConfirmed: true,
+      },
+    });
+  } catch (error) {
+    return null;
+  }
+}

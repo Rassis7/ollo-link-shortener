@@ -24,6 +24,26 @@ jest.mock("mailersend", () => ({
   })),
 }));
 
+jest.mock("@supabase/supabase-js", () => ({
+  ...jest.requireActual("@supabase/supabase-js"),
+  createClient: jest.fn().mockImplementation(() => ({
+    from: jest.fn(),
+    on: jest.fn(),
+    auth: {
+      signIn: jest.fn(),
+      signUp: jest.fn(),
+      signOut: jest.fn(),
+      user: jest.fn(),
+    },
+    storage: {
+      from: jest.fn().mockImplementation(() => ({
+        upload: jest.fn(),
+      })),
+      createBucket: jest.fn(),
+    },
+  })),
+}));
+
 require("./src/tests/server");
 require("./src/tests/prisma");
 require("./src/tests/redis");

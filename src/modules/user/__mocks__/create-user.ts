@@ -14,6 +14,7 @@ export const mockCreatedUserResponse = {
   id: faker.string.uuid(),
   createdAt: new Date(),
   accountConfirmed: false,
+  active: true,
   ...mockCreateUserInput,
 };
 

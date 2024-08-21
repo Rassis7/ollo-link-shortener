@@ -1,24 +1,24 @@
 import { Context } from "@/configurations/context";
 import {
   EditLinkInput,
+  GetAllLinksByUserInput,
   GetByLinkHashFromCacheResponse,
   LINK_ERRORS_RESPONSE,
+  SaveLinkInput,
 } from "../schemas";
 import { expireCacheInSeconds } from "@/helpers";
 import { CACHE_PREFIX, cache } from "@/infra";
-import { SaveLinkInput } from "../schemas";
 
 export async function getAllLinksByUser({
   input,
   context,
 }: {
-  input: { userId: string };
+  input: GetAllLinksByUserInput;
   context: Context;
 }) {
+  const { userId, ...restInput } = input;
   return context.prisma.link.findMany({
-    where: {
-      userId: input.userId,
-    },
+    where: { userId },
     select: {
       active: true,
       alias: true,
@@ -26,7 +26,10 @@ export async function getAllLinksByUser({
       metadata: true,
       redirectTo: true,
       validAt: true,
+      id: true,
     },
+    ...restInput,
+    orderBy: { createdAt: "desc" },
   });
 }
 
@@ -67,15 +70,20 @@ export async function getLinkByHashFromCache(
   return cache.get(CACHE_PREFIX.LINK, hash);
 }
 
+type SaveOrUpdateLinkCache = SaveLinkInput & {
+  id?: string;
+};
+
 export async function saveOrUpdateLinkCache({
   hash,
   alias,
-  userId: _userId,
+  userId: _,
+  id,
   ...rest
-}: SaveLinkInput) {
+}: SaveOrUpdateLinkCache) {
   const hasExistsLink = await getLinkByHashFromCache(hash);
 
-  if (hasExistsLink) {
+  if (hasExistsLink && !id) {
     throw new Error(LINK_ERRORS_RESPONSE.URL_HAS_EXISTS);
   }
 

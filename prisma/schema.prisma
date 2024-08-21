@@ -17,6 +17,7 @@ model User {
   password String
   accountConfirmed Boolean? @default(false)
   createdAt DateTime @default(now())
+  active Boolean @default(true)
   links Link[]
 }
 model Link {

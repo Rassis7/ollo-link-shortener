@@ -9,11 +9,15 @@ import {
   createUser,
   findUserByEmail,
   findUserById,
+  updateUser,
 } from "../services";
 import * as helpers from "@/helpers/hash";
 import { faker } from "@faker-js/faker";
 import { mockFindUserByEmailResponse } from "../__mocks__/find-user-by-email";
-import { mockUpdateUserResponse } from "../__mocks__/update-user";
+import {
+  mockUpdateUserInput,
+  mockUpdateUserResponse,
+} from "../__mocks__/update-user";
 import { CACHE_PREFIX } from "@/infra";
 
 describe("module/user.unit", () => {
@@ -100,5 +104,22 @@ describe("module/user.unit", () => {
     });
 
     expect(user.password !== newPassword).toBeTruthy();
+  });
+
+  it("Should be able to update user", async () => {
+    await updateUser({ user: mockUpdateUserInput, context });
+    const { id, ...restMockUpdateUser } = mockUpdateUserInput;
+
+    expect(mockContext.prisma.user.update).toHaveBeenCalledWith({
+      where: { id: id },
+      data: restMockUpdateUser,
+      select: {
+        accountConfirmed: true,
+        active: true,
+        email: true,
+        id: true,
+        name: true,
+      },
+    });
   });
 });

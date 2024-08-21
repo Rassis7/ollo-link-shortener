@@ -8,7 +8,7 @@ import { CACHE_PREFIX, cache, prisma } from "@/infra";
 async function userRequestFactory(userId: string) {
   const user = await findUserById({ userId, context: { prisma } });
 
-  if (!user) {
+  if (!user || !user.active) {
     throw new Error(AUTH_ERRORS_RESPONSE.NOT_AUTHORIZED);
   }
 
@@ -45,6 +45,7 @@ async function refreshAccessToken({
     const newAccessToken = app.jwt.accessToken.sign({
       id: request.user.id,
       name: request.user.name,
+      accountConfirmed: request.user.accountConfirmed,
     });
 
     reply.setCookie("access_token", newAccessToken, {
@@ -82,10 +83,11 @@ export async function authorizationMiddleware(
         CACHE_PREFIX.ACCOUNT_NOT_CONFIRMED,
         id
       );
+
       request.user = {
         id,
         name,
-        accountNotConfirmed: Boolean(accountNotConfirmed),
+        accountConfirmed: !accountNotConfirmed,
       };
     }
   } catch (e) {

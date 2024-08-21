@@ -7,16 +7,31 @@ import {
   saveOrUpdateLinkCache,
   updateLink,
 } from "../services";
-import { EditLink, EditLinkInput, LINK_ERRORS_RESPONSE } from "../schemas";
+import {
+  EditLink,
+  EditLinkInput,
+  GetAllRequestParams,
+  LINK_ERRORS_RESPONSE,
+} from "../schemas";
 
 export async function getAllLinksHandler(
-  request: FastifyRequest,
+  request: FastifyRequest<{
+    Querystring: GetAllRequestParams;
+  }>,
   reply: FastifyReply
 ) {
   try {
+    const { cursor: cursorQuery, take } = request.query;
+    const skip = cursorQuery ? 1 : 0;
     const userId = request.user.id;
+    const cursor = !cursorQuery
+      ? undefined
+      : {
+          hash: String(cursorQuery),
+        };
+
     const links = await getAllLinksByUser({
-      input: { userId },
+      input: { userId, cursor, take: Number(take), skip },
       context: { prisma },
     });
 
@@ -67,13 +82,14 @@ export async function editLinkHandler(
       active: body?.active ?? linkShorted.active,
       redirectTo: body?.redirectTo ?? linkShorted.redirectTo,
       alias: String(body?.alias ?? linkShorted.alias),
-      validAt: String(body?.validAt ?? linkShorted.validAt),
+      validAt: String(body?.validAt ?? linkShorted.validAt ?? ""),
       metadata: linkShorted.metadata as unknown as EditLinkInput["metadata"],
     };
 
     await saveOrUpdateLinkCache(linkUpdatedToCache);
 
     return reply.code(HTTP_STATUS_CODE.OK).send({
+      id: params.id,
       redirectTo,
       active,
       validAt,
