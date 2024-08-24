@@ -50,7 +50,7 @@ export async function resendVerificationEmailHandler(
     const { email } = request.body;
     await sendVerifyEmailHandler(email);
 
-    return reply.code(HTTP_STATUS_CODE.OK).send();
+    return reply.code(HTTP_STATUS_CODE.NO_CONTENT).send();
   } catch (error) {
     const e = new ErrorHandler(error);
     return reply.code(HTTP_STATUS_CODE.BAD_REQUEST).send(e);
