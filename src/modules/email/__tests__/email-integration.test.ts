@@ -4,6 +4,7 @@ import { VERIFY_EMAIL_RESPONSE } from "../schemas";
 import { inject } from "@/tests/app";
 import * as userService from "@/modules/user/services/user.service";
 import { mockFindUserByEmailResponse } from "@/modules/user/__mocks__/find-user-by-email";
+import { HTTP_STATUS_CODE } from "@/helpers";
 
 const BASE_URL = "api/email";
 
@@ -23,7 +24,7 @@ describe("modules/email.integration", () => {
       body: mockEmailInput,
     });
 
-    expect(response.statusCode).toEqual(204);
+    expect(response.statusCode).toEqual(HTTP_STATUS_CODE.NO_CONTENT);
   });
 
   it("Should reject if verification code is wrong or email not exists", async () => {
@@ -42,7 +43,7 @@ describe("modules/email.integration", () => {
     expect(response.json()).toEqual({
       error: "O código está expirado ou não existe",
     });
-    expect(response.statusCode).toEqual(400);
+    expect(response.statusCode).toEqual(HTTP_STATUS_CODE.BAD_REQUEST);
   });
 
   it("Should be able to resend verification email", async () => {
@@ -56,7 +57,7 @@ describe("modules/email.integration", () => {
       body: mockEmailInput,
     });
 
-    expect(response.statusCode).toEqual(200);
+    expect(response.statusCode).toEqual(HTTP_STATUS_CODE.NO_CONTENT);
   });
 
   it("Should reject if to fail resend email", async () => {
@@ -73,6 +74,6 @@ describe("modules/email.integration", () => {
     expect(response.json()).toEqual({
       error: "some_error",
     });
-    expect(response.statusCode).toEqual(400);
+    expect(response.statusCode).toEqual(HTTP_STATUS_CODE.BAD_REQUEST);
   });
 });
