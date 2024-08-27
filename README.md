@@ -228,6 +228,7 @@ REDIS_URL="redis://ollo-li-redis:6379"
 SUPABASE_URL=
 SUPABASE_KEY=
 SUPABASE_DEFAULT_BUCKET=
+CORS_ORIGIN=
 ```
 
 ## Para os testes é necessário criar um arquivo `.env-test`, pode ser igual ao `.env.-development`

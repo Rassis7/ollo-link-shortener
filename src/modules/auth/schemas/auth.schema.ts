@@ -38,11 +38,11 @@ export type JwtProps = z.infer<typeof jwtAuthValues>;
 
 export const cookiesProps = {
   httpOnly: true,
-  secure: true,
+  secure: process.env.NODE_ENV === "production",
   path: "/",
   sameSite: true,
   domain:
     process.env.NODE_ENV === "production"
-      ? process.env.FASTIFY_COOKIE_DOMAIN
-      : "",
+      ? process.env.CORS_ORIGIN
+      : "localhost",
 };

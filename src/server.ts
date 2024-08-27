@@ -10,6 +10,7 @@ dotenv.config({
   ),
 });
 import multipart from "@fastify/multipart";
+import cors from "@fastify/cors";
 
 import { app, logger } from "@/configurations/app";
 import { heathCheckRoutes } from "./modules/health-check/health-check.routes";
@@ -30,6 +31,25 @@ import "./configurations/errors";
 
 const port = Number(process.env.SERVER_PORT ?? 3000);
 const host = process.env.NODE_ENV === "development" ? "localhost" : "0.0.0.0";
+
+app.register(cors, {
+  credentials: true,
+  origin: (origin, cb) => {
+    const hostname = new URL(origin ?? "").hostname;
+    if (hostname === "localhost" && process.env.NODE_ENV === "development") {
+      return cb(null, true);
+    }
+
+    if (
+      hostname === process.env.INTERNAL_OLLO_LI_BASE_URL &&
+      process.env.NODE_ENV === "production"
+    ) {
+      return cb(null, true);
+    }
+
+    return cb(new Error("Not allowed"), false);
+  },
+});
 
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
