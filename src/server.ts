@@ -1,7 +1,14 @@
 import dotenv from "dotenv";
 import { resolve } from "node:path";
 
-dotenv.config({ path: resolve(__dirname, `../.env.${process.env.NODE_ENV}`) });
+dotenv.config({
+  path: resolve(
+    __dirname,
+    process.env.NODE_ENV === "production"
+      ? "../.env"
+      : `../.env.${process.env.NODE_ENV}`
+  ),
+});
 import multipart from "@fastify/multipart";
 
 import { app, logger } from "@/configurations/app";
