@@ -25,7 +25,7 @@ async function generateVerifyEmailUrl(email: string) {
   await cache.set(CACHE_PREFIX.EMAIL_VERIFICATION, email, urlSuffix);
   await cache.expire(CACHE_PREFIX.EMAIL_VERIFICATION, email, validAtInSeconds);
 
-  return `${process.env.INTERNAL_OLLO_LI_BASE_URL}/verification/${urlSuffix}?${emailParsed}`;
+  return `${process.env.INTERNAL_OLLO_LI_BASE_URL}/verification/${urlSuffix}?email=${emailParsed}`;
 }
 
 export async function sendVerifyEmailHandler(email: string) {

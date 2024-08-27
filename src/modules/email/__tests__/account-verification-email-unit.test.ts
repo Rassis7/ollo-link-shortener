@@ -77,7 +77,7 @@ describe("modules/account-verification-email", () => {
               var: "expire_in",
             },
             {
-              value: `${process.env.INTERNAL_OLLO_LI_BASE_URL}/verification/${uuid}?${emailParsed}`,
+              value: `${process.env.INTERNAL_OLLO_LI_BASE_URL}/verification/${uuid}?email=${emailParsed}`,
               var: "verification_url",
             },
           ],

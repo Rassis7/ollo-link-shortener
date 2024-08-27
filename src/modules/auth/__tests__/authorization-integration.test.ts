@@ -15,9 +15,6 @@ import { createSigner } from "fast-jwt";
 
 let mockRequestUser = {};
 
-const mockAccessToken = MOCK_ACCESS_TOKEN.toString();
-const mockRefreshToken = MOCK_REFRESH_TOKEN.toString();
-
 async function fakeApi(fastify: FastifyInstance) {
   fastify.route({
     method: "GET",
@@ -53,7 +50,14 @@ async function handleRequest({
   });
 }
 
+let mockAccessToken = "";
+let mockRefreshToken = "";
+
 describe("modules/authorization-integration.token", () => {
+  beforeAll(() => {
+    mockAccessToken = MOCK_ACCESS_TOKEN.toString();
+  });
+
   it("Should be able to validate routes with access token", async () => {
     const response = await handleRequest({ accessToken: mockAccessToken });
 
@@ -96,6 +100,11 @@ describe("modules/authorization-integration.token", () => {
 });
 
 describe("modules/authorization-integration.refreshToken", () => {
+  beforeAll(() => {
+    mockAccessToken = MOCK_ACCESS_TOKEN.toString();
+    mockRefreshToken = MOCK_REFRESH_TOKEN.toString();
+  });
+
   it("Should be able to show error if not exists refresh token and access token is invalid", async () => {
     const response = await handleRequest({
       accessToken: "any_token",
