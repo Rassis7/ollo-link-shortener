@@ -1,5 +1,12 @@
 
 
+## 1.2.8 (2024-09-04)
+
+
+### Bug Fixes
+
+* 🐛 fix cors configuration ([df68e8a](https://github.com/olloapp/ollo-link-api/commit/df68e8a2250bce6d6bf0077f27039a0eca5d0eba))
+
 ## 1.2.7 (2024-08-27)
 
 ## 1.2.6 (2024-08-27)
