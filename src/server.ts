@@ -41,7 +41,7 @@ app.register(cors, {
     }
 
     if (
-      hostname === process.env.INTERNAL_OLLO_LI_BASE_URL &&
+      process.env.INTERNAL_OLLO_LI_BASE_URL.endsWith(hostname) &&
       process.env.NODE_ENV === "production"
     ) {
       return cb(null, true);
