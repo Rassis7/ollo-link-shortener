@@ -98,7 +98,7 @@ npm run dev
 
 ## 🪲 Ativando o modo de debug
 
-Vá até o `.env-development` e habilite a flag `DEBUG_OPTION`
+Vá até o `.env.development` e habilite a flag `DEBUG_OPTION`
 
 ```
 DEBUG_MODE=true
@@ -214,21 +214,24 @@ Existe o `.env.example` que é a base para as variáveis de ambiente, pra rodar 
 
 ```
 # env.development
-DEBUG_MODE=false|true
-FASTIFY_JWT_SECRET="SOME_RANDOM_SECRET_HERE"
-FASTIFY_JWT_SECRET_EXPIRES_IN="7d"
+DEBUG_MODE=true|false
+FASTIFY_JWT_SECRET_ACCESS_TOKEN=
+FASTIFY_JWT_ACCESS_TOKEN_EXPIRES_IN="15m"
+FASTIFY_JWT_SECRET_REFRESH_TOKEN=
+FASTIFY_JWT_REFRESH_TOKEN_EXPIRES_IN="7d"
+REDIS_TOKEN_EXPIRE_IN=43200 #12 hours
 FASTIFY_RATE_LIMIT_MAX=100
 FASTIFY_RATE_LIMIT_TIME_WINDOW="1 minute"
 INTERNAL_OLLO_LI_BASE_URL="https://app.ollo.li"
 OLLO_LI_BASE_URL="https://ollo.li"
 
-DATABASE_URL="postgresql://ollo:ollo_password@localhost:5432/ollo_li?schema=public"
+DATABASE_URL=
 MAILERSEND_API_KEY=
-REDIS_URL="redis://ollo-li-redis:6379"
+REDIS_URL=
 SUPABASE_URL=
+SUPABASE_PUBLIC_URL=
 SUPABASE_KEY=
 SUPABASE_DEFAULT_BUCKET=
-CORS_ORIGIN=
 ```
 
-## Para os testes é necessário criar um arquivo `.env-test`, pode ser igual ao `.env.-development`
+## Para os testes é necessário criar um arquivo `.env.test`, pode ser igual ao `.env.development`

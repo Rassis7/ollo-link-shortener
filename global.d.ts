@@ -6,7 +6,6 @@ declare global {
       NODE_ENV: "production" | "test" | "development";
       DEBUG_MODE: string;
       SERVER_PORT: string;
-      FASTIFY_COOKIE_DOMAIN: string;
       DATABASE_URL: string;
       FASTIFY_JWT_SECRET_ACCESS_TOKEN: string;
       FASTIFY_JWT_ACCESS_TOKEN_EXPIRES_IN: string;

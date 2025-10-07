@@ -12,7 +12,7 @@
     "build": "tsc -p tsconfig.json && tsc-alias",
     "dev": "nodemon --inspect src/server.ts",
     "start": "NODE_ENV=production node ./dist/src/server.js",
-    "docker": "docker-compose up -d && npm run prisma generate",
+    "docker": "docker compose up -d && npm run prisma generate",
     "test": "NODE_ENV=test jest --coverage",
     "test:ci": "NODE_ENV=test jest --ci --collect-coverage --coverage",
     "test:watch": "NODE_ENV=test jest --watchAll",
