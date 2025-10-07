@@ -66,16 +66,26 @@ Devemos ficar atentos a não misturar as coisas, lembre-se cada parte tem sua re
 
 ## 🚀 Instalando OLLO.li API
 
-Para instalar o **OLLO.li API**, siga estas etapas:
+Para preparar o ambiente do **OLLO.li API** pela primeira vez, execute:
 
 ```bash
-npm run install
+make setup
 ```
 
-Se for a primeira vez que roda o projeto, é necessário rodar:
+> OBS1: Você precisa ter o [Makefile](https://makefiletutorial.com/) configurado em sua máquina
+> OBS2: Você precisa de ter o [NVM](https://github.com/nvm-sh/nvm) configurado como global em sua máquina
+
+Esse comando instala as dependências, inicia os serviços Docker, gera o client do Prisma, sincroniza o schema com o banco (`prisma db push`) e roda as seeds.
+
+Caso prefira realizar manualmente:
 
 ```bash
-npm run docker
+  nvm use $(cat .nvmrc) &&
+	npm install &&
+	npm run docker &&
+ 	npm run prisma generate &&
+	npm run prisma:db:push &&
+	npm run seed
 ```
 
 ## ☕ Usando OLLO.li API
@@ -146,6 +156,12 @@ Para abrir o Prisma Studio
 npm run prisma studio
 ```
 
+Para sincronizar o schema com o banco sem gerar migrations:
+
+```bash
+npm run prisma:db:push
+```
+
 ### Infra + Docker
 
 Pro hora usamos o docker somente para infra, então para subir o ambiente com o Prisma, só rodar:
@@ -195,7 +211,7 @@ Será criado uma pasta `dist` na raiz do projeto.
 Para rodar a API em modo de prod:
 
 ```bash
-npm run prod
+npm run start
 ```
 
 <details>
