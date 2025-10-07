@@ -10,7 +10,18 @@ const logger = pino(
 );
 
 const fastify = Fastify({
-  logger: process.env.DEBUG_MODE === "true" && logger,
+  logger:
+    process.env.DEBUG_MODE === "true"
+      ? {
+          transport: {
+            target: "pino-pretty",
+            options: {
+              translateTime: "HH:MM:ss Z",
+              ignore: "pid,hostname",
+            },
+          },
+        }
+      : false,
 });
 
 export { fastify as app, logger };
