@@ -35,7 +35,18 @@ const host = process.env.NODE_ENV === "development" ? "localhost" : "0.0.0.0";
 app.register(cors, {
   credentials: true,
   origin: (origin, cb) => {
-    const hostname = new URL(origin ?? "").hostname;
+    if (!origin) {
+      return cb(null, true);
+    }
+
+    let hostname: string;
+    try {
+      hostname = new URL(origin).hostname;
+    } catch (error) {
+      logger.warn({ origin, error }, "Invalid CORS origin header");
+      return cb(new Error("Not allowed"), false);
+    }
+
     if (hostname === "localhost" && process.env.NODE_ENV === "development") {
       return cb(null, true);
     }
