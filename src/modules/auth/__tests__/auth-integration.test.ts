@@ -39,7 +39,7 @@ describe("module/auth.integration", () => {
         id: mockAuthFindUserByEmailResponse.id,
       });
 
-      const { domain: _, httpOnly, ...cookiesWithoutDomain } = cookiesProps;
+      const { httpOnly, secure: _, ...cookiesWithoutDomain } = cookiesProps;
 
       expect(response.cookies).toEqual([
         {

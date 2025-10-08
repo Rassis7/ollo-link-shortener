@@ -129,8 +129,8 @@ describe("modules/authorization-integration.refreshToken", () => {
     expect(response.statusCode).toBe(HTTP_STATUS_CODE.OK);
 
     const {
-      domain: _domain,
       httpOnly: _httpOnly,
+      secure: _secure,
       ...cookiesWithoutDomain
     } = cookiesProps;
 
@@ -154,22 +154,27 @@ describe("modules/authorization-integration.refreshToken", () => {
       },
     });
 
+    const {
+      httpOnly: _httpOnly,
+      sameSite: _sameSite,
+      secure: _secure,
+      ...cookiesWithDomain
+    } = cookiesProps;
+
     expect(response.cookies).toEqual([
       {
-        path: "/",
-        secure: true,
+        ...cookiesWithDomain,
         sameSite: "Strict",
         name: "access_token",
         value: mockAccessToken,
       },
       {
-        path: "/",
-        secure: true,
+        ...cookiesWithDomain,
+        httpOnly: true,
         sameSite: "Strict",
         name: "refresh_token",
         maxAge: 604800,
         value: mockRefreshToken,
-        httpOnly: true,
       },
     ]);
     expect(response.statusCode).toEqual(HTTP_STATUS_CODE.NO_CONTENT);

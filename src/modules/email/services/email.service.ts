@@ -42,7 +42,7 @@ function getEmailParams({
 
 export async function sendEmail(props: SendEmailProps) {
   /* istanbul ignore if */
-  if (process.env.NODE_ENV !== "production") {
+  if (process.env.NODE_ENV === "development") {
     return;
   }
 
