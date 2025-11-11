@@ -1,35 +1,25 @@
 # Repository Guidelines
 
+> Sempre que precisar de visão geral, arquitetura ou regras específicas do projeto, consulte primeiro [`ai-context/index.md`](./ai-context/index.md). Ele centraliza navegação rápida para todos os resumos preparados para agentes e humanos.
+
 ## Project Structure & Module Organization
-- Core application code lives in `src/`; `src/server.ts` wires Fastify plugins, env bootstrap, and module routers.
-- Shared setup (logger, env, Prisma) resides in `src/configurations`; cross-cutting helpers sit in `src/services` and `src/helpers`.
-- Feature domains belong in `src/modules/<feature>` and should expose `*.route.ts` for registration, `*.controller.ts` for HTTP orchestration, and `services/` for business logic. Co-locate Zod schemas under `schemas/` within the module.
-- Prisma schema, migrations, and generated client resources stay in `prisma/`; update both schema and client together.
-- Test scaffolding under `src/tests` provides mocks and server factories; place module-level specs beside features following `[feature].unit.test.ts` / `[feature].integration.test.ts`.
+Fastify + TypeScript live under `src/` and are split by modules mirroring OLLO.li features: `modules/auth` (JWT/session lifecycle), `modules/user` (sign-up, profile, password), `modules/link` (shortener CRUD + caching), `modules/email` (verification + recovery templates) e `modules/upload` (Supabase storage). Cross-cutting pieces stay in `configurations/` (logger, decorators, rate limit, Swagger), `infra/` (Prisma, Redis, Supabase clients/storages) e `helpers/` (hashing, HTTP codes, TTL helpers). Tests accompany each module (`__tests__`) with shared harnesses under `src/tests/`. Docs, diagrams e templates residem em `docs/` e `resource/`.
 
 ## Build, Test, and Development Commands
-- `make setup`: bootstrap dependencies, Docker services, Prisma client, DB schema, and seed data.
-- `npm run dev`: launch Fastify with Nodemon + inspector using `.env.development`.
-- `npm run build`: emit compiled JS to `dist/` via `tsc` and `tsc-alias`.
-- `npm run docker`: start supporting containers; use `docker compose down` when finished.
-- `npm run test`, `npm run test:watch`, `npm run test:ci`: run Jest locally, in watch mode, or CI profile with coverage.
-- `npm run lint`: enforce ESLint (Standard + TypeScript) with auto-fix.
+- `make setup`: onboarding completo (nvm use, `npm install`, sobe `docker-compose` com Postgres/Redis, roda `prisma generate`, `prisma:db:push` e `npm run seed`).
+- `npm run dev`: levanta Fastify com Nodemon/inspector, carregando `.env.development` e exibindo logs coloridos se `DEBUG_MODE=true`.
+- `npm run docker`: inicia somente a stack de infra local (containers `ollo-li-postgres` e `ollo-li-redis`).
+- `npm run build` / `npm run start`: compila via `tsc` + `tsc-alias` e executa `dist/src/server.js` em produção.
+- `npm run test`, `test:watch`, `test:ci`: executam Jest com cobertura (mínimo 80% para branches/functions/lines/statements).
 
 ## Coding Style & Naming Conventions
-- TypeScript strict mode is enabled; declare explicit types on public functions and service contracts when inference is unclear.
-- Prefer the `@/` module alias for internal imports; avoid fragile relative paths.
-- Use 2-space indentation, `camelCase` for functions/variables, `PascalCase` for classes/types, and suffix route files with `.route.ts`.
-- Keep controllers slim: delegate to services, compose schemas for validation, and rely on the shared logger from `src/configurations/app.ts` instead of `console.log`.
+Utilize TypeScript estrito, path alias `@/` e sufixos por responsabilidade (`*.controller.ts`, `*.service.ts`, `*.schema.ts`). Controllers tratam Fastify requests/replies, services concentram regra de negócio com `Context { prisma }`, schemas usam Zod e expõem tipos. Enums/mensagens seguem `UPPER_SNAKE_CASE`. Antes de abrir PR, rode `npm run lint` (ESLint + `standard-with-typescript`) e mantenha funções curtas, com erros centralizados em `helpers/error-handler.ts`.
 
 ## Testing Guidelines
-- Jest powers unit and integration tests; mock external integrations (Supabase, Redis, MailerSend) via `src/tests/__mocks__`.
-- Maintain coverage by adding unit specs for services and integration specs for routes. Run `npm run test` before submitting changes and capture failure logs.
+Jest (`ts-jest`) cobre unidades e integrações. Nomeie arquivos como `link.service.unit.test.ts` ou `auth.routes.integration.test.ts`. Use mocks globais em `src/tests/` (`prisma.ts`, `redis.ts`, `app.ts`) para simular banco/cache e injetar cookies JWT (`tests/jwt.ts`). Não reduza cobertura abaixo de 80%; explore `npm run test:watch src/modules/link/__tests__/link-integration.test.ts` para iterações rápidas.
 
 ## Commit & Pull Request Guidelines
-- Follow Conventional Commits; run `npm run commit` (`git cz`) to compose messages that feed Release It and the changelog.
-- Keep pull requests focused, reference issues, and document testing evidence. Include sample API payloads or screenshots when behavior changes.
+Mensagens seguem Conventional Commits e são auxiliadas por `npm run commit` (Commitizen). Exemplos: `feat(link): add metadata validation` ou `fix(auth): refresh cookie flags`. Pull requests devem referenciar issues (`Closes #123`), resumir mudanças, listar comandos/testes executados e anexar evidências relevantes (p. ex., resposta do endpoint, novo fluxo em Mermaid). Certifique-se de que `npm run build` e `npm run test` passam antes do review.
 
 ## Security & Configuration Tips
-- Copy `.env.example` into `.env.development` and `.env.test`; never commit secrets.
-- Toggle `DEBUG_MODE=true` only for local troubleshooting.
-- After schema edits, execute `npm run prisma:db:push` and `npm run prisma:generate`, then restart local services to pick up changes.
+Nunca versione `.env.*`; baseie-se em `.env.example`. Preencha `FASTIFY_JWT_SECRET_*`, `SUPABASE_*`, `MAILERSEND_API_KEY`, `DATABASE_URL` e `REDIS_URL` com segredos fortes. Rate limiting depende de `FASTIFY_RATE_LIMIT_MAX/TIME_WINDOW`; ajuste por ambiente em vez de comentar o plugin. Antes do deploy, confirme que migrations Prisma foram aplicadas (`npm run prisma:newMigration && prisma migrate deploy`) e que o Redis externo está acessível para validações de email, recovery e caches de links.
