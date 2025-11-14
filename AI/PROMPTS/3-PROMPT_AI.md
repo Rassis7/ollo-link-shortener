@@ -35,5 +35,9 @@ Atualize no `ai-context` se necessário o novo comportamento e regras de negóci
 
 ## Additional Rules
 
-- Crie um plano para a tarefa em `AI/PLANS` usando o template `AI/PROMPTS/TEMPLATES/TEMPLATE_EXECUTION_PLAN.md` como base
+- Crie um plano para a tarefa em `AI/PLANS/REDIRECTOR_PLAN.md` usando o template `AI/PROMPTS/TEMPLATES/TEMPLATE_EXECUTION_PLAN.md` como base
 - Siga todas as regras de forma restritas ditas no plano criado
+- Ao final de cada tarefa, coloque o check ✅ na tarefa finalizada no plano `AI/PLANS/REDIRECTOR_PLAN.md`
+- Sempre use o plano `AI/PLANS/REDIRECTOR_PLAN.md` como memória de longo prazo para saber qual tarefa foi feita, qual está sendo feita e qual será a próxima
+- Apenas inicie uma tarefa após finalizar a outra
+- Sempre rode todos os testes para ver se houve algum efeito colateral em outra parte que já está funcionando, se sim, resolva
