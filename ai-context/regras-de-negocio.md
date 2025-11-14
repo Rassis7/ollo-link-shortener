@@ -30,7 +30,7 @@
 - `saveOrUpdateLinkCache`: garante consistência cacheada; se hash já existir e `id` não foi informado (novo link), lança `LINK_ERRORS_RESPONSE.URL_HAS_EXISTS` antes de tocar no banco.
 - `GET /api/links`: retorna paginação ordenada por `createdAt desc` apenas para o proprietário (`where: { userId }`).
 - `PUT /api/links/:id`: atualiza metadados e sincroniza cache (com TTL opcional usando `validAt`).
-- `GET /redirect/:hash`: (implementado em controllers) consulta Redis primeiro e cai no Prisma se o cache estiver frio, reduzindo latência.
+- `GET /r/:hash`: módulo `redirector` aceita hash **ou** alias; tenta `cache.get(CACHE_PREFIX.LINK, valor)` primeiro, valida `active`/`validAt` e devolve `301 Location` apontando para `redirectTo`. Sem cache, consulta Prisma (`getLinkByHashOrAlias`), hidrata novamente o cache e responde `404` quando link está inativo/expirado.
 
 ### Uploads (`src/modules/upload`)
 - `POST /api/upload`: exige usuário autenticado e verificado. O arquivo multipart é convertido em `File` (`convertMultipartToFile`), armazenado na Supabase e retorna URL pública montada via `SUPABASE_PUBLIC_URL`.

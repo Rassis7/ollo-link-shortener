@@ -495,7 +495,31 @@
 					"name": "Redirect",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [
+							{
+								"key": "Origin",
+								"value": "http://localhost:3000",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{redirect_base_url}}/r/:hash",
+							"host": [
+								"{{redirect_base_url}}"
+							],
+							"path": [
+								"r",
+								":hash"
+							],
+							"variable": [
+								{
+									"key": "hash",
+									"value": "06e4588d",
+									"description": "Hash ou alias retornado pelo encurtador"
+								}
+							]
+						},
+						"description": "Retorna 301 apontando para a URL original quando o hash existe; caso contrário responde 404."
 					},
 					"response": []
 				}
@@ -525,6 +549,13 @@
 				}
 			},
 			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "redirect_base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
 		}
 	]
 }

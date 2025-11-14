@@ -39,6 +39,15 @@ export enum HTTP_STATUS_CODE {
   NO_CONTENT = 204,
 
   /**
+   * 301 MOVED_PERMANENTLY
+   *
+   * Indicates that the requested resource has been definitively moved to a new URL provided in the Location header.
+   *
+   * Example usage: Redirecting short links to their original destination URLs.
+   */
+  MOVED_PERMANENTLY = 301,
+
+  /**
    * 400 BAD_REQUEST
    *
    * Indicates that the server cannot or will not process the request due to something that is perceived to be a client error (e.g., malformed request syntax).

@@ -19,6 +19,7 @@ import { authRoutes } from "@/modules/auth/auth.routes";
 import { emailRoutes } from "./modules/email/email.route";
 import { linkRoutes } from "./modules/link/link.route";
 import { uploadRoutes } from "./modules/upload/upload.route";
+import { redirectorRoutes } from "./modules/redirector/redirector.route";
 
 import {
   serializerCompiler,
@@ -31,6 +32,15 @@ import "./configurations/errors";
 
 const port = Number(process.env.SERVER_PORT ?? 3000);
 const host = process.env.NODE_ENV === "development" ? "localhost" : "0.0.0.0";
+
+app.addHook("onRequest", (request, _, done) => {
+  if (!request.headers.origin && request.url.startsWith("/r/")) {
+    const protocol = request.protocol ?? "http";
+    const host = request.headers.host ?? "localhost:3000";
+    request.headers.origin = `${protocol}://${host}`;
+  }
+  done();
+});
 
 app.register(cors, {
   credentials: true,
@@ -66,6 +76,7 @@ app.register(authRoutes, { prefix: "api/auth" });
 app.register(emailRoutes, { prefix: "api/email" });
 app.register(linkRoutes, { prefix: "api/links" });
 app.register(uploadRoutes, { prefix: "api/upload" });
+app.register(redirectorRoutes, { prefix: "r" });
 
 function main() {
   if (process.env.NODE_ENV === "test") {

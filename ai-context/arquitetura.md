@@ -4,7 +4,7 @@
 
 ## Visão geral
 - **Stack**: Fastify 4 + TypeScript estrito, Zod, Prisma, Redis e Supabase (`package.json`).
-- **Entry-point**: `src/server.ts` carrega `.env.*`, registra CORS/multipart, aplica decorators Zod e monta rotas dos módulos (`auth`, `user`, `link`, `email`, `upload`, `health-check`).
+- **Entry-point**: `src/server.ts` carrega `.env.*`, registra CORS/multipart, aplica decorators Zod e monta rotas dos módulos (`auth`, `user`, `link`, `email`, `upload`, `redirector`, `health-check`).
 - **Estilo**: módulos independentes agrupam `*.route.ts`, controllers, services e schemas; cross-cutting (logger, rate limit, JWT, doc) vive em `src/configurations/`.
 - **Contexto**: services recebem `Context { prisma }` (`src/configurations/context.ts`) para preservar testabilidade e permitir trocar dependências.
 
@@ -27,7 +27,7 @@
 
 ### Módulos de domínio (`src/modules/*`)
 - Cada módulo possui `*.route.ts` que registra controladores dentro do Fastify, controllers que lidam com `FastifyRequest/FastifyReply`, schemas Zod com validação e tipagem, services com regra de negócio/persistência e testes (`__tests__`).
-- Exemplo: `modules/link` expõe `shortenerLink`, caching (`saveOrUpdateLinkCache`) e `generateUrlHash`; `modules/email` orquestra MailerSend e TTL de códigos.
+- Exemplo: `modules/link` expõe `shortenerLink`, caching (`saveOrUpdateLinkCache`) e `generateUrlHash`; `modules/email` orquestra MailerSend e TTL de códigos; `modules/redirector` trata `GET /r/:hash` consultando Redis antes de Prisma e respondendo com `301 Location` ou `404` quando hash/alias expira ou está inativo.
 - Decoradores aplicados nas rotas (ex.: `app.isAuthorized`) garantem que serviços recebam `request.user` populado pelo middleware.
 
 ### Helpers e testes compartilhados
