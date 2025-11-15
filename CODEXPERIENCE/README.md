@@ -54,11 +54,11 @@ E cada uma dessas ferramentas possui um arquivo diferente de configuração:
 Pensando em sempre manter o mesmo contexto independente da ferramenta podemos criar um link simbólico entre eles
 
 ```bash
-ls -s AGENTS.md CLAUDE.md
+ln -s AGENTS.md CLAUDE.md
 ```
 
 ```bash
-ls -s AGENTS.md GEMINI.md
+ln -s AGENTS.md GEMINI.md
 ```
 
 ## Expanda o contexto do seu projeto para a IA
