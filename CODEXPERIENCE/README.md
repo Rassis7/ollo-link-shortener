@@ -182,7 +182,11 @@ Aqui temos o arquivo [PROMPTS/TEMPLATES/TEMPLATE_EXECUTION_PLAN.md](PROMPTS/TEMP
 Já sabemos o básico, agora vamos entregar a tarefa.
 Nosso time de produto foi claro na tarefa **"criar uma rota para o usuário ser redirecionado"**
 
-Ok, então vamos criar nosso prompt... ele está aqui [PROMPTS/PROMPT_TASK.md](PROMPTS/PROMPT_TASK.md)
+Ok, então vamos criar nosso prompt adicionando a ele todas as regras de negócio e indicando que ele deve _criar um plano de execução_... ele está aqui [PROMPTS/PROMPT_TASK.md](PROMPTS/PROMPT_TASK.md)
+
+O executar o prompt foi criado o plano de execução dessa tarefa [CODEXPERIENCE/PLANS/REDIRECTOR_PLAN.md](CODEXPERIENCE/PLANS/REDIRECTOR_PLAN.md)
+
+> Observe que esse plano já está atualizado, pois a tarefa já foi executada, como ele é a memória do modelo ele precisa atualizar ele ao fim de cada tarefa dando contexto do que foi feito
 
 ### Code review
 
