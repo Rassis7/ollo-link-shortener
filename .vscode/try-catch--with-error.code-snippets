@@ -12,7 +12,7 @@
     "body": [
       "try {",
       "$1",
-      "} catch (e) {",
+      "}catch (e) {",
       "const error = new ErrorHandler(e);",
       "return reply.code(400).send(error);",
       "}"
