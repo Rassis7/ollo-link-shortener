@@ -12,35 +12,35 @@ Estrutura reutilizável para que agentes planejem tarefas complexas mantendo dis
 > Defina estágios granulares e ordenados. Cada estágio deve ser independente e concluído antes do próximo.
 
 ### Stage 0 – Diagnóstico determinístico
-- [ ] ✅ **Test Fails** — Forçar diferença de timestamp (`jest.useFakeTimers().setSystemTime(Date.now() + 2000)`) e rodar `npm run test -- src/modules/auth/__tests__/authorization-integration.test.ts -t "Should be able to generate new refresh token"` para observar o diff entre o cookie esperado (`mockAccessToken`) e o token recém-gerado.
-- [ ] ✅ **Code** — Instrumentar temporariamente o teste para logar `response.cookies` e confirmar que os valores variam por conta do `iat` do `fast-jwt`; remover logs após coletar evidências.
-- [ ] ✅ **Green** — Nenhum (fase apenas de investigação); registrar achados no relatório/PR.
-- [ ] 📝 **Notas** — Atenção ao mock global de Date para não impactar outros testes; encapsular dentro do `it` e restaurar no `finally`.
+- [x] ✅ **Test Fails** — Mockei `Date.now()` (+2s) e rodei `npm run test -- src/modules/auth/__tests__/authorization-integration.test.ts -t "Should be able to generate new refresh token"` para forçar divergência entre cookies esperados e tokens emitidos.
+- [x] ✅ **Code** — Adicionei log temporário de `response.cookies` no teste para capturar o payload completo e validar que a variação vinha do `iat` do `fast-jwt`.
+- [x] ✅ **Green** — Sem ação (fase investigativa); achados registrados no relatório final.
+- [x] 📝 **Notas** — Evitei `useFakeTimers` (quebrava o hook) e usei `jest.spyOn(Date, "now")` com `mockRestore()` para isolar o efeito no próprio `it`.
 
 ### Stage 1 – Ajustar especificação do refresh
-- [ ] ✅ **Test Fails** — Atualizar o teste para validar sem acoplar ao token string: comparar payload via `app.jwt.accessToken.verify`/`refreshToken.verify`, conferir flags (`httpOnly`, `maxAge`, `sameSite`) e, opcionalmente, garantir que novos valores `!==` cookies antigos. Rodar o mesmo comando para ver o teste falhar antes do código.
-- [ ] ✅ **Code** — Refatorar asserções para: (1) localizar cookies por `name`, (2) decodificar tokens e comparar `id`, `name`, `accountConfirmed`, (3) verificar que `refresh_token` continua `httpOnly` + `maxAge` e (4) remover dependência de `mockAccessToken`/`mockRefreshToken` na expectativa direta.
-- [ ] ✅ **Green** — Executar `npm run test -- src/modules/auth/__tests__/authorization-integration.test.ts` e confirmar que todo o arquivo fica verde; caso mexa em helpers, rodar também `npm run test -- src/modules/auth/__tests__/auth-integration.test.ts`.
-- [ ] 📝 **Notas** — Considerar criar helper de parsing de cookies se repetirmos lógica; manter o teste organizado para futura extensão (ex.: validação de `accountConfirmed` falso).
+- [x] ✅ **Test Fails** — Novo teste atualizado para verificar payload/flags; a rota já atendia as asserções reforçadas, então não houve falha após a refatoração.
+- [x] ✅ **Code** — Refatorei o teste para buscar cookies por `name`, validar flags (`sameSite`, `httpOnly`, `maxAge`) e decodificar os tokens via `app.jwt.*.verify`, eliminando dependência das strings mockadas.
+- [x] ✅ **Green** — `npm run test -- src/modules/auth/__tests__/authorization-integration.test.ts` confirma o arquivo todo em verde com cobertura preservada.
+- [x] 📝 **Notas** — Mantive a lógica inline (sem helper dedicado) porque só este caso faz parsing completo; fácil extrair no futuro se repetirmos.
 
 ### Stage 2 – Regressão e comunicação
-- [ ] ✅ **Test Fails** — Não aplicável (fase de validação final).
-- [ ] ✅ **Code** — Revisar se outros testes dependem de `mockAccessToken`/`mockRefreshToken` em expectativas absolutas; atualizar README/ai-context se necessário para reforçar política de rotação.
-- [ ] ✅ **Green** — `npm run test` completo (ou pelo menos módulos de auth) para garantir que cobertura mínima continua atendida após mexer nos testes.
-- [ ] 📝 **Notas** — Registrar na descrição do PR que o fix é apenas na suíte de integração e anexar diff do erro original para contexto histórico.
+- [x] ✅ **Test Fails** — Não aplicável (validação final apenas somou regressão direcionada).
+- [x] ✅ **Code** — Revisei os demais testes de auth; nenhum outro dependia de comparação direta com `mockAccessToken`/`mockRefreshToken`, então não houve necessidade de docs extras.
+- [x] ✅ **Green** — `npm run test -- src/modules/auth/__tests__` executado para cobrir toda a suíte de autenticação.
+- [x] 📝 **Notas** — Recomendado citar no PR a causa raiz (`iat` variável) + screenshot do diff do teste falhando após forçar `Date.now()`.
 
 ## Checks Globais
-- [ ] 🔁 **Regressão direcionada** — Executar `npm run test -- src/modules/auth/__tests__` inteiro após ajustes.
-- [ ] 📦 **DX/Docs** — Atualizar `ai-context/seguranca-compliance.md` somente se flags de cookie mudarem (não previsto).
-- [ ] 📊 **Observabilidade** — Sem impactos (endpoint apenas de autenticação).
-- [ ] ✅ **Entrega** — Preparar nota no PR destacando causa raiz (iat variável) e como o novo teste cobre o cenário.
+- [x] 🔁 **Regressão direcionada** — `npm run test -- src/modules/auth/__tests__` rodado com sucesso pós-refatoração.
+- [x] 📦 **DX/Docs** — Sem alteração de flags; nenhum doc precisava ser tocado.
+- [x] 📊 **Observabilidade** — Nenhum efeito em métricas/logs, somente cobertura de teste.
+- [x] ✅ **Entrega** — Nota para PR preparada destacando o `iat` variável e a nova estratégia de asserção.
 
 ## Registro de Execução (preencha durante a execução)
 | Estágio | Hora de início | Resultado | Observações |
 | ------- | -------------- | --------- | ----------- |
-| `Stage 0 – Diagnóstico determinístico` | `HH:MM` | `<ok/pending>` | `<achados, blockers>` |
-| `Stage 1 – Ajustar especificação do refresh` | `HH:MM` | `<ok/pending>` | `<achados, blockers>` |
-| `Stage 2 – Regressão e comunicação` | `HH:MM` | `<ok/pending>` | `<achados, blockers>` |
+| `Stage 0 – Diagnóstico determinístico` | `20:05` | `ok` | `Teste falhou ao mockar Date.now(); cookies mostraram novos JWTs com iat diferente.` |
+| `Stage 1 – Ajustar especificação do refresh` | `20:12` | `ok` | `Teste atualizado para validar payload + flags; backend já atendia requisitos.` |
+| `Stage 2 – Regressão e comunicação` | `20:25` | `ok` | `Suíte completa de auth executada; sem dependências extras em mocks.` |
 
 ## Playbook de Atualização
 1. Valide se o plano ainda é válido antes de executar cada estágio.
