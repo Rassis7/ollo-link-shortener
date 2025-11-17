@@ -1,0 +1,561 @@
+{
+	"info": {
+		"_postman_id": "1c91df92-b566-480f-b183-04bbec3b7144",
+		"name": "OLLO.li",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18288365"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Origin",
+								"value": "http://localhost:3000",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"romuloassis.as@gmail.com\",\n  \"password\": \"asd)Aasdas_00a0\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/auth",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Origin",
+								"value": "http://localhost:3000",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/auth/refreshToken",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"refreshToken"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Create a new user",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Origin",
+								"value": "http://localhost:3000",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"romuloassis.as@gmail.com\",\n  \"password\": \"asd)Aasdas_00a0\",\n  \"name\": \"Romulo Assis\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Origin",
+								"value": "http://localhost:3000",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"John Due\",\n  \"active\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/users/:userId",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								":userId"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "113a10bd-c13e-48e4-a502-25d43bfc6998"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Origin",
+								"value": "http://localhost:3000",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/users/:userId",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								":userId"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "3ecdf605-d618-45ea-9d91-c50b21cedf0f"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Origin",
+								"value": "http://localhost:3000",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"linkId\": \"16c95c46-ec99-4f67-82ca-055bc2cc1bb8\",\n    \"password\": \"asd)Aasdas_000!!!!\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/users/changePassword",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"changePassword"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Email",
+			"item": [
+				{
+					"name": "Email Verify",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Origin",
+								"value": "http://localhost:3000",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"romuloassis.as@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/email/verify/:email_unique_key",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"email",
+								"verify",
+								":email_unique_key"
+							],
+							"variable": [
+								{
+									"key": "email_unique_key",
+									"value": "e5798398-c517-4f11-96c1-5fff7ac9eb27"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Email resend code",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Origin",
+								"value": "http://localhost:3000",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"romuloassis.as@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/email/resendVerificationEmail",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"email",
+								"resendVerificationEmail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Recovery Password",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Origin",
+								"value": "http://localhost:3000",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"romuloassis.as@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/email/recoveryPassword",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"email",
+								"recoveryPassword"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Link",
+			"item": [
+				{
+					"name": "Shortener a link",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Origin",
+								"value": "http://localhost:3000",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"url\": \"https://www.linkedin.com/in/romulo-assis/\",\n   \"validAt\": \"2025-12-31T19:52:21.208Z\",\n   \"metadata\": {\n     \"title\": \"Romulo's Linkedin\",\n     \"description\": \"Hello I'm Romulo Assis\",\n     \"image\": \"https://robohash.org/UTI.png?set=set1\"\n   }\n }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/links/shortener",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"links",
+								"shortener"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All links",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Origin",
+								"value": "http://localhost:3000",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/links?take=1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"links"
+							],
+							"query": [
+								{
+									"key": "cursor",
+									"value": "3bd40f38-b047-47c9-b23e-5edd5ee6a95d",
+									"disabled": true
+								},
+								{
+									"key": "take",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update a link",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Origin",
+								"value": "http://localhost:3000",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": " {\n  \"redirectTo\": \"https://any_site/kk\",\n  \"hash\": \"06e4588d\",\n  \"alias\": \"MySite5\",\n  \"validAt\": \"2024-01-27T12:30:24.958Z\",\n  \"active\": false\n }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/links/:linkID",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"links",
+								":linkID"
+							],
+							"variable": [
+								{
+									"key": "linkID",
+									"value": "783d7c98-e32a-462e-b4f3-0e55621403a4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Redirect",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Origin",
+								"value": "http://localhost:3000",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{redirect_base_url}}/r/:hash",
+							"host": [
+								"{{redirect_base_url}}"
+							],
+							"path": [
+								"r",
+								":hash"
+							],
+							"variable": [
+								{
+									"key": "hash",
+									"value": "06e4588d",
+									"description": "Hash ou alias retornado pelo encurtador"
+								}
+							]
+						},
+						"description": "Retorna 301 apontando para a URL original quando o hash existe; caso contrário responde 404."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Chek API is UP",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Origin",
+						"value": "http://localhost:3000",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/healthcheck",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"healthcheck"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "redirect_base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		}
+	]
+}

@@ -8,7 +8,7 @@ import {
   MOCK_USER_NAME,
   MOCK_REFRESH_TOKEN,
 } from "@/tests";
-import { AUTH_ERRORS_RESPONSE, cookiesProps } from "../schemas";
+import { AUTH_ERRORS_RESPONSE, JwtProps, cookiesProps } from "../schemas";
 import * as userServices from "@/modules/user/services/user.service";
 import { mockFindUserByIdResponse } from "@/modules/user/__mocks__/find-user-by-email";
 import { createSigner } from "fast-jwt";
@@ -154,30 +154,59 @@ describe("modules/authorization-integration.refreshToken", () => {
       },
     });
 
-    const {
-      httpOnly: _httpOnly,
-      sameSite: _sameSite,
-      secure: _secure,
-      ...cookiesWithDomain
-    } = cookiesProps;
-
-    expect(response.cookies).toEqual([
-      {
-        ...cookiesWithDomain,
-        sameSite: "Strict",
-        name: "access_token",
-        value: mockAccessToken,
-      },
-      {
-        ...cookiesWithDomain,
-        httpOnly: true,
-        sameSite: "Strict",
-        name: "refresh_token",
-        maxAge: 604800,
-        value: mockRefreshToken,
-      },
-    ]);
     expect(response.statusCode).toEqual(HTTP_STATUS_CODE.NO_CONTENT);
+
+    const sameSiteProp =
+      cookiesProps.sameSite === true ? "Strict" : cookiesProps.sameSite;
+
+    const accessTokenCookie = response.cookies.find(
+      (cookie) => cookie.name === "access_token"
+    );
+    const refreshTokenCookie = response.cookies.find(
+      (cookie) => cookie.name === "refresh_token"
+    );
+
+    if (!accessTokenCookie || !refreshTokenCookie) {
+      throw new Error("Access or refresh token cookie not found in response");
+    }
+
+    expect(accessTokenCookie).toMatchObject({
+      domain: cookiesProps.domain,
+      name: "access_token",
+      path: cookiesProps.path,
+      sameSite: sameSiteProp,
+    });
+
+    expect(accessTokenCookie.value).toEqual(expect.any(String));
+
+    const decodedAccessToken = app.jwt.accessToken.verify<JwtProps>(
+      accessTokenCookie.value
+    );
+
+    expect(decodedAccessToken).toEqual(
+      expect.objectContaining({
+        id: MOCK_USER_ID,
+        name: MOCK_USER_NAME,
+        accountConfirmed: true,
+      })
+    );
+
+    expect(refreshTokenCookie).toMatchObject({
+      domain: cookiesProps.domain,
+      name: "refresh_token",
+      path: cookiesProps.path,
+      sameSite: sameSiteProp,
+      httpOnly: true,
+      maxAge: 7 * 24 * 60 * 60,
+    });
+
+    expect(refreshTokenCookie.value).toEqual(expect.any(String));
+
+    const decodedRefreshToken = app.jwt.refreshToken.verify<JwtProps>(
+      refreshTokenCookie.value
+    );
+
+    expect(decodedRefreshToken.id).toEqual(MOCK_USER_ID);
   });
 
   it("Should be able to show error when valid refresh token and user not found", async () => {

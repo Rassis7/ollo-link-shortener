@@ -11,6 +11,27 @@ jest.mock("node:crypto", () => ({
   createHash: jest.fn(),
 }));
 
+jest.mock("bcrypt", () => ({
+  genSalt: jest.fn().mockResolvedValue("salt"),
+  hash: jest.fn().mockResolvedValue("hashed-password"),
+  compare: jest.fn().mockResolvedValue(true),
+}));
+const bcrypt = require("bcrypt");
+const { Blob } = require("buffer");
+
+if (typeof global.File === "undefined") {
+  class PolyfillFile extends Blob {
+    constructor(bits, name, options = {}) {
+      super(bits, options);
+      this.name = name;
+      this.lastModified = options.lastModified ?? Date.now();
+      this.webkitRelativePath = "";
+    }
+  }
+
+  global.File = PolyfillFile;
+}
+
 jest.mock("mailersend", () => ({
   ...jest.requireActual("mailersend"),
   MailerSend: jest.fn().mockImplementation(() => ({
@@ -44,13 +65,16 @@ jest.mock("@supabase/supabase-js", () => ({
   })),
 }));
 
-require("./src/tests/server");
 require("./src/tests/prisma");
+require("./src/tests/server");
 require("./src/tests/redis");
 
 beforeEach(() => {
   jest.clearAllMocks();
   jest.resetAllMocks();
+  bcrypt.genSalt.mockResolvedValue("salt");
+  bcrypt.hash.mockResolvedValue("hashed-password");
+  bcrypt.compare.mockResolvedValue(false);
 });
 
 afterAll(() => {
