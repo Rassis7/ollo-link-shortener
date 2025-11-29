@@ -23,6 +23,10 @@ export async function upload({ file, userId, fileType }: UploadProps) {
 }
 
 function streamToBuffer(stream: Readable): Promise<Buffer> {
+  if (typeof (stream as any)._read !== "function") {
+    (stream as any)._read = () => {};
+  }
+
   return new Promise((resolve, reject) => {
     const chunks: Uint8Array[] = [];
     stream.on("data", (chunk) =>

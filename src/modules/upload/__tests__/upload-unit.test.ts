@@ -8,7 +8,9 @@ import { faker } from "@faker-js/faker";
 describe("modules/upload.unit", () => {
   describe("convertMultipartToFile", () => {
     it("should convert a multipart file stream to a File", async () => {
-      const readable = new Readable();
+      const readable = new Readable({
+        read() {},
+      });
       const data = "Hello, world!";
       readable.push(data);
       readable.push(null);
@@ -27,7 +29,9 @@ describe("modules/upload.unit", () => {
     });
 
     it("should handle stream errors", async () => {
-      const readable = new Readable();
+      const readable = new Readable({
+        read() {},
+      });
       const error = new Error("Stream error");
 
       process.nextTick(() => readable.emit("error", error));

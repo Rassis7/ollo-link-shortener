@@ -6,6 +6,7 @@ const prismaMock = mockDeep<PrismaClient>();
 
 jest.mock("@/infra/clients/prisma", () => ({
   __esModule: true,
+  prisma: prismaMock,
   default: prismaMock,
 }));
 
