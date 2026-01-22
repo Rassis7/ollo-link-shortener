@@ -39,7 +39,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^8.3.1",
-    "@release-it/conventional-changelog": "^8.0.1",
+    "@release-it/conventional-changelog": "^10.0.4",
     "@types/bcrypt": "^5.0.2",
     "@types/jest": "^29.5.11",
     "@types/node": "^20.9.0",
@@ -61,7 +61,7 @@
     "pino": "^8.16.2",
     "pino-pretty": "^10.2.3",
     "prisma": "^6.16.3",
-    "release-it": "^17.1.1",
+    "release-it": "^19.2.4",
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.8",
